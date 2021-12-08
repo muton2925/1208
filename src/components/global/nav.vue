@@ -1,30 +1,57 @@
 <template>
-  <div class="header">
-    <div class="nav_logo">
-      <img src="../../assets/free5gmano_icon.png" width="70" height="70" alt="logo_icon"/>
-      <h1 class="nav_logo_h1">FREE 5G MANO</h1>
-    </div>
+  <div class="Nav">
+    <header class="  ">
+      <div class="header_logo header_logo-width">
+        <img src="../../assets/free5gmano_icon.png" width="70" height="70" alt="logo_icon"/>
+        <h1 class="header_logo_h1">FREE 5G MANO</h1>
+      </div>
+      <div class="navColor header "></div>
+    </header>
+    <nav class="nav nav-height navColor">
+
+    </nav>
   </div>
 </template>
 <script>
-export default {};
+export default {
+  setup() {
+
+
+    return {
+
+    }
+  }
+
+
+
+
+};
 </script>
 <style scoped>
-.header {
-  min-height: 100vh;
+.nav-height {
+  min-height: calc(100vh - 70px);
+
+}
+.navColor{
   background-color: #4e73df;
   background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
   background-size: cover;
 }
-.nav_logo {
-  width: 100%;
+header{
+  min-width: 100vw;
+  display: flex;
+}
+.header{
+  min-width: calc(100vw - 104px);
+  }
+.header_logo {
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #FFF;
   cursor: pointer;
 }
-.nav_logo_h1 {
+.header_logo_h1 {
     display: none;
     text-align: center;
     letter-spacing: 0.05em;
@@ -33,20 +60,36 @@ export default {};
     margin-left: 4px;
     margin-right: 4px;
 }
-@media (min-width: 576px) {
-  .header {
-    width: 104px;
-  }
+.header_logo-width{
+  width: 104px;
 }
-@media (min-width: 768px) {
-  .header {
+ .nav {
     width: 224px;
   }
-  .nav_logo {
+@media (min-width: 576px) {
+  .nav, .header_logo-width {
+    width: 104px;
+  }
+  .header{
+    min-width: calc(100vw - 104px);
+    padding: 0;
+    margin: 0;
+  } 
+}
+@media (min-width: 768px) {
+  .nav, .header_logo-width {
+    width: 224px;
+  }
+  .header_logo {
     padding: 0 16px;
   }
-  .nav_logo_h1 {
+  .header_logo_h1 {
       display: inline;
+  }
+  .header{
+    min-width: calc(100vw - 224px);
+    padding: 0;
+    margin: 0;
   }
 }
 </style>

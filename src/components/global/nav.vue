@@ -1,6 +1,6 @@
 <template>
-  <div class="Nav">
-    <header class="  ">
+  <!-- <div class="Nav">
+    <header class="">
       <div class="header_logo header_logo-width">
         <img src="../../assets/free5gmano_icon.png" width="70" height="70" alt="logo_icon"/>
         <h1 class="header_logo_h1">FREE 5G MANO</h1>
@@ -10,25 +10,36 @@
     <nav class="nav nav-height navColor">
 
     </nav>
-  </div>
+  </div> -->
+  <nav class="navbar navbar-expand-sm navbar-dark flex-nowrap py-0 bg-blue shadow-normal vw-mincontent">
+    <div class="container-fluid px-0">
+      <div class="navbar-brand white-space-normal bg-white px-3 py-0" href="#">
+        <img src="../../assets/free5gmano_icon.png" alt="free5gmano_icon" width="70" height="70"/>
+        <h1 class="d-none nav_h1 d-md-inline-block align-middle text-black text-center my-0">FREE 5G MANO</h1>
+      </div>
+      <button class="navbar-toggler me-3" type="button">
+        <span class="navbar-toggler-icon"></span>
+      </button> 
+    </div>
+  </nav>
 </template>
 <script>
 export default {
   setup() {
-
-
-    return {
-
-    }
-  }
-
-
-
-
+    return {};
+  },
 };
 </script>
 <style scoped>
-.nav-height {
+.nav_h1 {
+  width: 90px;
+  margin: 0 16px;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.6;
+  letter-spacing: 0.05rem;
+}
+/* .nav-height {
   min-height: calc(100vh - 70px);
 
 }
@@ -65,19 +76,19 @@ header{
 }
  .nav {
     width: 224px;
-  }
+  } */
 @media (min-width: 576px) {
-  .nav, .header_logo-width {
+  /* .nav, .header_logo-width {
     width: 104px;
   }
   .header{
     min-width: calc(100vw - 104px);
     padding: 0;
     margin: 0;
-  } 
+  }  */
 }
 @media (min-width: 768px) {
-  .nav, .header_logo-width {
+  /* .nav, .header_logo-width {
     width: 224px;
   }
   .header_logo {
@@ -90,6 +101,6 @@ header{
     min-width: calc(100vw - 224px);
     padding: 0;
     margin: 0;
-  }
+  } */
 }
 </style>

@@ -1,0 +1,79 @@
+@import "../../../node_modules/bootstrap/scss/functions";
+@import "../../../node_modules/bootstrap/scss/variables";
+
+// Custom Variables Code
+$box-shadow-normal: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+
+@import "../../../node_modules/bootstrap/scss/utilities";
+
+// Custom Utilities Code
+$utilities: map-merge(
+  $utilities,
+  (
+    "width": map-merge(
+      map-get($utilities, "shadow"),
+      (
+        values: map-merge(
+          map-get(map-get($utilities, "shadow"), "values"),
+          (normal: $box-shadow-normal), //以此類推
+        ),
+      ),
+    ),
+  ),
+);
+$utilities: map-merge(
+  $utilities,
+  (
+    "cursor": (
+      property: cursor,
+      class: cursor,
+      responsive: true,
+      values: auto pointer grab,
+    )
+  )
+);
+$utilities: map-merge(
+  $utilities,
+  (
+    "min-viewport-width": (
+      property: min-width,
+      class: vw,
+      values: (
+        0: 0,
+        100: 100vw,
+        'mincontent': min-content,
+        'maxcontent': max-content)
+    )
+  )
+);
+$utilities: map-merge(
+  $utilities,
+  (
+    "width": (
+      property: width,
+      class: w,
+      responsive: true,
+      values: (
+        25: 25%,
+        50: 50%,
+        75: 75%,
+        100: 100%,
+        auto: auto,
+        102px: 102px,
+        224px: 224px
+      )
+    ),
+  )
+);
+$utilities: map-merge(
+  $utilities,
+  (
+    "white-space": (
+      property: white-space,
+      class: white-space,
+      responsive: true,
+      values: normal nowrap pre pre-wrap pre-line,
+    )
+  )
+);
+@import "../../../node_modules/bootstrap/scss/bootstrap.scss";

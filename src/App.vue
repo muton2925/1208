@@ -2,7 +2,6 @@
   <Nav></Nav>
   <div class="d-flex">
     <Menucomponent></Menucomponent>
-    
   </div>
 </template>
 <script>
@@ -14,12 +13,16 @@ export default {
     Menucomponent,
   },
   data() {
-    return {
-    }   
-  }
+    return {};
+  },
 };
 </script>
 <style>
+ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
 .bg-blue {
   background-color: #4e73df;
   background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
@@ -27,5 +30,8 @@ export default {
 }
 .aside_height {
   min-height: calc(100vh - 70px);
+}
+.offcanvas-backdrop {
+  top: 70px !important;
 }
 </style>

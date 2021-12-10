@@ -16,7 +16,7 @@
         </li>
         <li class="list-item"><a href="#">NSS template</a></li>
         <li class="list-item">
-          <a data-bs-toggle="collapse" data-bs-target="#collapseTwo">Generic Template</a>
+          <a data-bs-toggle="collapse" data-bs-target="#collapseTwo">NSSI View</a>
           <div id="collapseTwo" class="mt-3 collapse" data-bs-parent="#accordionExample">
             <div class="accordion-body-custom">
               <a class="list-item2" href="#">Graph View</a>
@@ -26,7 +26,29 @@
         </li>
       </template>
       <template v-else>
-
+        <li class="list-item"><router-link to="/dashboard">Dashboard</router-link></li>
+        <li class="list-item"><router-link to="/nfv_mano_plugin">NFV MANO Plugin</router-link></li>
+        <li class="list-item">
+          <router-link to="/nfv_mano_plugin" data-bs-toggle="collapse" data-bs-target="#collapse1">Generic Template</router-link>
+          <div id="collapse1" class="collapse aaa" data-bs-parent="#accordionExample">
+            <div class="accordion-body-custom">
+              <a class="list-item2" href="#">VNF Template</a>
+              <a class="list-item2" href="#">NSD Template</a>
+              <a class="list-item2" href="#">NRM Template</a>
+            </div>
+          </div>
+        </li>
+        <li class="list-item"><router-link to="/nfv_mano_plugin">NSS Template</router-link></li>
+        <li class="list-item">
+          <router-link to="/nfv_mano_plugin" data-bs-toggle="collapse" data-bs-target="#collapse2">NSSI View</router-link>
+          <div id="collapse2" class="collapse aaa" data-bs-parent="#accordionExample">
+            <div class="accordion-body-custom">
+              <a class="list-item2" href="#">VNF Template</a>
+              <a class="list-item2" href="#">NSD Template</a>
+              <a class="list-item2" href="#">NRM Template</a>
+            </div>
+          </div>
+        </li>
       </template>
     </ul>
   </aside>
@@ -63,6 +85,12 @@ export default {
 li{
     cursor: pointer;
 }
+.aaa {
+    position: absolute;
+    top: 0;
+    left: 110px;
+    box-shadow: 0 0.15rem 1.75rem 0 rgb(58 59 69 / 15%);
+}
 .accordion-body-custom {
     background-color: #FFF;
     border-radius: 5px;
@@ -75,8 +103,8 @@ li{
 .list-item {
     display: block;
     font-size: .65rem;
-    padding:12px 16px;
-    position: relative;
+    padding: 12px 16px;
+    position: relative !important;
 }
 .list-item a{
     color: white;

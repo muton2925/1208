@@ -13,7 +13,9 @@ export default {
     Menucomponent,
   },
   data() {
-    return {};
+    return {
+
+    };
   },
 };
 </script>

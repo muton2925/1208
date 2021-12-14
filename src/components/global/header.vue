@@ -17,7 +17,7 @@
   </div>
 </template>
 <script>
-import Item from './item.vue'
+import Item from './offcanvas.vue'
 export default {
   components: {
     Item

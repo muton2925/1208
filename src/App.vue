@@ -1,12 +1,13 @@
 <template>
   <Nav></Nav>
-  <div class="d-flex">
+  <div class="d-sm-flex">
     <Menucomponent></Menucomponent>
+    <router-view></router-view>
   </div>
 </template>
 <script>
-import Nav from "./components/global/nav.vue";
-import Menucomponent from "./components/global/menucomponent.vue";
+import Nav from "./components/global/header.vue";
+import Menucomponent from "./components/global/sidebar.vue";
 export default {
   components: {
     Nav,

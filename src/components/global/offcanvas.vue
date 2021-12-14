@@ -1,5 +1,5 @@
 <template>
-  <li class="">
+  <li>
     <template v-if="childs.length > 0">
       <div class="list-item" data-bs-toggle="collapse" :data-bs-target="'#' + url">
         <i class="me-2" :class="icon"></i>

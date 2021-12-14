@@ -1,5 +1,5 @@
 <template>
-  <aside class="d-none d-sm-block w-sm-102px w-md-224px aside_height bg-blue">
+  <aside class="d-none d-sm-inline-block w-sm-102px w-md-224px aside_height bg-blue">
     <ul class="list-none text-white text-center text-md-start" id="accordionExample">
       <template v-if="windowWidth >= 768">
         <li class="list-item"><router-link to="/dashboard">Dashboard</router-link></li>
@@ -90,6 +90,7 @@ li{
     top: 0;
     left: 110px;
     box-shadow: 0 0.15rem 1.75rem 0 rgb(58 59 69 / 15%);
+    z-index: 999;
 }
 .accordion-body-custom {
     background-color: #FFF;
@@ -104,6 +105,7 @@ li{
     display: block;
     font-size: .65rem;
     padding: 12px 16px;
+    width: 102px;
     position: relative !important;
 }
 .list-item a{
@@ -126,6 +128,7 @@ li{
 @media (min-width: 768px) {
     .list-item {
         padding: 19px;
+        width: 224px;
     }
 }
 </style>

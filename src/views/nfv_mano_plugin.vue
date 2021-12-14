@@ -1,13 +1,14 @@
 <template>
   <div class="container-outer" style="overflow:hidden">
-    <div class="container-header d-flex justify-content-between align-items-center flex-nowrap mb-4">
+    <!-- <div class="container-header d-flex justify-content-between align-items-center flex-nowrap mb-4">
       <h3>NFV MANO Plugin</h3>
       <button class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#create_plugin_Modal">
         <i class="d-sm-none bi bi-folder-plus"></i>
         <span class="d-none d-sm-inline">Create Plugin</span>
       </button>
-    </div>
-    <div class="card shadow-sm">
+    </div> -->
+    <containerHeader title="NFV MANO Plugin" btnContent="Create Plugin"></containerHeader>
+    <!-- <div class="card shadow-sm">
       <div class="card-header card-header-custom py-3">
         <h6>NFV MANO Plugin List</h6>
       </div>
@@ -22,7 +23,9 @@
           </table>
         </div>
       </div>
-    </div>
+    </div> -->
+    <fileTable title="NFV MANO Plugin List" :tableFile="th_list"></fileTable>
+
   </div>
   <div class="modal fade" id="create_plugin_Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -52,7 +55,13 @@
   </div>
 </template>
 <script>
+import fileTable from '../components/global/fileTable.vue'
+import containerHeader from '../components/global/containerHeader.vue'
 export default {
+  components:{
+    fileTable
+    ,containerHeader
+  },
   data() {
     return {
       th_list :['Plugin Name', 'Allocate NSSI File', 'Deallocate NSSI File', 'Update Plugin', 'Plugin File', 'Delete Plugin']

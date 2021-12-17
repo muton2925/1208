@@ -8,7 +8,7 @@
       <div :id="url" class="collapse" data-bs-parent="#accordion-basic">
         <ul class="list-ul">
           <li v-for="child in childs" :key="child.name">
-            <router-link class="list-item" :to="{ path : '/'+ url + '/' + child.url }"> {{ child.name }} </router-link>
+            <router-link class="list-item" :to="{ path :  '/' + child.url }"> {{ child.name }} </router-link>
           </li>
         </ul>
       </div>

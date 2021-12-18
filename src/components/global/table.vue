@@ -4,7 +4,7 @@
       <h3>
         <slot name="header"></slot>
       </h3>
-      <button class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#create_plugin_Modal">
+      <button v-if="btn" class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#create_plugin_Modal">
         <i class="d-sm-none bi bi-folder-plus"></i>
         <span class="d-none d-sm-inline">
           <slot name="button"></slot>
@@ -19,7 +19,7 @@
       </div>
       <div class="card-body">
         <div class="table-responsive">
-          <table class="table table-bordered">
+          <table ref="Table" class="table table-bordered" id="a">
             <thead>
               <tr>
                 <slot name="tr"></slot>
@@ -31,6 +31,23 @@
     </div>
   </div>
 </template>
+<script>
+import { ref } from 'vue'
+export default {
+  setup(props) {
+    const btn = ref(props.showBtn)
+    return {
+      btn
+    }
+  },
+  props:{
+    showBtn:{
+      typeof:Boolean,
+      default:true
+    }
+  }
+}
+</script>
 <style>
 .container-outer {
   flex: 1 1 auto;

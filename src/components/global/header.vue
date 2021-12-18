@@ -15,6 +15,7 @@
       <Item v-for="item in menuData" :key="item.name" :title="item.name" :icon="item.icon" :childs="item.childNodes" :url="item.url"></Item>
     </ul>
   </div>
+  <!-- <div class="nav-height a a-manu nav-offcanvas " ></div> -->
 </template>
 <script>
 import Item from './offcanvas.vue'
@@ -69,11 +70,11 @@ export default {
           childNodes: [
             {
               name: "Graph View",
-              url: "graph_view"
+              url: "nssi_topology"
             },
             {
               name: "List View",
-              url: "list_view"
+              url: "NSS_Instance"
             },
           ],
         },
@@ -103,6 +104,15 @@ export default {
 };
 </script>
 <style scoped>
+.nav-height {
+  min-height: calc(100vh - 70px);
+}
+.a{
+  width: 100vw;
+  position: absolute;
+  z-index: 1;
+  background-color: rgba(0,0,0,.15);
+}
 .offcanvas-custom {
   top: 70px;
   width: 180px;

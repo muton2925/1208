@@ -1,31 +1,35 @@
 <template>
   <Table>
     <template v-slot:header>
-      NFV MANO Plugin
+      Virtualized Network Function Template
     </template>
     <template v-slot:button>
-      Create Plugin
+      Create VNF Template
     </template>
     <template v-slot:table>
-      NFV MANO Plugin List
+      VNF Template List
     </template>
     <template v-slot:tr>
       <th v-for="item in th_list" :key="item">{{ item }}</th>
     </template>
   </Table>
-  <Modal>
+    <Modal>
     <template v-slot:header>
-      Create new NFV MANO Plugin
+      Create new VNF Template
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
-          <label for="InputFile" class="form-label">Plugin Name</label>
-          <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱">
+          <label for="InputFile" class="form-label">Template Name :</label>
+          <input type="text" class="form-control" id="InputFile" placeholder="Template Name">
         </div>
         <div class="mb-2">
-          <label for="UploadFile" class="form-label">Plugin File</label>
-          <input type="file" class="form-control" id="UploadFile">
+          <label for="InputFile2" class="form-label">VNF Description :</label>
+          <input type="text" class="form-control" id="InputFile2" placeholder="VNF Description">
+        </div>
+        <div class="mb-2">
+          <label for="NFVOName" class="form-label">NFVO Name : </label>
+          <select name="NFVOName" id="NFVOName"></select>
         </div>
       </form>
     </template>
@@ -38,31 +42,15 @@
 <script>
 import Modal from '../components/global/modal.vue';
 import Table from '../components/global/table.vue';
-// import { Share } from '../assets/js/api'
 export default {
   components: {
     Modal,
     Table
   },
-  setup(){
-    // const {PluginList,TemplateList} = Share();
-    // PluginList().then(res=>{
-    //   console.log(res)
-    // })
-    // TemplateList().then(res=>{
-    //   console.log(res)
-    // })
-   return {
-
-   }
-  },
   data() {
     return {
-      th_list :['Plugin Name', 'Allocate NSSI File', 'Deallocate NSSI File', 'Update Plugin', 'Plugin File', 'Delete Plugin']
+      th_list :['Id List', 'Template Name', 'Description', 'Type',	'NFVO',	'VNF Status',	'Update Template',	'Template Download',	'Delete Template']
     }
-  },
-  mounted() {
-    
   }
 }
 </script>

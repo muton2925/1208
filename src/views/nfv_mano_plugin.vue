@@ -12,10 +12,15 @@
     <template v-slot:table-th>
       <tr>
         <th scope="col" v-for="item in th_list" :key="item">
-          <div class="d-flex cursor-pointer">
-            <span>{{ item.name }}</span>
-            <i v-if="item.sort == true" class="bi bi-filter ms-auto"></i>
+          <template v-if="item.sort == true">
+            <div class="d-flex justify-content-between cursor-pointer">
+              <span>{{ item.name }}</span>
+              <i class="bi bi-filter ms-2"></i>
           </div>
+          </template>
+          <template v-else>
+            <span class="cursor-pointer">{{ item.name }}</span>
+          </template>
         </th>
       </tr>
     </template>

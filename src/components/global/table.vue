@@ -1,5 +1,5 @@
 <template>
-  <div class="container-outer user-select-none" style="overflow:hidden">
+  <div class="d-flex flex-column container-outer user-select-none" style="overflow:hidden">
     <div class="container-header d-flex justify-content-between align-items-center flex-wrap mb-4">
       <h3>
         <slot name="header"></slot>
@@ -11,14 +11,14 @@
         </span>
       </button>
     </div>
-    <div class="card shadow-sm">
+    <div class="card card-custom shadow-sm">
       <div class="card-header card-header-custom py-3">
         <h6>
           <slot name="table-name"></slot>
         </h6>
       </div>
-      <div class="card-body">
-        <div class="d-flex mb-3">
+      <div class="d-flex flex-column card-body">
+        <div class="d-flex mb-3 align-items-center">
           <div class="d-flex align-items-baseline">
             Show
             <select v-model="currentEntries" class="form-select form-select-sm form-select-custom mx-2" @change="paginateEntries">
@@ -26,9 +26,12 @@
             </select>
             entries
           </div>
+          <div class="d-flex ms-auto">
+            <input type="text" class="form-control form-control" placeholder="Search" v-model="searchInput" @input="paginateEntries">
+          </div>
         </div>
-        <div class="table-responsive">
-          <table ref="Table" class="table table-bordered table-striped table-hover align-middle" id="a">
+        <div class="table-responsive mb-2">
+          <table class="table table-bordered table-striped table-hover align-middle mb-1">
             <thead>
               <slot name="table-th"></slot>
             </thead>
@@ -37,12 +40,24 @@
             </tbody>
           </table>
         </div>
-        <div class="d-flex justify-content-between align-items-center">
-          <div>Show {{ showInfo.start }} to {{ showInfo.end }} of {{ showInfo.length }} entries</div>
+        <div class="d-flex justify-content-center justify-content-sm-between align-items-center mt-auto">
+          <div class="d-none d-sm-block">Show {{ showInfo.start }} to {{ showInfo.end }} of {{ showInfo.length }} entries</div>
           <ul class="pagination">
-            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-            <li class="page-item" v-for="page in showPagination" :key="page"><a class="page-link" href="#" @click="paginateEvent(page)">{{ page }}</a></li>
-            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            <li class="page-item" :class="{ disabled : currentPage == 1 }">
+              <a class="page-link" href="#" @click.prevent="paginateEvent(1)">First</a>
+            </li>
+            <li class="page-item" :class="{ disabled : currentPage == 1 }">
+              <a class="page-link" href="#" @click="paginateEvent(currentPage-1)"><i class="bi bi-chevron-left"></i></a>
+            </li>
+            <li class="page-item" v-for="page in showPagination" :key="page" :class="[{ active: page == currentPage },{ disabled: page == '...'}]">
+              <a class="page-link" href="#" @click="paginateEvent(page)">{{ page }}</a>
+            </li>
+            <li class="page-item" :class="{ disabled : currentPage == allPages }">
+              <a class="page-link" href="#" @click="paginateEvent(currentPage+1)"><i class="bi bi-chevron-right"></i></a>
+            </li>
+            <li class="page-item" :class="{ disabled : currentPage == allPages }">
+              <a class="page-link" href="#" @click.prevent="paginateEvent(allPages)">Last</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -61,43 +76,69 @@ export default {
   },
   data() {
     return {
-      currentEntries: 5, // 當前每頁筆數
-      showEntries: [5,10,15,20,50], // 每頁筆數列表
+      currentEntries: 10, // 當前每頁筆數
+      showEntries: [10,50,100], // 每頁筆數列表
       filterEntries: [], // 過濾完的資料
       currentPage: 1, // 當前頁數
       allPages: 1, // 所有頁數
+      searchInput: '',
+      searchEntries: [],
     }
   },
   props:{
     showBtn:{
-      typeof:Boolean,
-      default:true
+      typeof: Boolean,
+      default: true
     },
-    entries: Array
+    entries: {
+      typeof: Array,
+      default: []
+    }
   },
   created() {
+    if(this.entries.length > 0) {
+      this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
+    }
     this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-    this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
     this.$emit('update',this.filterEntries); // 過濾好的資料丟回
   },
   computed: {
     showInfo() {
-      return $array.pageInfo(this.entries,this.currentPage,this.currentEntries) // pageInfo ( 所有資料 , 當前頁數 , 每頁幾筆 )
+      const getCurrentEntries = (this.searchInput.length <= 0) ? this.entries : this.searchEntries;
+      return $array.pageInfo(getCurrentEntries,this.currentPage,this.currentEntries) // pageInfo ( 所有資料 , 當前頁數 , 每頁幾筆 )
     },
     showPagination() {
-      return $array.pagination(this.allPages,this.currentPage,3)  // pagination ( 全部頁數 , 目前頁數 , 差多少頁會顯示 ... )
+      if (this.searchInput.length > 0) {
+        if(this.searchEntries.length > 0) {
+          return $array.pagination(this.allPages,this.currentPage,2)  // pagination ( 全部頁數 , 目前頁數 , 差多少頁會顯示 ... )
+        }
+        else {
+          return $array.pagination(1,1,0)  // pagination ( 全部頁數 , 目前頁數 , 差多少頁會顯示 ... )
+        }
+      }
+      else {
+        return $array.pagination(this.allPages,this.currentPage,2)  // pagination ( 全部頁數 , 目前頁數 , 差多少頁會顯示 ... )
+      }
     }
   },
   methods: {
     paginateEntries() {
       this.currentPage = 1;
-      this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);  // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-      this.allPages = $array.pages(this.entries, this.currentEntries);
+      if(this.searchInput.length > 0) {
+        this.searchEntries = $array.searchBy(this.entries,[this.searchInput],['name','allocate_nssi','deallocate_nssi']);
+        this.filterEntries = $array.paginate(this.searchEntries,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
+        this.allPages = $array.pages(this.searchEntries, this.currentEntries);
+      }
+      else {
+        this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);  // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
+        this.allPages = $array.pages(this.entries, this.currentEntries);
+      }
       this.$emit('update',this.filterEntries);
     },
     paginateEvent(page) {
       this.currentPage = page;
-      this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);  // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
+      const paginateStatus = (this.searchInput.length > 0) ? this.searchEntries : this.entries;
+      this.filterEntries = $array.paginate(paginateStatus,this.currentPage,this.currentEntries)// paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
       this.$emit('update',this.filterEntries);
     }
   }
@@ -117,6 +158,9 @@ export default {
 .container-header button {
   flex:none;
   min-width: 0;
+}
+.card-custom {
+  flex: 1;
 }
 .card-header-custom {
   background-color: #f8f9fc ;

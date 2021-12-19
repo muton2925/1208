@@ -19,7 +19,7 @@
       </div>
       <div class="d-flex flex-column card-body">
         <div class="d-flex mb-3 align-items-center">
-          <div class="d-flex align-items-baseline">
+          <div class="d-flex align-items-baseline me-2">
             Show
             <select v-model="currentEntries" class="form-select form-select-sm form-select-custom mx-2" @change="paginateEntries">
               <option v-for="option in showEntries" :key="option" :value="option">{{ option }}</option>
@@ -40,9 +40,9 @@
             </tbody>
           </table>
         </div>
-        <div class="d-flex justify-content-center justify-content-sm-between align-items-center mt-auto">
-          <div class="d-none d-sm-block">Show {{ showInfo.start }} to {{ showInfo.end }} of {{ showInfo.length }} entries</div>
-          <ul class="pagination">
+        <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center mt-auto">
+          <div class="col-12 text-center col-lg-auto mb-2 mb-lg-0">Show {{ showInfo.start }} to {{ showInfo.end }} of {{ showInfo.length }} entries</div>
+          <ul class="pagination col-auto">
             <li class="page-item" :class="{ disabled : currentPage == 1 }">
               <a class="page-link" href="#" @click.prevent="paginateEvent(1)">First</a>
             </li>
@@ -96,7 +96,7 @@ export default {
     }
   },
   created() {
-    if(this.entries.length > 0) {
+    if(this.entries.length > 0) {       
       this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
     }
     this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
@@ -113,6 +113,7 @@ export default {
           return $array.pagination(this.allPages,this.currentPage,2)  // pagination ( 全部頁數 , 目前頁數 , 差多少頁會顯示 ... )
         }
         else {
+          
           return $array.pagination(1,1,0)  // pagination ( 全部頁數 , 目前頁數 , 差多少頁會顯示 ... )
         }
       }
@@ -122,24 +123,30 @@ export default {
     }
   },
   methods: {
-    paginateEntries() {
-      this.currentPage = 1;
-      if(this.searchInput.length > 0) {
-        this.searchEntries = $array.searchBy(this.entries,[this.searchInput],['name','allocate_nssi','deallocate_nssi']);
+    paginateEntries() { // 切換筆數或搜尋事件
+      this.currentPage = 1; // currentPage 固定為 1
+      if(this.searchInput.length > 0) { // 若搜尋字數大於 0
+        this.searchEntries = $array.searchBy(this.entries,[this.searchInput],['name','allocate_nssi','deallocate_nssi']); // 搜尋過濾完的 Entries ， searchBy ( 所有資料 , 要搜尋的東西 , 要搜尋的欄位 ) 
         this.filterEntries = $array.paginate(this.searchEntries,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-        this.allPages = $array.pages(this.searchEntries, this.currentEntries);
+        if(this.searchEntries.length > 0)  // 若搜尋過濾完的 Entries 長度大於 0
+          this.allPages = $array.pages(this.searchEntries, this.currentEntries); // allPage 跟據 searchEntries 跟 currentEntries ( 每頁幾筆 ) 計算
+        else // 若搜尋過濾完的 Entrires 長度小於等於 0 ，意即查無數據
+          this.allPages = 1; // allPages 固定為 1 
       }
-      else {
+      else { // 若搜尋字數小於等於0
         this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);  // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-        this.allPages = $array.pages(this.entries, this.currentEntries);
+        if(this.entries.length > 0) // 若全 Entries 長度大於 0
+          this.allPages = $array.pages(this.entries, this.currentEntries); // allPage 跟據全 Entries 跟 currentEntries ( 每頁幾筆 ) 計算
+        else // 若全 Entries 長度小於等於 0
+          this.allPages = 1; // allPages 固定為 1 
       }
-      this.$emit('update',this.filterEntries);
+      this.$emit('update',this.filterEntries); // 每次更新都觸發 update 事件回傳 filterEntries
     },
-    paginateEvent(page) {
-      this.currentPage = page;
-      const paginateStatus = (this.searchInput.length > 0) ? this.searchEntries : this.entries;
-      this.filterEntries = $array.paginate(paginateStatus,this.currentPage,this.currentEntries)// paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-      this.$emit('update',this.filterEntries);
+    paginateEvent(page) { // 換頁事件
+      this.currentPage = page; // currentPage 等於點擊的頁數
+      const paginateStatus = (this.searchInput.length > 0) ? this.searchEntries : this.entries; // 若搜尋長度大於 0 ， 選用 searchEntries ，反之，使用全 Entries
+      this.filterEntries = $array.paginate(paginateStatus,this.currentPage,this.currentEntries)// 更新 filterEntries，paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
+      this.$emit('update',this.filterEntries); // 每次點擊都觸發 update 事件回傳 filterEntries
     }
   }
 }

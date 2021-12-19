@@ -179,6 +179,56 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
+          name: "kube5gnfvo6",
+          allocate_nssi: "allocate/main.py",
+          deallocate_nssi: "deallocate/main.py",
+          pluginFile:
+            "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo5/kube5gnfvo_vvQz197.zip",
+          nm_host: "10.0.0.15:8000",
+          nfvo_host: "10.0.0.180:8000",
+          subscription_host: "10.0.1.108:8082",
+        },
+        {
+          name: "kube5gnfvo7",
+          allocate_nssi: "allocate/main.py",
+          deallocate_nssi: "deallocate/main.py",
+          pluginFile:
+            "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo5/kube5gnfvo_vvQz197.zip",
+          nm_host: "10.0.0.15:8000",
+          nfvo_host: "10.0.0.180:8000",
+          subscription_host: "10.0.1.108:8082",
+        },
+        {
+          name: "kube5gnfvo8",
+          allocate_nssi: "allocate/main.py",
+          deallocate_nssi: "deallocate/main.py",
+          pluginFile:
+            "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo5/kube5gnfvo_vvQz197.zip",
+          nm_host: "10.0.0.15:8000",
+          nfvo_host: "10.0.0.180:8000",
+          subscription_host: "10.0.1.108:8082",
+        },
+        {
+          name: "kube5gnfvo9",
+          allocate_nssi: "allocate/main.py",
+          deallocate_nssi: "deallocate/main.py",
+          pluginFile:
+            "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo5/kube5gnfvo_vvQz197.zip",
+          nm_host: "10.0.0.15:8000",
+          nfvo_host: "10.0.0.180:8000",
+          subscription_host: "10.0.1.108:8082",
+        },
+        {
+          name: "kube5gnfvo10",
+          allocate_nssi: "allocate/main.py",
+          deallocate_nssi: "deallocate/main.py",
+          pluginFile:
+            "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo5/kube5gnfvo_vvQz197.zip",
+          nm_host: "10.0.0.15:8000",
+          nfvo_host: "10.0.0.180:8000",
+          subscription_host: "10.0.1.108:8082",
+        },
+        {
           name: "nfvof16",
           allocate_nssi: "allocate/main.py",
           deallocate_nssi: "deallocate/main.py",

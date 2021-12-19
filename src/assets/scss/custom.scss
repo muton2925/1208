@@ -20,7 +20,7 @@ $theme-colors: (
 $utilities: map-merge(
   $utilities,
   (
-    "width": map-merge(
+    "shadow": map-merge(
       map-get($utilities, "shadow"),
       (
         values: map-merge(
@@ -64,6 +64,7 @@ $utilities: map-merge(
       class: w,
       responsive: true,
       values: (
+        0: 0%,
         25: 25%,
         50: 50%,
         75: 75%,

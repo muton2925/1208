@@ -104,7 +104,7 @@ export default {
 };
 </script>
 <style scoped>
-.nav-height {
+/* .nav-height {
   min-height: calc(100vh - 70px);
 }
 .a{
@@ -112,7 +112,7 @@ export default {
   position: absolute;
   z-index: 1;
   background-color: rgba(0,0,0,.15);
-}
+}` */
 .offcanvas-custom {
   top: 70px;
   width: 180px;

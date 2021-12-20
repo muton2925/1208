@@ -33,7 +33,19 @@
         <div class="table-responsive mb-2">
           <table class="table table-bordered table-striped table-hover align-middle mb-1">
             <thead>
-              <slot name="table-th"></slot>
+              <tr>
+                <th class="cursor-pointer" scope="col" v-for="item in columns" :key="item">
+                  <template v-if="item.sort == true">
+                    <div class="d-flex justify-content-between" @click="sortColumn(item.name,item.status)">
+                      <span>{{ item.text }}</span>
+                      <i class="bi bi-filter ms-2"></i>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <span>{{ item.text }}</span>
+                  </template>
+                </th>
+              </tr>
             </thead>
             <tbody>
               <slot name="table-td"></slot>
@@ -83,6 +95,8 @@ export default {
       allPages: 1, // 所有頁數
       searchInput: '',
       searchEntries: [],
+      columns: this.column,
+      entries: this.entrie,
     }
   },
   props:{
@@ -90,10 +104,13 @@ export default {
       typeof: Boolean,
       default: true
     },
-    entries: {
+    column: {
+      typeof: Array,
+    },
+    entrie: {
       typeof: Array,
       default: []
-    }
+    },
   },
   created() {
     if(this.entries.length > 0) {       
@@ -131,7 +148,7 @@ export default {
         if(this.searchEntries.length > 0)  // 若搜尋過濾完的 Entries 長度大於 0
           this.allPages = $array.pages(this.searchEntries, this.currentEntries); // allPage 跟據 searchEntries 跟 currentEntries ( 每頁幾筆 ) 計算
         else // 若搜尋過濾完的 Entrires 長度小於等於 0 ，意即查無數據
-          this.allPages = 1; // allPages 固定為 1 
+          this.allPages = 1; // allPages 固定為 1
       }
       else { // 若搜尋字數小於等於0
         this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);  // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
@@ -147,6 +164,43 @@ export default {
       const paginateStatus = (this.searchInput.length > 0) ? this.searchEntries : this.entries; // 若搜尋長度大於 0 ， 選用 searchEntries ，反之，使用全 Entries
       this.filterEntries = $array.paginate(paginateStatus,this.currentPage,this.currentEntries)// 更新 filterEntries，paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
       this.$emit('update',this.filterEntries); // 每次點擊都觸發 update 事件回傳 filterEntries
+    },
+    sortColumn(name,status) { // 排序事件
+      let index = this.columns.map(function(e) {return e.name}).indexOf(name);
+      if(this.searchInput.length > 0){
+        switch (status) {
+          case 'asc':
+            this.searchEntries = $array.sortBy(this.searchEntries, name , 'desc');
+            this.columns[index].status = 'desc';
+            break;
+          case 'desc':
+            this.searchEntries = $array.sortBy(this.searchEntries, name , 'asc');
+            this.columns[index].status = 'asc';
+            break;
+          default:
+            this.searchEntries = $array.sortBy(this.searchEntries, name , 'asc');
+            this.columns[index].status = 'asc';
+        }
+        // this.searchEntries =  $array.sortBy(this.searchEntries, name , 'desc');
+        this.filterEntries = $array.paginate(this.searchEntries,this.currentPage,this.currentEntries);
+      }
+      else {
+        switch (status) {
+          case 'asc':
+            this.entries = $array.sortBy(this.entries, name , 'desc');
+            this.columns[index].status = 'desc';
+            break;
+          case 'desc':
+            this.entries = $array.sortBy(this.entries, name , 'asc');
+            this.columns[index].status = 'asc';
+            break;
+          default:
+            this.entries = $array.sortBy(this.entries, name , 'asc');
+            this.columns[index].status = 'asc';
+        }
+        this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);
+      }
+      this.$emit('update',this.filterEntries); // 每次更新都觸發 update 事件回傳 filterEntries
     }
   }
 }

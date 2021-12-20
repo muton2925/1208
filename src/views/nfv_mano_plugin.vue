@@ -1,5 +1,5 @@
 <template>
-  <Table :entries="td_list" @update="updateData">
+  <Table :column="th_list" :entrie="td_list" @update="updateData">
     <template v-slot:header>
       NFV MANO Plugin
     </template>
@@ -9,11 +9,11 @@
     <template v-slot:table-name>
       NFV MANO Plugin List
     </template>
-    <template v-slot:table-th>
+    <!-- <template v-slot:table-th>
       <tr>
         <th scope="col" v-for="item in th_list" :key="item">
           <template v-if="item.sort == true">
-            <div class="d-flex justify-content-between cursor-pointer">
+            <div class="d-flex justify-content-between cursor-pointer" @click="sortColumn()">
               <span>{{ item.name }}</span>
               <i class="bi bi-filter ms-2"></i>
           </div>
@@ -23,7 +23,7 @@
           </template>
         </th>
       </tr>
-    </template>
+    </template> -->
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.name">
         <td>{{ item.name }}</td>
@@ -95,17 +95,17 @@ export default {
     return {
       filterEntries: [],
       th_list: [
-        { name: "Plugin Name", sort: true },
-        { name: "Allocate NSSI File", sort: true },
-        { name: "Deallocate NSSI File", sort: true },
-        { name: "Update Plugin", sort: false },
-        { name: "Plugin File", sort: false },
-        { name: "Delete Plugin", sort: false },
+        { name: "name", text: "Plugin Name", sort: true, status: 'none' },
+        { name: "allocate_nssi", text: "Allocate NSSI File", sort: true, status: 'none' },
+        { name: "dellocate_nssi", text: "Deallocate NSSI File", sort: true, status: 'none' },
+        { name: "update_plugin", text: "Update Plugin", sort: false, status: 'none' },
+        { name: "plugin_file", text: "Plugin File", sort: false, status: 'none' },
+        { name: "delete_plugin", text: "Delete Plugin", sort: false, status: 'none' },
       ],
       td_list: [
         {
-          name: "1",
-          allocate_nssi: "allocate/main.py",
+          name: "2",
+          allocate_nssi: "1",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/1/NFVOplugin.zip",
@@ -114,8 +114,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "123",
-          allocate_nssi: "allocate/main.py",
+          name: "1",
+          allocate_nssi: "22",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/123/kube5gnfvo_16.zip",
@@ -124,8 +124,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "kube5gnfvo",
-          allocate_nssi: "allocate/main.py",
+          name: "3",
+          allocate_nssi: "34",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo/simpleexampleplugin.zip",
@@ -134,8 +134,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "kube5gnfvo1",
-          allocate_nssi: "allocate/main.py",
+          name: "4",
+          allocate_nssi: "4",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo1/kube5gnfvo_IITPhfr.zip",
@@ -144,8 +144,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "kube5gnfvo2",
-          allocate_nssi: "allocate/main.py",
+          name: "5",
+          allocate_nssi: "57",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo2/kube5gnfvo_yAILjQX.zip",
@@ -154,8 +154,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "kube5gnfvo3",
-          allocate_nssi: "allocate/main.py",
+          name: "6",
+          allocate_nssi: "16",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo3/kube5gnfvo_xPwLyrd.zip",
@@ -164,8 +164,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "kube5gnfvo4",
-          allocate_nssi: "allocate/main.py",
+          name: "7",
+          allocate_nssi: "7",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo4/kube5gnfvo_d7Nfj1E.zip",
@@ -174,8 +174,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "kube5gnfvo5",
-          allocate_nssi: "allocate/main.py",
+          name: "8",
+          allocate_nssi: "80",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo5/kube5gnfvo_vvQz197.zip",
@@ -184,8 +184,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "kube5gnfvo6",
-          allocate_nssi: "allocate/main.py",
+          name: "9",
+          allocate_nssi: "9",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo5/kube5gnfvo_vvQz197.zip",
@@ -194,8 +194,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "kube5gnfvo7",
-          allocate_nssi: "allocate/main.py",
+          name: "10",
+          allocate_nssi: "150",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo5/kube5gnfvo_vvQz197.zip",
@@ -204,8 +204,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "kube5gnfvo8",
-          allocate_nssi: "allocate/main.py",
+          name: "11",
+          allocate_nssi: "171",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo5/kube5gnfvo_vvQz197.zip",
@@ -214,8 +214,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "kube5gnfvo9",
-          allocate_nssi: "allocate/main.py",
+          name: "12",
+          allocate_nssi: "12",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo5/kube5gnfvo_vvQz197.zip",
@@ -224,8 +224,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "kube5gnfvo10",
-          allocate_nssi: "allocate/main.py",
+          name: "13",
+          allocate_nssi: "133",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/kube5gnfvo5/kube5gnfvo_vvQz197.zip",
@@ -234,8 +234,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvof16",
-          allocate_nssi: "allocate/main.py",
+          name: "14",
+          allocate_nssi: "114",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -244,8 +244,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvo18fff6",
-          allocate_nssi: "allocate/main.py",
+          name: "15",
+          allocate_nssi: "5",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -254,8 +254,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvo1eee76",
-          allocate_nssi: "allocate/main.py",
+          name: "16",
+          allocate_nssi: "167",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -264,8 +264,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvfffo146",
-          allocate_nssi: "allocate/main.py",
+          name: "17",
+          allocate_nssi: "157",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -274,8 +274,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfqqqvo161",
-          allocate_nssi: "allocate/main.py",
+          name: "18",
+          allocate_nssi: "187",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -284,8 +284,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvqfweo161",
-          allocate_nssi: "allocate/main.py",
+          name: "19",
+          allocate_nssi: "189",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -294,8 +294,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvefqo161",
-          allocate_nssi: "allocate/main.py",
+          name: "20",
+          allocate_nssi: "120",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -304,8 +304,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvo1feqw61",
-          allocate_nssi: "allocate/main.py",
+          name: "21",
+          allocate_nssi: "231",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -314,8 +314,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvoqwfe161",
-          allocate_nssi: "allocate/main.py",
+          name: "22",
+          allocate_nssi: "227",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -324,8 +324,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvofeqw161",
-          allocate_nssi: "allocate/main.py",
+          name: "23",
+          allocate_nssi: "232",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -334,8 +334,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nffeqvo161",
-          allocate_nssi: "allocate/main.py",
+          name: "24",
+          allocate_nssi: "214",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -344,8 +344,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvofqwf161",
-          allocate_nssi: "allocate/main.py",
+          name: "25",
+          allocate_nssi: "215",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -354,8 +354,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfqfwevo161",
-          allocate_nssi: "allocate/main.py",
+          name: "26",
+          allocate_nssi: "256",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -364,8 +364,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvofqw161",
-          allocate_nssi: "allocate/main.py",
+          name: "27",
+          allocate_nssi: "207",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -374,8 +374,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvo1feq61",
-          allocate_nssi: "allocate/main.py",
+          name: "28",
+          allocate_nssi: "288",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -384,8 +384,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvqwfeo161",
-          allocate_nssi: "allocate/main.py",
+          name: "29",
+          allocate_nssi: "279",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -394,8 +394,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvoqef161",
-          allocate_nssi: "allocate/main.py",
+          name: "30",
+          allocate_nssi: "30",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -404,8 +404,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfqewfvo161",
-          allocate_nssi: "allocate/main.py",
+          name: "31",
+          allocate_nssi: "351",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -414,8 +414,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvoqe161",
-          allocate_nssi: "allocate/main.py",
+          name: "32",
+          allocate_nssi: "32",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -424,8 +424,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "nfvgfo161",
-          allocate_nssi: "allocate/main.py",
+          name: "33",
+          allocate_nssi: "33",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
             "http://10.0.0.15:8081/plugin/management/download/nfvo16/kube5gnfvo_16.zip",
@@ -439,7 +439,7 @@ export default {
   methods: {
     updateData(val) {
       this.filterEntries = val;
-    }
+    },
   }
 }
 </script>

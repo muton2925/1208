@@ -104,7 +104,7 @@ export default {
       ],
       td_list: [
         {
-          name: "2",
+          name: "123",
           allocate_nssi: "1",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
@@ -114,7 +114,7 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "1",
+          name: "12345",
           allocate_nssi: "22",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:
@@ -124,7 +124,7 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
         {
-          name: "3",
+          name: "123456",
           allocate_nssi: "34",
           deallocate_nssi: "deallocate/main.py",
           pluginFile:

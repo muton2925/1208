@@ -8,9 +8,11 @@
       <button class="navbar-toggler me-3" data-bs-toggle="offcanvas" data-bs-target="#nav-offcanvas">
         <span class="navbar-toggler-icon"></span>
       </button>
+      
     </div>
+
   </nav>
-  <div v-if="windowWidth < 576" id="nav-offcanvas" class="offcanvas offcanvas-end offcanvas-custom" data-bs-backdrop="false">
+  <div v-if="windowWidth < 576" id="nav-offcanvas" class="z offcanvas offcanvas-end offcanvas-custom" data-bs-backdrop="false">
     <ul id="accordion-basic">
       <Item v-for="item in menuData" :key="item.name" :title="item.name" :icon="item.icon" :childs="item.childNodes" :url="item.url"></Item>
     </ul>
@@ -113,6 +115,9 @@ export default {
   z-index: 1;
   background-color: rgba(0,0,0,.15);
 }` */
+.z{
+  z-index: 9999;
+}
 .offcanvas-custom {
   top: 70px;
   width: 180px;

@@ -41,7 +41,7 @@
                   <template v-if="item.sort == true">
                     <div class="d-flex justify-content-between" @click="sortColumn(item.name,item.status)">
                       <span>{{ item.text }}</span>
-                      <i class="bi bi-filter ms-2"></i>
+                      <i class="bi bi-filter ms-2 " :class="{trsform:sortDesc == item.name}"></i>
                     </div>
                   </template>
                   <template v-else>
@@ -85,6 +85,7 @@ import { ref } from 'vue'
 export default {
   setup(props) {
     const btn = ref(props.showBtn)
+ 
     return {
       btn
     }
@@ -96,13 +97,14 @@ export default {
       filterEntries: [], // 過濾完的資料
       currentPage: 1, // 當前頁數
       allPages: 1, // 所有頁數
-      searchInput: '',
-      searchEntries: [],
-      columns: this.column,
-      entries: this.entrie,
-      sortAsc: '',
-      sortDesc: '',
-      sortCol: '',
+      searchInput: '', // 搜尋字數
+      searchEntries: [], // 搜尋完的資料
+      columns: this.column, // 欄位名稱
+      entries: this.entrie, // 欄位資料
+      sortAsc: '', // 排序 Asc 對象
+      sortDesc: '', // 排序 Desc 對象
+      sortCol: '', // 上一次排序的對象
+      BeforeDataEntries:0,
     }
   },
   props:{
@@ -124,6 +126,18 @@ export default {
     }
     this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
     this.$emit('update',this.filterEntries); // 過濾好的資料丟回
+  },
+  beforeUpdate(){
+    if(this.BeforeDataEntries != this.entrie.length){
+      if(this.entries.length > 0) {  // 如果 Entries 有資料 
+        this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
+      }
+      this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
+      this.$emit('update',this.filterEntries); // 過濾好的資料丟回
+      this.once = 1
+      this.BeforeDataEntries = this.entrie.length;
+    }
+
   },
   computed: {
     showInfo() {
@@ -226,12 +240,18 @@ export default {
         }
         this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);
       }
+      console.log(status)
+      // console.log(this.sortAsc)
       this.$emit('update',this.filterEntries); // 每次更新都觸發 update 事件回傳 filterEntries
     }
   }
 }
 </script>
 <style>
+.trsform{
+  transform: rotate(0.5turn);
+  transition: .3s;
+}
 .container-outer {
   flex: 1 1 auto;
   padding: 1.5rem;

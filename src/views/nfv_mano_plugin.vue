@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" @update="updateData">
+  <Table :column="th_list" :entrie="td_lst" @update="updateData">
     <template v-slot:header>
       NFV MANO Plugin
     </template>
@@ -73,22 +73,27 @@
 <script>
 import Modal from '../components/global/modal.vue';
 import Table from '../components/global/table.vue';
-// import { Share } from '../assets/js/api'
+import { Share } from '../assets/js/api'
+// import { watchEffect } from '@vue/runtime-core';
+// import { ref } from '@vue/reactivity';
 export default {
   components: {
     Modal,
     Table
   },
   setup(){
-    // const {PluginList,TemplateList} = Share();
-    // PluginList().then(res=>{
-    //   console.log(res)
-    // })
-    // TemplateList().then(res=>{
-    //   console.log(res)
-    // })
+  //   const {PluginList} = Share();
+  //   let td_lst1 = ref([]) ;
+  //   PluginList().then(res=>{
+  //     console.log(res)
+  //     td_lst1.value = res.data['ObjectManagement/NSS/topology'].map(ele =>ele)
+  //   })
+  //  watchEffect(
+  //   //  td_lst1
+  //    console.log(td_lst1)
+  //  )
    return {
-
+    //  td_lst1
    }
   },
   data() {
@@ -434,7 +439,19 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
       ],
+      td_lst:[],
     };
+  },
+  created(){
+      const {PluginList} = Share();
+      const th = this;
+      PluginList()
+      .then(res=>{
+          res.data.forEach(element => {
+          th.td_lst.push(element)
+      });      
+    })
+   
   },
   methods: {
     updateData(val) {

@@ -116,9 +116,9 @@ function show_nssi(dom) {
           nssi_switched = !nssi_switched;
           label = !label;
           if (nssi_switched) {
-            axios.get(url+params.data.id+'/').then(response => {
+            axios.get(topology_url+params.data.id+'/').then(response => {
               var datas = response.data;
-              var categories = [];
+              // var categories = [];
               datas.nodes.forEach(function(node) {
                 node.itemStyle = null;
                 node.category = node.attributes.modularity_class;

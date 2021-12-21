@@ -11,7 +11,7 @@
         </span>
       </button>
     </div>
-    <div class="card card-custom shadow-sm">
+    <div class="card shadow-sm">
       <div class="card-header card-header-custom py-3">
         <h6>
           <slot name="table-name"></slot>
@@ -30,10 +30,7 @@
             <input type="text" class="form-control form-control" placeholder="Search" v-model="searchInput" @input="paginateEntries">
           </div>
         </div>
-        <!-- <div>{{searchEntries}}</div> -->
-        <!-- <div>{{"asc"+sortAsc}}</div> -->
-        <!-- <div>{{"desc"+sortDesc}}</div> -->
-        <div class="table-responsive mb-2 table-custom">
+        <div class="table-responsive mb-3 table-custom">
           <table class="table table-bordered table-striped table-hover align-middle mb-1">
             <thead>
               <tr>
@@ -55,7 +52,7 @@
             </tbody>
           </table>
         </div>
-        <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center mt-auto">
+        <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center">
           <div class="col-12 text-center col-lg-auto mb-2 mb-lg-0">Show {{ showInfo.start }} to {{ showInfo.end }} of {{ showInfo.length }} entries</div>
           <ul class="pagination col-auto">
             <li class="page-item" :class="{ disabled : currentPage == 1 }">
@@ -246,9 +243,7 @@ export default {
   flex:none;
   min-width: 0;
 }
-.card-custom {
-  flex: 1;
-}
+
 .card-header-custom {
   background-color: #f8f9fc ;
 }
@@ -267,7 +262,7 @@ thead tr th {
   vertical-align: middle;
   background-color: #FFF !important;
   position: sticky;
-  top:0;
+  top: 0;
 }
 tbody {
   border-top: 0 !important;
@@ -277,7 +272,7 @@ tbody tr td {
 }
 .table-custom {
   min-height: 200px;
-  max-height: calc(100vh - 375px );
+  max-height: calc(100vh - 375px);
   overflow-y:auto;
   border-top:0.1px solid #dee2e6;
 }

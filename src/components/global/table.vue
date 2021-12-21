@@ -88,8 +88,8 @@ export default {
   },
   data() {
     return {
-      currentEntries: 10, // 當前每頁筆數
-      showEntries: [10,50,100], // 每頁筆數列表
+      currentEntries: 5, // 當前每頁筆數
+      showEntries: [5,10,50,100], // 每頁筆數列表
       filterEntries: [], // 過濾完的資料
       currentPage: 1, // 當前頁數
       allPages: 1, // 所有頁數
@@ -116,11 +116,17 @@ export default {
     },
   },
   created() {
-    if(this.entries.length > 0) {       
-      this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
+
+  },
+  watch: {
+    entries: {
+      handler: function(newValue){
+        this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
+        this.filterEntries = $array.paginate(newValue,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
+        this.$emit('update',this.filterEntries); // 過濾好的資料丟回
+      },
+      deep: true
     }
-    this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-    this.$emit('update',this.filterEntries); // 過濾好的資料丟回
   },
   computed: {
     showInfo() {

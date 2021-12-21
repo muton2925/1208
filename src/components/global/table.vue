@@ -88,8 +88,8 @@ export default {
   },
   data() {
     return {
-      currentEntries: 5, // 當前每頁筆數
-      showEntries: [5,10,50,100], // 每頁筆數列表
+      currentEntries: 2, // 當前每頁筆數
+      showEntries: [2,10,50,100], // 每頁筆數列表
       filterEntries: [], // 過濾完的資料
       currentPage: 1, // 當前頁數
       allPages: 1, // 所有頁數
@@ -163,9 +163,14 @@ export default {
           this.allPages = 1; // allPages 固定為 1
       }
       else { // 若搜尋字數小於等於0
-        this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);  // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-        if(this.entries.length > 0) // 若全 Entries 長度大於 0
+        if(this.entries.length > 0){ // 若全 Entries 長度大於 0
+          if(this.sortAsc != '')
+            this.entries = $array.sortBy(this.entries, this.sortAsc, 'asc');
+          if(this.sortDesc != '')
+            this.entries = $array.sortBy(this.entries, this.sortDesc, 'desc');
+          this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);  // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
           this.allPages = $array.pages(this.entries, this.currentEntries); // allPage 跟據全 Entries 跟 currentEntries ( 每頁幾筆 ) 計算
+        }
         else // 若全 Entries 長度小於等於 0
           this.allPages = 1; // allPages 固定為 1 
       }

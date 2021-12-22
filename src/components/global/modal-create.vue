@@ -12,7 +12,8 @@
           <slot name="body"></slot>
         </div>
         <div class="modal-footer">
-          <slot name="footer"></slot>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary text-white">Create</button>
         </div>
       </div>
     </div>

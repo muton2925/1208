@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_lst" @update="updateData">
+  <Table v-if="status" :column="th_list" :entrie="td_list" @update="updateData">
     <template v-slot:header>
       NFV MANO Plugin
     </template>
@@ -30,7 +30,7 @@
         <td>{{ item.allocate_nssi }}</td>
         <td>{{ item.deallocate_nssi }}</td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px">
+          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_filename(item.name)">
             <i class="bi bi-wrench"></i>
           </div>
         </td>
@@ -47,58 +47,52 @@
       </tr>
     </template>
   </Table>
-
-  <Modal>
+  <Modalcreate>
     <template v-slot:header>
       Create new NFV MANO Plugin
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
-          <label for="InputFile" class="form-label">Plugin Name</label>
+          <label for="InputFile" class="form-label">Plugin Name :</label>
           <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱">
         </div>
         <div class="mb-2">
-          <label for="UploadFile" class="form-label">Plugin File</label>
+          <label for="UploadFile" class="form-label">Plugin File :</label>
           <input type="file" class="form-control" id="UploadFile">
         </div>
       </form>
     </template>
-    <template v-slot:footer>
-      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-      <button type="button" class="btn btn-primary text-white">Create</button>
-    </template>
-  </Modal>
+  </Modalcreate>
+    <Modalupdate :filename="filename">
+      <template v-slot:header>
+        Update Service Mapping Plugin
+      </template>
+    </Modalupdate>
 </template>
 <script>
-import Modal from '../components/global/modal.vue';
+import Modalcreate from '../components/global/modal-create.vue';
+import Modalupdate from '../components/global/modal-update.vue';
 import Table from '../components/global/table.vue';
 import { Share } from '../assets/js/api'
-// import { watchEffect } from '@vue/runtime-core';
-// import { ref } from '@vue/reactivity';
 export default {
   components: {
-    Modal,
+    Modalcreate,
+    Modalupdate,
     Table
   },
-  setup(){
-  //   const {PluginList} = Share();
-  //   let td_lst1 = ref([]) ;
-  //   PluginList().then(res=>{
-  //     console.log(res)
-  //     td_lst1.value = res.data['ObjectManagement/NSS/topology'].map(ele =>ele)
-  //   })
-  //  watchEffect(
-  //   //  td_lst1
-  //    console.log(td_lst1)
-  //  )
-   return {
-    //  td_lst1
-   }
+  created() {
+    const { PluginList } = Share();
+    PluginList().then(res => {
+      for(let i of res.data){
+        this.td_list.push(i);
+      }
+    })
   },
   data() {
     return {
       filterEntries: [],
+      status: false,
       th_list: [
         { name: "name", text: "Plugin Name", sort: true, status: 'none' },
         { name: "allocate_nssi", text: "Allocate NSSI File", sort: true, status: 'none' },
@@ -107,7 +101,8 @@ export default {
         { name: "plugin_file", text: "Plugin File", sort: false, status: 'none' },
         { name: "delete_plugin", text: "Delete Plugin", sort: false, status: 'none' },
       ],
-      td_list: [
+      td_list:[],
+      td_list2: [
         {
           name: "123",
           allocate_nssi: "1",
@@ -439,24 +434,16 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
       ],
-      td_lst:[],
+      filename: ''
     };
-  },
-  created(){
-      const {PluginList} = Share();
-      const th = this;
-      PluginList()
-      .then(res=>{
-          res.data.forEach(element => {
-          th.td_lst.push(element)
-      });      
-    })
-   
   },
   methods: {
     updateData(val) {
       this.filterEntries = val;
     },
+    update_filename(name) {
+      this.filename = name;
+    }
   }
 }
 </script>

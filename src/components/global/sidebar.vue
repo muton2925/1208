@@ -8,19 +8,19 @@
           <a class="mb-4" data-bs-toggle="collapse" data-bs-target="#collapseOne">Generic Template</a>
           <div id="collapseOne" class="mt-3 collapse" data-bs-parent="#accordionExample">
             <div class="accordion-body-custom">
-              <a class="list-item2" href="#">VNF Template</a>
-              <a class="list-item2" href="#">NSD Template</a>
-              <a class="list-item2" href="#">NRM Template</a>
+              <router-link class="list-item2" to="/VNF_Template">VNF Template</router-link>
+              <router-link class="list-item2" to="/NSD_Template">NSD Template</router-link>
+              <router-link class="list-item2" to="/NRM_Template">NRM Template</router-link>
             </div>
           </div>
         </li>
-        <li class="list-item"><a href="#">NSS template</a></li>
+        <li class="list-item"><router-link  to="/NSS_template">NSS template</router-link></li>
         <li class="list-item">
           <a data-bs-toggle="collapse" data-bs-target="#collapseTwo">NSSI View</a>
           <div id="collapseTwo" class="mt-3 collapse" data-bs-parent="#accordionExample">
             <div class="accordion-body-custom">
-              <a class="list-item2" href="#">Graph View</a>
-              <a class="list-item2" href="#">List View</a>
+              <router-link class="list-item2" to="/nssi_topology">Graph View</router-link>
+              <router-link class="list-item2" to="/NSS_Instance">List View</router-link>
             </div>
           </div>
         </li>
@@ -32,9 +32,9 @@
           <router-link to="/nfv_mano_plugin" data-bs-toggle="collapse" data-bs-target="#collapse1">Generic Template</router-link>
           <div id="collapse1" class="collapse aaa" data-bs-parent="#accordionExample">
             <div class="accordion-body-custom">
-              <a class="list-item2" href="#">VNF Template</a>
-              <a class="list-item2" href="#">NSD Template</a>
-              <a class="list-item2" href="#">NRM Template</a>
+              <router-link class="list-item2" to="/VNF_Template">VNF Template</router-link>
+              <router-link class="list-item2" to="/NSD_Template">NSD Template</router-link>
+              <router-link class="list-item2" to="/NRM_Template">NRM Template</router-link>
             </div>
           </div>
         </li>
@@ -43,9 +43,9 @@
           <router-link to="/nfv_mano_plugin" data-bs-toggle="collapse" data-bs-target="#collapse2">NSSI View</router-link>
           <div id="collapse2" class="collapse aaa" data-bs-parent="#accordionExample">
             <div class="accordion-body-custom">
-              <a class="list-item2" href="#">VNF Template</a>
-              <a class="list-item2" href="#">NSD Template</a>
-              <a class="list-item2" href="#">NRM Template</a>
+              <router-link class="list-item2" to="/VNF_Template">VNF Template</router-link>
+              <router-link class="list-item2" to="/NSD_Template">NSD Template</router-link>
+              <router-link class="list-item2" to="/NRM_Template">NRM Template</router-link>
             </div>
           </div>
         </li>

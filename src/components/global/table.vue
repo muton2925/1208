@@ -11,7 +11,7 @@
         </span>
       </button>
     </div>
-    <div class="card card-custom shadow-sm">
+    <div class="card shadow-sm">
       <div class="card-header card-header-custom py-3">
         <h6>
           <slot name="table-name"></slot>
@@ -30,10 +30,7 @@
             <input type="text" class="form-control form-control" placeholder="Search" v-model="searchInput" @input="paginateEntries">
           </div>
         </div>
-        <!-- <div>{{searchEntries}}</div> -->
-        <!-- <div>{{"asc"+sortAsc}}</div> -->
-        <!-- <div>{{"desc"+sortDesc}}</div> -->
-        <div class="table-responsive mb-2 table-custom">
+        <div class="table-responsive mb-3 table-custom">
           <table class="table table-bordered table-striped table-hover align-middle mb-1">
             <thead>
               <tr>
@@ -41,21 +38,28 @@
                   <template v-if="item.sort == true">
                     <div class="d-flex justify-content-between" @click="sortColumn(item.name,item.status)">
                       <span>{{ item.text }}</span>
-                      <i class="bi bi-filter ms-2 " :class="{trsform:sortDesc == item.name}"></i>
+                      <i class="bi bi-filter ms-2 " :class="{trsform:(sortDesc == item.name && item.status == 'desc')}"></i>
                     </div>
                   </template>
                   <template v-else>
-                    <span>{{ item.text }}</span>
+                    <div>{{ item.text }}</div>
                   </template>
                 </th>
               </tr>
             </thead>
             <tbody>
-              <slot name="table-td"></slot>
+              <template v-if="filterEntries.length > 0">
+                <slot name="table-td"></slot>
+              </template>
+              <template v-else>
+                <tr class="text-center">
+                  <td colspan="6">No matching data found</td>  
+                </tr>
+              </template>
             </tbody>
           </table>
         </div>
-        <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center mt-auto">
+        <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center">
           <div class="col-12 text-center col-lg-auto mb-2 mb-lg-0">Show {{ showInfo.start }} to {{ showInfo.end }} of {{ showInfo.length }} entries</div>
           <ul class="pagination col-auto">
             <li class="page-item" :class="{ disabled : currentPage == 1 }">
@@ -85,15 +89,14 @@ import { ref } from 'vue'
 export default {
   setup(props) {
     const btn = ref(props.showBtn)
- 
     return {
       btn
     }
   },
   data() {
     return {
-      currentEntries: 10, // 當前每頁筆數
-      showEntries: [10,50,100], // 每頁筆數列表
+      currentEntries: 5, // 當前每頁筆數
+      showEntries: [5,10,50,100], // 每頁筆數列表
       filterEntries: [], // 過濾完的資料
       currentPage: 1, // 當前頁數
       allPages: 1, // 所有頁數
@@ -104,7 +107,6 @@ export default {
       sortAsc: '', // 排序 Asc 對象
       sortDesc: '', // 排序 Desc 對象
       sortCol: '', // 上一次排序的對象
-      BeforeDataEntries:0,
     }
   },
   props:{
@@ -121,23 +123,20 @@ export default {
     },
   },
   created() {
-    if(this.entries.length > 0) {       
-      this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
-    }
+    this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
     this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
     this.$emit('update',this.filterEntries); // 過濾好的資料丟回
   },
-  beforeUpdate(){
-    if(this.BeforeDataEntries != this.entrie.length){
-      if(this.entries.length > 0) {  // 如果 Entries 有資料 
-        this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
-      }
-      this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-      this.$emit('update',this.filterEntries); // 過濾好的資料丟回
-      this.once = 1
-      this.BeforeDataEntries = this.entrie.length;
-    }
+  watch: {
+    entries: {
+      handler: function(newValue){
 
+        this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
+        this.filterEntries = $array.paginate(newValue,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
+        this.$emit('update',this.filterEntries); // 過濾好的資料丟回
+      },
+      deep: true
+    }
   },
   computed: {
     showInfo() {
@@ -174,9 +173,14 @@ export default {
           this.allPages = 1; // allPages 固定為 1
       }
       else { // 若搜尋字數小於等於0
-        this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);  // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-        if(this.entries.length > 0) // 若全 Entries 長度大於 0
+        if(this.entries.length > 0){ // 若全 Entries 長度大於 0
+          if(this.sortAsc != '')
+            this.entries = $array.sortBy(this.entries, this.sortAsc, 'asc');
+          if(this.sortDesc != '')
+            this.entries = $array.sortBy(this.entries, this.sortDesc, 'desc');
+          this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);  // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
           this.allPages = $array.pages(this.entries, this.currentEntries); // allPage 跟據全 Entries 跟 currentEntries ( 每頁幾筆 ) 計算
+        }
         else // 若全 Entries 長度小於等於 0
           this.allPages = 1; // allPages 固定為 1 
       }
@@ -240,8 +244,8 @@ export default {
         }
         this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);
       }
-      console.log(status)
-      // console.log(this.sortAsc)
+      console.log(status == 'desc')
+      console.log(name)
       this.$emit('update',this.filterEntries); // 每次更新都觸發 update 事件回傳 filterEntries
     }
   }
@@ -266,9 +270,7 @@ export default {
   flex:none;
   min-width: 0;
 }
-.card-custom {
-  flex: 1;
-}
+
 .card-header-custom {
   background-color: #f8f9fc ;
 }
@@ -287,7 +289,7 @@ thead tr th {
   vertical-align: middle;
   background-color: #FFF !important;
   position: sticky;
-  top:0;
+  top: 0;
 }
 tbody {
   border-top: 0 !important;
@@ -297,7 +299,7 @@ tbody tr td {
 }
 .table-custom {
   min-height: 200px;
-  max-height: calc(100vh - 375px );
+  max-height: calc(100vh - 375px);
   overflow-y:auto;
   border-top:0.1px solid #dee2e6;
 }

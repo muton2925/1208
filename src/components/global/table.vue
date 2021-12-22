@@ -30,15 +30,15 @@
             <input type="text" class="form-control form-control" placeholder="Search" v-model="searchInput" @input="paginateEntries">
           </div>
         </div>
-        <div class="table-responsive mb-3 table-custom">
+        <div class="table-responsive mb-2 mb-lg-3 table-custom">
           <table class="table table-bordered table-striped table-hover align-middle mb-1">
             <thead>
               <tr>
-                <th class="cursor-pointer" scope="col" v-for="item in columns" :key="item">
+                <th class="cursor-pointer" scope="col" v-for="item in columns" :key="item" @click="sortColumn(item.name,item.status)">
                   <template v-if="item.sort == true">
-                    <div class="d-flex justify-content-between" @click="sortColumn(item.name,item.status)">
+                    <div class="d-flex justify-content-between">
                       <span>{{ item.text }}</span>
-                      <i class="bi bi-filter ms-2 " :class="{trsform:(sortDesc == item.name && item.status == 'desc')}"></i>
+                      <i class="bi bi-filter ms-2"></i>
                     </div>
                   </template>
                   <template v-else>
@@ -100,13 +100,13 @@ export default {
       filterEntries: [], // 過濾完的資料
       currentPage: 1, // 當前頁數
       allPages: 1, // 所有頁數
-      searchInput: '', // 搜尋字數
-      searchEntries: [], // 搜尋完的資料
-      columns: this.column, // 欄位名稱
-      entries: this.entrie, // 欄位資料
-      sortAsc: '', // 排序 Asc 對象
-      sortDesc: '', // 排序 Desc 對象
-      sortCol: '', // 上一次排序的對象
+      searchInput: '',
+      searchEntries: [],
+      columns: this.column,
+      entries: this.entrie,
+      sortAsc: '',
+      sortDesc: '',
+      sortCol: '',
     }
   },
   props:{
@@ -127,17 +127,16 @@ export default {
     this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
     this.$emit('update',this.filterEntries); // 過濾好的資料丟回
   },
-  watch: {
-    entries: {
-      handler: function(newValue){
-
-        this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
-        this.filterEntries = $array.paginate(newValue,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-        this.$emit('update',this.filterEntries); // 過濾好的資料丟回
-      },
-      deep: true
-    }
-  },
+  // watch: {
+  //   entries: {
+  //     handler: function(newValue){
+  //       this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
+  //       this.filterEntries = $array.paginate(newValue,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
+  //       this.$emit('update',this.filterEntries); // 過濾好的資料丟回
+  //     },
+  //     deep: true
+  //   }
+  // },
   computed: {
     showInfo() {
       const getCurrentEntries = (this.searchInput.length <= 0) ? this.entries : this.searchEntries;
@@ -244,18 +243,12 @@ export default {
         }
         this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries);
       }
-      console.log(status == 'desc')
-      console.log(name)
       this.$emit('update',this.filterEntries); // 每次更新都觸發 update 事件回傳 filterEntries
     }
   }
 }
 </script>
 <style>
-.trsform{
-  transform: rotate(0.5turn);
-  transition: .3s;
-}
 .container-outer {
   flex: 1 1 auto;
   padding: 1.5rem;
@@ -299,7 +292,7 @@ tbody tr td {
 }
 .table-custom {
   min-height: 200px;
-  max-height: calc(100vh - 375px);
+  max-height: calc(100vh - 380px);
   overflow-y:auto;
   border-top:0.1px solid #dee2e6;
 }

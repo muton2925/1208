@@ -51,10 +51,10 @@
 
 </template>
 <script>
-import {  ref } from '@vue/runtime-core';
+import {  ref ,onMounted} from '@vue/runtime-core';
 // import Modal from '../components/global/modal.vue';
 // import Table from '../components/global/table.vue';
-// import {show_nssi} from '../assets/js/01'
+import {show_nssi} from '../assets/js/01'
 export default {
   components: {
     // Modal,
@@ -63,11 +63,10 @@ export default {
   setup(){
 
         const dom = ref(null);
-      
-        // onMounted(()=>{
-
-        //   show_nssi(dom.value)
-        // })
+        onMounted(()=>{
+          console.log(dom.value)
+          show_nssi(dom.value)
+        })
         return{
           dom
         }
@@ -89,6 +88,10 @@ export default {
   position: relative;
   height: 10rem;
   width: 100%;
+}
+.echarts {
+  width: 100%;
+  height: 400px; 
 }
 @media (min-width: 768px) {
     .chart-pie {

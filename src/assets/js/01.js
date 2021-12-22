@@ -1,20 +1,23 @@
 import axios from 'axios'
-//
+import * as echarts from 'echarts'
 function show_nssi(dom) {
     const topology_url = 'http://10.0.0.15:8081/ObjectManagement/NSS/topology/';
     var myChart = echarts.init(dom);
     var datas,nssi_num;
     var nssi_switched = 0;  
+    var label;
   axios.get(topology_url).then(response => {
       console.log(response)
     if (response.data.length) {
       for (var i = 1; i < response.data.length; i++) {
         var node_tal = response.data[0].nodes;
         var node = response.data[i].nodes;
-        $.merge(node_tal, node);
+        node_tal = node_tal.concat(node);
+        // $.merge(node_tal, node);
         var link_tal = response.data[0].links;
         var link = response.data[i].links;
-        $.merge(link_tal, link);
+         link_tal = link_tal.concat(link);
+        // $.merge(link_tal, link);
       }
       datas = response.data[0];
       nssi_num = response.data.length;
@@ -63,7 +66,7 @@ function show_nssi(dom) {
             data: datas.nodes,
             links: datas.links,
             edgeSymbol: ['circle', 'arrow'],
-            edgeSymbolSize: [4, 10],
+            edgeSymbolSize: [5, 10],
             categories: categories,
             roam: true,
             label: {

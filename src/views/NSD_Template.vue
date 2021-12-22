@@ -96,8 +96,16 @@ export default {
     const {TemplateList}  = Share();
     const th = this;
     TemplateList().then(res=>{
-      const NSD = res.data.filter(x=>x.templateType == 'NSD')
+      console.log(res)
+      const NSD = JSON.parse(JSON.stringify(res.data.filter(x=>x.templateType == 'NSD')))
+
       NSD.forEach(element => {
+        if(element.description == null){
+          element.description ='null'
+        }
+        if( element.name == null){
+          element.name ='null'
+        }
         th.td_lst.push(element)
       });
     })

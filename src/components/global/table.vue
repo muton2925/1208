@@ -127,17 +127,24 @@ export default {
     this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
     this.$emit('update',this.filterEntries); // 過濾好的資料丟回
   },
-  // watch: {
-  //   entries: {
-  //     handler: function(newValue){
-  //       this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
-  //       this.filterEntries = $array.paginate(newValue,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-  //       this.$emit('update',this.filterEntries); // 過濾好的資料丟回
-  //     },
-  //     deep: true
-  //   }
-  // },
+  watch: {
+    entrie: {
+      handler: function(newValue){
+        this.entries = newValue;
+        this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
+        this.filterEntries = $array.paginate(this.entries, this.currentPage, this.currentEntries);
+        this.$emit('update', this.filterEntries);
+        // this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
+        // this.filterEntries = $array.paginate(newValue,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
+        // this.$emit('update',this.filterEntries); // 過濾好的資料丟回
+      },
+      deep: true
+    }
+  },
   computed: {
+    // entries() {
+    //   return this.entrie;
+    // },
     showInfo() {
       const getCurrentEntries = (this.searchInput.length <= 0) ? this.entries : this.searchEntries;
       return $array.pageInfo(getCurrentEntries,this.currentPage,this.currentEntries) // pageInfo ( 所有資料 , 當前頁數 , 每頁幾筆 )

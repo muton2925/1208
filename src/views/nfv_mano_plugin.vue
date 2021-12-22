@@ -9,21 +9,6 @@
     <template v-slot:table-name>
       NFV MANO Plugin List
     </template>
-    <!-- <template v-slot:table-th>
-      <tr>
-        <th scope="col" v-for="item in th_list" :key="item">
-          <template v-if="item.sort == true">
-            <div class="d-flex justify-content-between cursor-pointer" @click="sortColumn()">
-              <span>{{ item.name }}</span>
-              <i class="bi bi-filter ms-2"></i>
-          </div>
-          </template>
-          <template v-else>
-            <span class="cursor-pointer">{{ item.name }}</span>
-          </template>
-        </th>
-      </tr>
-    </template> -->
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.name">
         <td>{{ item.name }}</td>
@@ -40,7 +25,7 @@
           </div>
         </td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal">
+          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="delete_file(item)">
             <i class="bi bi-trash"></i>
           </div>
         </td>
@@ -75,10 +60,11 @@
       Plugin File :
     </template>
   </Modalupdate>
-  <Modaldelete>
+  <Modaldelete :file="file" @delete="deleteData">
   </Modaldelete>
 </template>
 <script>
+import { $array } from 'alga-js';
 import Modalcreate from '../components/global/modal-create.vue';
 import Modalupdate from '../components/global/modal-update.vue';
 import Modaldelete from '../components/global/modal-delete.vue';
@@ -450,7 +436,8 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
       ],
-      filename: ''
+      filename: '',
+      file: {},
     };
   },
   methods: {
@@ -459,6 +446,13 @@ export default {
     },
     update_filename(name) {
       this.filename = name;
+    },
+    deleteData(file) {
+      let index = this.td_list.map(function(e) { return e }).indexOf(file);
+      this.td_list = $array.destroy(this.td_list, index);
+    },
+    delete_file(file) {
+      this.file = file;
     }
   }
 }

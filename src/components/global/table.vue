@@ -42,13 +42,20 @@
                     </div>
                   </template>
                   <template v-else>
-                    <span>{{ item.text }}</span>
+                    <div>{{ item.text }}</div>
                   </template>
                 </th>
               </tr>
             </thead>
             <tbody>
-              <slot name="table-td"></slot>
+              <template v-if="filterEntries.length > 0">
+                <slot name="table-td"></slot>
+              </template>
+              <template v-else>
+                <tr class="text-center">
+                  <td colspan="6">No matching data found</td>  
+                </tr>
+              </template>
             </tbody>
           </table>
         </div>
@@ -88,8 +95,8 @@ export default {
   },
   data() {
     return {
-      currentEntries: 2, // 當前每頁筆數
-      showEntries: [2,10,50,100], // 每頁筆數列表
+      currentEntries: 5, // 當前每頁筆數
+      showEntries: [5,10,50,100], // 每頁筆數列表
       filterEntries: [], // 過濾完的資料
       currentPage: 1, // 當前頁數
       allPages: 1, // 所有頁數
@@ -116,18 +123,20 @@ export default {
     },
   },
   created() {
-
+    this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
+    this.filterEntries = $array.paginate(this.entries,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
+    this.$emit('update',this.filterEntries); // 過濾好的資料丟回
   },
-  watch: {
-    entries: {
-      handler: function(newValue){
-        this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
-        this.filterEntries = $array.paginate(newValue,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-        this.$emit('update',this.filterEntries); // 過濾好的資料丟回
-      },
-      deep: true
-    }
-  },
+  // watch: {
+  //   entries: {
+  //     handler: function(newValue){
+  //       this.allPages = $array.pages(this.entries, this.currentEntries); // pages ( 所有資料 , 每頁幾筆 )
+  //       this.filterEntries = $array.paginate(newValue,this.currentPage,this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
+  //       this.$emit('update',this.filterEntries); // 過濾好的資料丟回
+  //     },
+  //     deep: true
+  //   }
+  // },
   computed: {
     showInfo() {
       const getCurrentEntries = (this.searchInput.length <= 0) ? this.entries : this.searchEntries;

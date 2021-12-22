@@ -9,10 +9,20 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body mx-1">
-          <slot name="body"></slot>
+          <form>
+            <div class="mb-3">
+              <label for="InputFile" class="form-label">Plugin Name :</label>
+              <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="plugin_name" readonly>
+            </div>
+            <div class="mb-2">
+              <label for="UploadFile" class="form-label">Plugin File :</label>
+              <input type="file" class="form-control" id="UploadFile">
+            </div>
+          </form>
         </div>
         <div class="modal-footer">
-          <slot name="footer"></slot>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary text-white">Update</button>
         </div>
       </div>
     </div>
@@ -20,6 +30,16 @@
 </template>
 <script>
 export default {
+  props: ['filename'],
+  data() {
+    return {
 
+    }
+  },
+  computed: {
+    plugin_name() {
+      return this.filename
+    }
+  }
 }
 </script>

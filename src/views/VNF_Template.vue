@@ -28,7 +28,7 @@
           <input type="text" class="form-control" id="InputFile2" placeholder="VNF Description">
         </div>
         <div class="mb-2">
-          <label for="NFVOName" class="form-label">NFVO Name : </label>
+          <label for="NFVOName" class="form-label">NFVO Name :</label>
           <select name="NFVOName" id="NFVOName"></select>
         </div>
       </form>

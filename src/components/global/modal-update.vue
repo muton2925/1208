@@ -11,18 +11,22 @@
         <div class="modal-body mx-1">
           <form>
             <div class="mb-3">
-              <label for="InputFile" class="form-label">Plugin Name :</label>
+              <label for="InputFile" class="form-label">
+                <slot name="plugin-name"></slot>
+              </label>
               <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="plugin_name" readonly>
             </div>
             <div class="mb-2">
-              <label for="UploadFile" class="form-label">Plugin File :</label>
+              <label for="UploadFile" class="form-label">
+                <slot name="plugin-file"></slot>
+              </label>
               <input type="file" class="form-control" id="UploadFile">
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary text-white">Update</button>
+          <button type="button" class="btn btn-warning text-white">Update</button>
         </div>
       </div>
     </div>

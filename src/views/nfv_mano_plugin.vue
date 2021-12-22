@@ -40,7 +40,7 @@
           </div>
         </td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px">
+          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal">
             <i class="bi bi-trash"></i>
           </div>
         </td>
@@ -64,21 +64,31 @@
       </form>
     </template>
   </Modalcreate>
-    <Modalupdate :filename="filename">
-      <template v-slot:header>
-        Update Service Mapping Plugin
-      </template>
-    </Modalupdate>
+  <Modalupdate :filename="filename">
+    <template v-slot:header>
+      Update Service Mapping Plugin
+    </template>
+    <template v-slot:plugin-name>
+      Plugin Name :
+    </template>
+    <template v-slot:plugin-file>
+      Plugin File :
+    </template>
+  </Modalupdate>
+  <Modaldelete>
+  </Modaldelete>
 </template>
 <script>
 import Modalcreate from '../components/global/modal-create.vue';
 import Modalupdate from '../components/global/modal-update.vue';
+import Modaldelete from '../components/global/modal-delete.vue';
 import Table from '../components/global/table.vue';
 import { Share } from '../assets/js/api';
 export default {
   components: {
     Modalcreate,
     Modalupdate,
+    Modaldelete,
     Table
   },
   created() {

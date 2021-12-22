@@ -37,4 +37,10 @@ ul {
 .offcanvas-backdrop {
   top: 70px !important;
 }
+.modal {
+  padding: 0 !important;
+}
+.modal-open {
+  padding: 0 !important;
+}
 </style>

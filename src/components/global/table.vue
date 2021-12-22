@@ -30,13 +30,13 @@
             <input type="text" class="form-control form-control" placeholder="Search" v-model="searchInput" @input="paginateEntries">
           </div>
         </div>
-        <div class="table-responsive mb-3 table-custom">
+        <div class="table-responsive mb-2 mb-lg-3 table-custom">
           <table class="table table-bordered table-striped table-hover align-middle mb-1">
             <thead>
               <tr>
-                <th class="cursor-pointer" scope="col" v-for="item in columns" :key="item">
+                <th class="cursor-pointer" scope="col" v-for="item in columns" :key="item" @click="sortColumn(item.name,item.status)">
                   <template v-if="item.sort == true">
-                    <div class="d-flex justify-content-between" @click="sortColumn(item.name,item.status)">
+                    <div class="d-flex justify-content-between">
                       <span>{{ item.text }}</span>
                       <i class="bi bi-filter ms-2"></i>
                     </div>
@@ -292,7 +292,7 @@ tbody tr td {
 }
 .table-custom {
   min-height: 200px;
-  max-height: calc(100vh - 375px);
+  max-height: calc(100vh - 380px);
   overflow-y:auto;
   border-top:0.1px solid #dee2e6;
 }

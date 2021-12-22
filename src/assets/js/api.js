@@ -1,46 +1,17 @@
 import axios from 'axios'
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-// const baseURL = 'http://localhost:3000/'
-const baseURL = 'http://10.0.0.15:8081/'
-=======
-// const baseURL = 'http://10.0.0.15:8081/'
-const baseURL = 'http://localhost:3000/'
->>>>>>> 03e867c37177fe99b920592e78d189f48e106bec
-=======
+
 const baseURL = 'http://localhost:3000/'
 // const baseURL = 'http://10.0.0.15:8081/'
->>>>>>> Stashed changes
-=======
-const baseURL = 'http://localhost:3000/'
-// const baseURL = 'http://10.0.0.15:8081/'
->>>>>>> Stashed changes
+
 const instance  = axios.create({
     baseURL:baseURL
 })
 const Share = function(){
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-    const PluginList = ()=>instance.get(`plugin/management/`)
-    // const  PluginList = ()=>instance.get(`nfv_mano_plugin`)
-=======
+
     // const PluginList = ()=>instance.get(`plugin/management/`)
     const PluginList = ()=>instance.get(`data`)
->>>>>>> 03e867c37177fe99b920592e78d189f48e106bec
-    const TemplateList = ()=>instance.get(`ObjectManagement/GenericTemplate/`)
-=======
-=======
->>>>>>> Stashed changes
-    // const PluginList = ()=>instance.get(`plugin/management/`)
-    const  PluginList = ()=>instance.get(`data`)
     // const TemplateList = ()=>instance.get(`ObjectManagement/GenericTemplate/`)
     const TemplateList = ()=>instance.get(`data`)
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     return {PluginList,TemplateList}
 }
 const nss_template = function(){

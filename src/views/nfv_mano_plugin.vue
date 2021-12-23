@@ -1,5 +1,5 @@
 <template>
-  <Table v-if="status" :column="th_list" :entrie="td_list" @update="updateData">
+  <Table v-if="status" :column="th_list" :entrie="td_list" :columnNumber="columnNumber" @update="updateData">
     <template v-slot:header>
       NFV MANO Plugin
     </template>
@@ -436,6 +436,7 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
       ],
+      columnNumber: 6,
       filename: '',
       file: {},
     };
@@ -448,7 +449,7 @@ export default {
       this.filename = name;
     },
     deleteData(file) {
-      let index = this.td_list.map(function(e) { return e }).indexOf(file);
+      let index = this.td_list.indexOf(file);
       this.td_list = $array.destroy(this.td_list, index);
     },
     delete_file(file) {

@@ -1,5 +1,5 @@
 <template>
-  <Table v-if="status" :column="th_list" :entrie="td_list" :columnNumber="columnNumber" @update="updateData">
+  <Table v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateData">
     <template v-slot:header>
       NFV MANO Plugin
     </template>
@@ -436,6 +436,7 @@ export default {
           subscription_host: "10.0.1.108:8082",
         },
       ],
+      columnSort: ['name','allocate_nssi','dellocate_nssi'],
       columnNumber: 6,
       filename: '',
       file: {},

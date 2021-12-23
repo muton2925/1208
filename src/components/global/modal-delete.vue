@@ -13,7 +13,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger text-white" data-bs-dismiss="modal" @click="delete_file()">Delete</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="delete_plugin">Delete</button>
         </div>
       </div>
     </div>
@@ -21,16 +21,16 @@
 </template>
 <script>
 export default {
-    props: ['file'],
-    computed: {
-      deleteData() {
-        return this.file;
-      }
-    },
-    methods: {
-      delete_file() {
-        this.$emit('delete', this.file);
-      }
+  props: ['file'],
+  computed: {
+    file_data() {
+      return this.file;
     }
+  },
+  methods: {
+    delete_plugin() {
+      this.$emit('delete', this.file);
+    }
+  }
 }
 </script>

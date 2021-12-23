@@ -1,5 +1,5 @@
 <template>
-  <Table v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateData">
+  <Table v-if="status" :column="th_list" :entrie="td_list2" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateData">
     <template v-slot:header>
       NFV MANO Plugin
     </template>
@@ -32,7 +32,7 @@
       </tr>
     </template>
   </Table>
-  <Modalcreate>
+  <Modalcreate :create_plugin_name="create_plugin_name" :create_plugin_file1="create_plugin_file1">
     <template v-slot:header>
       Create new NFV MANO Plugin
     </template>
@@ -40,11 +40,11 @@
       <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">Plugin Name :</label>
-          <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱">
+          <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="create_plugin_name">
         </div>
         <div class="mb-2">
           <label for="UploadFile" class="form-label">Plugin File :</label>
-          <input type="file" class="form-control" id="UploadFile">
+          <input type="file" class="form-control" id="UploadFile" @change="create_plugin_file">
         </div>
       </form>
     </template>
@@ -81,6 +81,7 @@ export default {
     const { PluginList } = Share();
     PluginList()
     .then(res => {
+      console.log(res)
       for(let i of res.data){
         this.td_list.push(i);
       }
@@ -94,7 +95,7 @@ export default {
   data() {
     return {
       filterEntries: [],
-      status: false,
+      status: true,
       th_list: [
         { name: "name", text: "Plugin Name", sort: true, status: 'none' },
         { name: "allocate_nssi", text: "Allocate NSSI File", sort: true, status: 'none' },
@@ -440,6 +441,8 @@ export default {
       columnNumber: 6,
       filename: '',
       file: {},
+      create_plugin_name : '',
+      create_plugin_file1: null,
     };
   },
   methods: {
@@ -450,11 +453,16 @@ export default {
       this.filename = name;
     },
     deleteData(file) {
-      let index = this.td_list.indexOf(file);
-      this.td_list = $array.destroy(this.td_list, index);
+      // let index = this.td_list.indexOf(file);
+      let index = this.td_list2.indexOf(file);
+      // this.td_list = $array.destroy(this.td_list, index);
+      this.td_list2 = $array.destroy(this.td_list2, index);
     },
     delete_file(file) {
       this.file = file;
+    },
+    create_plugin_file(e) {
+      this.create_plugin_file1 = e.target.files
     }
   }
 }

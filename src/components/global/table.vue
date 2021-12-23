@@ -140,16 +140,6 @@ export default {
       },
       deep: true
     },
-    entries: {
-      handler: function(newVal){
-        console.log(newVal)
-        console.log(newVal.length)
-        if(newVal.length == 0) {
-          this.allPages = 1;
-        }
-        console.log(this.allPages)
-      }
-    },
     filterEntries: {
       handler: function(newVal) {
         // console.log('觸發 filterEntries watch')
@@ -162,7 +152,11 @@ export default {
     allPages: {
       get() {
         // console.log('觸發 allpages get :' + $array.pages(this.entries, this.currentEntries))
-        return $array.pages(this.entries, this.currentEntries);
+        if(this.entries.length != 0){
+          return $array.pages(this.entries, this.currentEntries);
+        }
+        else
+          return 1;
       },
       set(newVal) {
         // console.log('觸發 allpages set :' + newVal)

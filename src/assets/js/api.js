@@ -28,7 +28,8 @@ const GenericTemplate = function(){
 const nfv_mano_plugin = function(){
     const createPluginList = (form)=>instance.post(`plugin/management/`,form)
     const updatePlugin = (pluginName,form)=>instance.patch(`plugin/management/${pluginName}/`,form)
-    return{createPluginList, updatePlugin}
+    const deletePlugin = (templateId)=>instance.delete(`plugin/management/${templateId}/`)
+    return{ createPluginList, updatePlugin, deletePlugin }
 }
 const NSS_Instance = function(){
     const deleteNssi = (nssiId)=>instance.delete(`ObjectManagement/NetworkSliceSubnet/${nssiId}/?scope=[%27BASE_NTH_LEVEL%27,0]`)

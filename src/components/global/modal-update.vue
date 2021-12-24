@@ -6,7 +6,7 @@
           <h5 class="modal-title" id="exampleModalLabel">
             <slot name="header"></slot>
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="cancelEvent"></button>
         </div>
         <div class="modal-body mx-1">
           <form>
@@ -25,8 +25,8 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-warning">Update</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelEvent">Cancel</button>
+          <button type="button" class="btn btn-warning text-white">Update</button>
         </div>
       </div>
     </div>
@@ -43,6 +43,11 @@ export default {
   computed: {
     plugin_name() {
       return this.fileName
+    }
+  },
+  methods: {
+    cancelEvent() {
+      this.$emit('remove')
     }
   }
 }

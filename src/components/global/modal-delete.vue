@@ -21,7 +21,6 @@
 </template>
 <script>
 export default {
-  props: ['fileData'],
   methods: {
     cancelEvent() {
       this.$emit('remove');

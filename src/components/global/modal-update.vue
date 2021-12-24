@@ -20,13 +20,13 @@
               <label for="UploadFile" class="form-label">
                 <slot name="plugin-file"></slot>
               </label>
-              <input type="file" class="form-control" id="UploadFile">
+              <slot name="upload-file"></slot>
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelEvent">Cancel</button>
-          <button type="button" class="btn btn-warning text-white">Update</button>
+          <slot name="footer"></slot>
         </div>
       </div>
     </div>
@@ -35,11 +35,11 @@
 <script>
 export default {
   props: ['fileName'],
-  data() {
-    return {
-
-    }
-  },
+  // data() {
+  //   return {
+  //     fileData: {},
+  //   }
+  // },
   computed: {
     plugin_name() {
       return this.fileName
@@ -48,7 +48,10 @@ export default {
   methods: {
     cancelEvent() {
       this.$emit('remove')
-    }
+    },
+    // add_plugin(e) {
+    //   this.fileData = e.target.files[0];
+    // }
   }
 }
 </script>

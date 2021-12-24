@@ -65,21 +65,31 @@
       <button type="button" class="btn btn-primary text-white" @click="create_plugin">Create</button>
     </template>
   </Modalcreate>
-  <Modalupdate :fileName="fileName" @remove="removeUpdateData">
+  <Modalupdate @remove="removeUpdateData">
     <template v-slot:header>
       Update Service Mapping Plugin
     </template>
-    <template v-slot:plugin-name>
-      Plugin Name :
-    </template>
-    <template v-slot:plugin-file>
-      Plugin File :
-    </template>
-    <template v-slot:upload-file>
-      <input type="file" class="form-control" id="UploadFile" ref="uploadData_update" accept=".zip" @change="add_plugin">
+    <template v-slot:body>
+      <form :class="{ 'was-invalidated': isinvalidated }">
+        <div class="mb-3">
+          <label for="InputFile" class="form-label">
+            Plugin Name :
+          </label>
+          <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="fileName" readonly>
+        </div>
+        <div class="mb-2">
+          <label for="UploadFile2" class="form-label">
+            Plugin File :
+          </label>
+          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="add_plugin">
+          <div class="invalid-feedback">
+            檔案不得為空
+          </div>
+        </div>
+      </form>
     </template>
     <template v-slot:footer>
-      <button type="button" class="btn btn-warning text-white" data-bs-dismiss="modal" @click="update_plugin_modal">Update</button>
+      <button type="button" class="btn btn-warning text-white" @click="update_plugin_modal">Update</button>
     </template>
   </Modalupdate>
   <Modaldelete @delete="deleteData" @remove="removeFile"></Modaldelete>
@@ -232,25 +242,33 @@ export default {
         this.file_invalidated = true;
       }
     },
+    update_validate() {
+      if(this.fileData[0] == null) {
+        this.file_invalidated = true;
+      } 
+    },
     update_plugin(name) {
       this.fileName = name;
     },
     update_plugin_modal() {
-      const { updatePlugin } = nfv_mano_plugin();
-      let form = new FormData();
-      form.append("name", this.fileName);
-      form.append("pluginFile", this.fileData[0]);
-     updatePlugin(this.fileName,form)
-      .then((res) => {
-        console.log(res);
-        const index = this.td_list.map(function(e) { return e.name }).indexOf(this.fileName);
-        this.td_list[index].pluginFile = res.data.pluginFile;
-        this.removeUpdateData();
-      })
-      .catch(res => {
-        console.log(res);
-        this.removeUpdateData();
-      })
+      this.update_validate();
+      if(this.isinvalidated == false) {
+        const { updatePlugin } = nfv_mano_plugin();
+        let form = new FormData();
+        form.append("name", this.fileName);
+        form.append("pluginFile", this.fileData[0]);
+        updatePlugin(this.fileName,form)
+        .then((res) => {
+          console.log(res);
+          const index = this.td_list.map(function(e) { return e.name }).indexOf(this.fileName);
+          this.td_list[index].pluginFile = res.data.pluginFile;
+          this.removeUpdateData();
+        })
+        .catch(res => {
+          console.log(res);
+          this.removeUpdateData();
+        })
+      }
     },
     delete_plugin(file) {
       this.fileData = file;

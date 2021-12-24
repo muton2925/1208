@@ -21,10 +21,10 @@
 </template>
 <script>
 export default {
-  props: ['file'],
+  props: ['fileData'],
   computed: {
-    file_data() {
-      return this.file;
+    file() {
+      return this.fileData;
     }
   },
   methods: {

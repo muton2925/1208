@@ -34,7 +34,7 @@
 </template>
 <script>
 export default {
-  props: ['filename'],
+  props: ['fileName'],
   data() {
     return {
 
@@ -42,7 +42,7 @@ export default {
   },
   computed: {
     plugin_name() {
-      return this.filename
+      return this.fileName
     }
   }
 }

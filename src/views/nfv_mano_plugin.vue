@@ -1,5 +1,5 @@
 <template>
-  <Table v-if="status" :column="th_list" :entrie="td_list2" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateData">
+  <Table v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateData">
     <template v-slot:header>
       NFV MANO Plugin
     </template>
@@ -15,7 +15,7 @@
         <td>{{ item.allocate_nssi }}</td>
         <td>{{ item.deallocate_nssi }}</td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_filename(item.name)">
+          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_plugin(item.name)">
             <i class="bi bi-wrench"></i>
           </div>
         </td>
@@ -25,14 +25,14 @@
           </div>
         </td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="delete_file(item)">
+          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="delete_plugin(item)">
             <i class="bi bi-trash"></i>
           </div>
         </td>
       </tr>
     </template>
   </Table>
-  <Modalcreate :create_plugin_name="create_plugin_name" :create_plugin_file1="create_plugin_file1">
+  <Modalcreate :fileName="fileName" :fileData="fileData">
     <template v-slot:header>
       Create new NFV MANO Plugin
     </template>
@@ -40,16 +40,19 @@
       <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">Plugin Name :</label>
-          <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="create_plugin_name">
+          <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="fileName">
         </div>
         <div class="mb-2">
           <label for="UploadFile" class="form-label">Plugin File :</label>
-          <input type="file" class="form-control" id="UploadFile" @change="create_plugin_file">
+          <input id="UploadFile" ref="uploadData" type="file" class="form-control" @change="create_plugin">
         </div>
       </form>
     </template>
+    <template v-slot:footer>
+      <button type="button" class="btn btn-primary text-white" data-bs-dismiss="modal" @click="create_plugin_modal">Create</button>
+    </template>
   </Modalcreate>
-  <Modalupdate :filename="filename">
+  <Modalupdate :fileName="fileName">
     <template v-slot:header>
       Update Service Mapping Plugin
     </template>
@@ -60,8 +63,7 @@
       Plugin File :
     </template>
   </Modalupdate>
-  <Modaldelete :file="file" @delete="deleteData">
-  </Modaldelete>
+  <Modaldelete :fileData="fileData" @delete="deleteData"></Modaldelete>
 </template>
 <script>
 import { $array } from 'alga-js';
@@ -70,6 +72,7 @@ import Modalupdate from '../components/global/modal-update.vue';
 import Modaldelete from '../components/global/modal-delete.vue';
 import Table from '../components/global/table.vue';
 import { Share } from '../assets/js/api';
+import { nfv_mano_plugin } from '../assets/js/api';
 export default {
   components: {
     Modalcreate,
@@ -439,31 +442,38 @@ export default {
       ],
       columnSort: ['name','allocate_nssi','dellocate_nssi'],
       columnNumber: 6,
-      filename: '',
-      file: {},
-      create_plugin_name : '',
-      create_plugin_file1: null,
+      fileName: '',
+      fileData: {},
     };
   },
   methods: {
-    updateData(val) {
+    updateData(val) {  // emit
       this.filterEntries = val;
     },
-    update_filename(name) {
-      this.filename = name;
+    deleteData(file) { // emit
+      let index = this.td_list.indexOf(file);
+      this.td_list = $array.destroy(this.td_list, index);
     },
-    deleteData(file) {
-      // let index = this.td_list.indexOf(file);
-      let index = this.td_list2.indexOf(file);
-      // this.td_list = $array.destroy(this.td_list, index);
-      this.td_list2 = $array.destroy(this.td_list2, index);
+    create_plugin(e) {
+      this.fileData = e.target.files;
     },
-    delete_file(file) {
-      this.file = file;
+    create_plugin_modal() {
+      const { createPluginList } = nfv_mano_plugin();
+      let form = new FormData();
+      form.append("name", this.fileName);
+      form.append("pluginFile", this.fileData[0]);
+      createPluginList(form)
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(res => console.log(res))
     },
-    create_plugin_file(e) {
-      this.create_plugin_file1 = e.target.files
-    }
+    update_plugin(name) {
+      this.fileName = name;
+    },
+    delete_plugin(file) {
+      this.fileData = file;
+    },
   }
 }
 </script>

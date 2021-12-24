@@ -465,6 +465,16 @@ export default {
       createPluginList(form)
       .then(res => {
         console.log(res.data);
+        let obj = {
+          name: res.data.name,
+          allocate_nssi: 'allocate/main.py',
+          deallocate_nssi: 'deallocate/main.py',
+          pluginFile: res.data.pluginFile,
+          nm_host: '10.20.1.57:8081',
+          nfvo_host: '10.0.0.16:30888',
+          subscription_host: '10.0.1.108:8082'
+        };
+        this.td_list.push(obj);
       })
       .catch(res => console.log(res))
     },

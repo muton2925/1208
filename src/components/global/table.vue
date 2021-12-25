@@ -133,6 +133,7 @@ export default {
   watch: {
     entrie: {
       handler: function(newVal) {
+        this.searchInput = '';
         this.entries = newVal;
         this.entries = $array.searchBy(this.entries, [this.searchInput], this.columnSort);
         if(this.sortAsc != '') {

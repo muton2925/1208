@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" id="update_plugin_Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="update_plugin_Modal" ref="modal_update" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -20,11 +20,30 @@
   </div>
 </template>
 <script>
+import { ref } from 'vue';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
 export default {
+  setup() {
+    const modal_update = ref(null)
+    return{
+      modal_update,
+    }
+  },
+  data() {
+    return {
+      modal: '',
+    }
+  },
+  mounted() {
+    this.modal = new Modal(this.$refs.modal_update, {})
+  },
   methods: {
     cancelEvent() {
       this.$emit('remove')
     },
+    closeModalEvent() {
+      this.modal.hide();
+    }
   }
 }
 </script>

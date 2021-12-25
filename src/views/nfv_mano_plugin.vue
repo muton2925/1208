@@ -34,7 +34,7 @@
       </tr>
     </template>
   </Table>
-  <Modalcreate @remove="removeCreateData">
+  <Modalcreate ref="modalCreate" @remove="removeCreateData">
     <template v-slot:header>
       Create new NFV MANO Plugin
     </template>
@@ -65,7 +65,7 @@
       <button type="button" class="btn btn-primary text-white" @click="create_plugin">Create</button>
     </template>
   </Modalcreate>
-  <Modalupdate @remove="removeUpdateData">
+  <Modalupdate ref="modalUpdate" @remove="removeUpdateData">
     <template v-slot:header>
       Update Service Mapping Plugin
     </template>
@@ -111,10 +111,13 @@ export default {
     Table
   },
   setup() {
+    const modalCreate = ref(null)
+    const modalUpdate = ref(null)
     const uploadData_create = ref(null)
     const uploadData_update = ref(null)
+    
     return{
-      uploadData_update,uploadData_create
+      modalCreate,modalUpdate,uploadData_update,uploadData_create,
     }
   },
   created() {
@@ -163,12 +166,16 @@ export default {
   watch: {
     fileName: {
       handler: function() {
-        this.text_invalidated = false;
+        if(this.isinvalidated) {
+          this.text_invalidated = false;
+        }
       }
     },
     fileData: {
       handler: function() {
-        this.file_invalidated = false;
+        if(this.isinvalidated) {
+          this.file_invalidated = false;
+        }
       }
     }
   },
@@ -189,6 +196,10 @@ export default {
         this.removeFile();
       })
     },
+    validate_clear() {
+      this.text_invalidated = false;
+      this.file_invalidated = false;
+    },
     removeFile() {
       this.fileData = {};
     },
@@ -198,17 +209,19 @@ export default {
     },
     removeCreateData() {
       this.removeData();
+      this.validate_clear();
       this.$refs.uploadData_create.value = null;
     },
     removeUpdateData() {
       this.removeData();
+      this.validate_clear();
       this.$refs.uploadData_update.value = null;
     },
     add_plugin(e) {
       this.fileData = e.target.files;
     },
     create_plugin() {
-      this.create_validate();
+      this.create_validate(); 
       if(this.isinvalidated == false) {
         const { createPluginList } = nfv_mano_plugin();
         let form = new FormData();
@@ -226,6 +239,7 @@ export default {
             subscription_host: '10.0.1.108:8082'
           };
           this.td_list.push(obj);
+          this.$refs.modalCreate.closeModalEvent();
           this.removeCreateData();
         })
         .catch(res => {
@@ -259,9 +273,9 @@ export default {
         form.append("pluginFile", this.fileData[0]);
         updatePlugin(this.fileName,form)
         .then((res) => {
-          console.log(res);
           const index = this.td_list.map(function(e) { return e.name }).indexOf(this.fileName);
           this.td_list[index].pluginFile = res.data.pluginFile;
+          this.$refs.modalUpdate.closeModalEvent();
           this.removeUpdateData();
         })
         .catch(res => {

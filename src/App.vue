@@ -1,6 +1,6 @@
 <template>
   <Header></Header>
-  <div class="d-flex">
+  <div class="d-flex main-custom">
     <Sidebar :menuData="menuData"></Sidebar>
     <router-view></router-view>
   </div>
@@ -99,5 +99,13 @@ ul {
 .modal-backdrop {
   width: 100% !important;
   height: 100% !important;
+}
+.offcanvas-backdrop {
+  width: 100% !important;
+  height: 100% !important;
+}
+.main-custom {
+  position: relative;
+  top: 70px;
 }
 </style>

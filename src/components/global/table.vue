@@ -30,7 +30,7 @@
             <input type="text" class="form-control form-control" placeholder="Search" v-model="searchInput" @input="searchEvent">
           </div>
         </div>
-        <div class="table-responsive mb-2 mb-lg-3 table-custom" :class="{ 'table-height-custom' : filterEntries.length == 0 }">
+        <div class="table-responsive mb-2 mb-lg-3 table-custom">
           <table class="table table-bordered table-striped table-hover align-middle mb-0">
             <thead>
               <tr>
@@ -275,9 +275,6 @@ tbody tr td {
   max-height: calc(100vh - 399px);
   overflow-y: scroll;
   border-top:0.1px solid #dee2e6;
-}
-.table-height-custom {
-  min-height: 0;
 }
 @media (min-width: 576px) {
   .container-header h3 {

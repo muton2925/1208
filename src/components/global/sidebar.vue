@@ -3,7 +3,6 @@
     <ul id="sidebar-parent" class="text-white">
       <li class="position-relative" v-for="item in menuData" :key="item.name">
         <template v-if="item.childNodes.length > 0">
-          <template v-if="windowWidth >= 576">
           <a class="list-item" data-bs-toggle="collapse" :data-bs-target="'#' + item.url">{{ item.name }}</a>
           <div :id="item.url" class="collapse collapse-item" :ref="item.url" data-bs-parent="#sidebar-parent">
               <ul class="py-2">
@@ -12,7 +11,6 @@
                 </li>
               </ul>
           </div>
-          </template>
         </template>
         <template v-else>
           <router-link class="list-item" :to="{ path : '/' + item.url }" @click="changeCollapseStatus()">{{ item.name }}</router-link>
@@ -46,7 +44,10 @@ export default {
         if(oldVal < 768) 
           this.changeCollapseStatus();
       }
-      else {
+      else if(newVal < 768) {
+        if(newVal < 576) {
+          this.changeCollapseStatus();
+        }
         if(oldVal >= 768) 
           this.changeCollapseStatus();
       }

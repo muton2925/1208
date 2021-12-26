@@ -1,30 +1,39 @@
 <template>
-  <nav class="navbar navbar-expand-sm navbar-dark flex-nowrap py-0 bg-blue shadow-normal vw-mincontent">
+  <nav class="navbar navbar-expand-sm navbar-dark fixed-top flex-nowrap pe-3 py-0 bg-blue shadow-normal vw-mincontent">
     <div class="container-fluid px-0">
       <div class="navbar-brand white-space-normal bg-white px-3 py-0">
         <img src="../../assets/free5gmano_icon.png" alt="free5gmano_icon" width="70" height="70"/>
         <h1 class="navbar_custom d-none d-md-inline-block align-middle">FREE 5G MANO</h1>
       </div>
-      <button class="navbar-toggler me-3" data-bs-toggle="offcanvas" data-bs-target="#nav-offcanvas">
+      <button class="navbar-toggler" data-bs-toggle="offcanvas" data-bs-target="#nav-offcanvas">
         <span class="navbar-toggler-icon"></span>
       </button>
     </div>
   </nav>
-  <div v-if="windowWidth < 576" id="nav-offcanvas" class="offcanvas offcanvas-end offcanvas-custom" data-bs-backdrop="false">
+  <div v-show="windowWidth < 576" id="nav-offcanvas" class="offcanvas offcanvas-end offcanvas-custom" ref="offcanvas_ref">
     <ul id="accordion-basic">
-      <Offcanvas v-for="item in menuData" :key="item.name" :title="item.name" :icon="item.icon" :childs="item.childNodes" :url="item.url"></Offcanvas>
+      <offcanvas v-for="item in menuData" :key="item.name" :title="item.name" :icon="item.icon" :childs="item.childNodes" :url="item.url"></offcanvas>
     </ul>
   </div>
   <!-- <div class="nav-height a a-manu nav-offcanvas " ></div> -->
 </template>
 <script>
-import Offcanvas from './offcanvas.vue'
+import { ref } from 'vue';
+import { Offcanvas } from 'bootstrap/dist/js/bootstrap.bundle.js';
+import offcanvas from './offcanvas.vue';
 export default {
   components: {
-    Offcanvas
+    offcanvas
+  },
+  setup() {
+    const offcanvas_ref = ref(null)
+    return{
+      offcanvas_ref,
+    }
   },
   data() {
     return {
+      offcanvas: '',
       menuData: [
         {
           name: "Dashboard",
@@ -83,24 +92,22 @@ export default {
     };
   },
   watch: {
-    windowWidth: function (newValue,oldValue) {
-      if(oldValue < 768){
-        if (newValue >= 768) {
-          this.isOpen = false;
-        }
-      }
-      else{
-        if(newValue < 768) {
-          this.isOpen = false;
-        }        
-      }
+    windowWidth: function (newValue) {
+      if(newValue >= 576)
+        this.changeOffcanvasStatus();
     },
   },
   mounted() {
     window.addEventListener("resize", () => {
       this.windowWidth = window.innerWidth;
     });
+    this.offcanvas = new Offcanvas(this.$refs.offcanvas_ref,{})
   },
+  methods: {
+    changeOffcanvasStatus() {
+      this.offcanvas.hide();
+    }
+  }
 };
 </script>
 <style scoped>

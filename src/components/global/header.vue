@@ -12,16 +12,16 @@
   </nav>
   <div v-if="windowWidth < 576" id="nav-offcanvas" class="offcanvas offcanvas-end offcanvas-custom" data-bs-backdrop="false">
     <ul id="accordion-basic">
-      <Item v-for="item in menuData" :key="item.name" :title="item.name" :icon="item.icon" :childs="item.childNodes" :url="item.url"></Item>
+      <Offcanvas v-for="item in menuData" :key="item.name" :title="item.name" :icon="item.icon" :childs="item.childNodes" :url="item.url"></Offcanvas>
     </ul>
   </div>
   <!-- <div class="nav-height a a-manu nav-offcanvas " ></div> -->
 </template>
 <script>
-import Item from './offcanvas.vue'
+import Offcanvas from './offcanvas.vue'
 export default {
   components: {
-    Item
+    Offcanvas
   },
   data() {
     return {

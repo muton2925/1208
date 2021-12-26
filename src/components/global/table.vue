@@ -30,8 +30,8 @@
             <input type="text" class="form-control form-control" placeholder="Search" v-model="searchInput" @input="searchEvent">
           </div>
         </div>
-        <div class="table-responsive mb-2 mb-lg-3 table-custom">
-          <table class="table table-bordered table-striped table-hover align-middle mb-1">
+        <div class="table-responsive mb-2 mb-lg-3 table-custom" :class="{ 'table-height-custom' : filterEntries.length == 0 }">
+          <table class="table table-bordered table-striped table-hover align-middle mb-0">
             <thead>
               <tr>
                 <th class="cursor-pointer" scope="col" v-for="item in columns" :key="item" @click="sortColumn(item.name,item.status)">
@@ -271,10 +271,13 @@ tbody tr td {
   height: 48px;
 }
 .table-custom {
-  min-height: 200px;
-  max-height: calc(100vh - 380px);
+  min-height: 300px;
+  max-height: calc(100vh - 399px);
   overflow-y:auto;
   border-top:0.1px solid #dee2e6;
+}
+.table-height-custom {
+  min-height: 0;
 }
 @media (min-width: 576px) {
   .container-header h3 {
@@ -286,6 +289,11 @@ tbody tr td {
   .container-header h3 {
     margin: 0;
     font-size: 1.75rem;
+  }
+}
+@media (min-width: 992px) {
+  .table-custom {
+    max-height: calc(100vh - 375px);
   }
 }
 </style>

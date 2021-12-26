@@ -43,4 +43,8 @@ ul {
 .modal-open {
   padding: 0 !important;
 }
+.modal-backdrop {
+  width: 100% !important;
+  height: 100% !important;
+}
 </style>

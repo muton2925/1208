@@ -271,9 +271,9 @@ tbody tr td {
   height: 48px;
 }
 .table-custom {
-  min-height: 300px;
+  min-height: 96px;
   max-height: calc(100vh - 399px);
-  overflow-y:auto;
+  overflow-y: scroll;
   border-top:0.1px solid #dee2e6;
 }
 .table-height-custom {

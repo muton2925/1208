@@ -3,35 +3,68 @@
     <ul id="sidebar-parent" class="text-white">
       <li class="position-relative" v-for="item in menuData" :key="item.name">
         <template v-if="item.childNodes.length > 0">
+          <template v-if="windowWidth >= 576">
           <a class="list-item" data-bs-toggle="collapse" :data-bs-target="'#' + item.url">{{ item.name }}</a>
           <div :id="item.url" class="collapse collapse-item" :ref="item.url" data-bs-parent="#sidebar-parent">
               <ul class="py-2">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :to="{ path :  '/' + child.url }"> {{ child.name }} </router-link>
+                  <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="changeCollapseStatus()"> {{ child.name }} </router-link>
                 </li>
               </ul>
           </div>
+          </template>
         </template>
         <template v-else>
-          <router-link class="list-item" :to="{ path : '/' + item.url }">{{ item.name }}</router-link>
+          <router-link class="list-item" :to="{ path : '/' + item.url }" @click="changeCollapseStatus()">{{ item.name }}</router-link>
         </template>
       </li>
     </ul>
   </aside>
 </template>
 <script>
+import { ref } from 'vue';
+import { Collapse } from 'bootstrap/dist/js/bootstrap.bundle.js'
 export default {
   props: ['menuData'],
+  setup() {
+    const generic_template = ref(null)
+    const nssi_view = ref(null)
+    return{
+      generic_template,nssi_view
+    }
+  },
   data() {
     return {
       windowWidth: window.innerWidth,
+      generic_template_collapse: '',
+      nssi_view_collapse: ''
     };
+  },
+  watch: {
+    windowWidth: function(newVal,oldVal) {
+      if(newVal >= 768) {
+        if(oldVal < 768) 
+          this.changeCollapseStatus();
+      }
+      else {
+        if(oldVal >= 768) 
+          this.changeCollapseStatus();
+      }
+    }
   },
   mounted() {
     window.addEventListener("resize", () => {
       this.windowWidth = window.innerWidth;
     });
+    this.generic_template_collapse = new Collapse(this.$refs.generic_template,{ toggle: false })
+    this.nssi_view_collapse = new Collapse(this.$refs.nssi_view,{ toggle: false })
   },
+  methods: {
+    changeCollapseStatus() {
+      this.generic_template_collapse.hide();
+      this.nssi_view_collapse.hide();
+    }
+  }
 }
 </script>
 <style scoped>

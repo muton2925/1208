@@ -121,18 +121,6 @@ export default {
     }
   },
   async created() {
-    // const { PluginList } = Share();
-    // PluginList()
-    // .then(res => {
-    //   for(let i of res.data){
-    //     this.td_list.push(i);
-    //   }
-    //   this.status = true;
-    // })
-    // .catch(res => {
-    //   console.log(res);
-    //   this.status = true;
-    // })
     await this.getTableData();
     this.status = true;
   },

@@ -4,7 +4,14 @@
       <li class="position-relative" v-for="item in menuData" :key="item.name">
         <template v-if="item.childNodes.length > 0">
           <a class="list-item" data-bs-toggle="collapse" :data-bs-target="'#' + item.url">{{ item.name }}</a>
-          <div :id="item.url" class="collapse collapse-item" :ref="item.url" data-bs-parent="#sidebar-parent">
+          <div v-show="windowWidth >= 768" :id="item.url" class="collapse collapse-item" :ref="item.url + '_md'" data-bs-parent="#sidebar-parent">
+              <ul class="py-2">
+                <li v-for="child in item.childNodes" :key="child.name">
+                  <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="changeCollapseStatus()"> {{ child.name }} </router-link>
+                </li>
+              </ul>
+          </div>
+          <div v-show="windowWidth >= 576 && windowWidth < 768" :id="item.url" class="collapse collapse-item" :ref="item.url + '_sm'" data-bs-parent="#sidebar-parent">
               <ul class="py-2">
                 <li v-for="child in item.childNodes" :key="child.name">
                   <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="changeCollapseStatus()"> {{ child.name }} </router-link>
@@ -25,14 +32,17 @@ import { Collapse } from 'bootstrap/dist/js/bootstrap.bundle.js'
 export default {
   props: ['menuData'],
   setup() {
-    const generic_template = ref(null)
-    const nssi_view = ref(null)
+    const generic_template_sm = ref(null)
+    const generic_template_md = ref(null)
+    const nssi_view_sm = ref(null)
+    const nssi_view_md = ref(null)
     return{
-      generic_template,nssi_view
+      generic_template_sm,generic_template_md,nssi_view_sm,nssi_view_md
     }
   },
   data() {
     return {
+      changeStatus: false,
       windowWidth: window.innerWidth,
       generic_template_collapse: '',
       nssi_view_collapse: ''
@@ -42,13 +52,13 @@ export default {
     windowWidth: function(newVal,oldVal) {
       if(newVal >= 768) {
         if(oldVal < 768) 
-          this.changeCollapseStatus();
+          this.changeCollapseStatus(); // 767(sm) -> 768(md)
       }
       else if(newVal < 768) {
-        if(newVal < 576) {
+        if(newVal < 576) { // 576(sm) -> 575(sm)
           this.changeCollapseStatus();
         }
-        if(oldVal >= 768) 
+        if(oldVal >= 768)  // 768(sm) -> 767(sm)
           this.changeCollapseStatus();
       }
     }
@@ -57,13 +67,17 @@ export default {
     window.addEventListener("resize", () => {
       this.windowWidth = window.innerWidth;
     });
-    this.generic_template_collapse = new Collapse(this.$refs.generic_template,{ toggle: false })
-    this.nssi_view_collapse = new Collapse(this.$refs.nssi_view,{ toggle: false })
+    this.generic_template_collapse_sm = new Collapse(this.$refs.generic_template_sm,{ toggle: false })
+    this.generic_template_collapse_md = new Collapse(this.$refs.generic_template_md,{ toggle: false })
+    this.nssi_view_collapse_sm = new Collapse(this.$refs.nssi_view_sm,{ toggle: false })
+    this.nssi_view_collapse_md = new Collapse(this.$refs.nssi_view_md,{ toggle: false })
   },
   methods: {
     changeCollapseStatus() {
-      this.generic_template_collapse.hide();
-      this.nssi_view_collapse.hide();
+      this.generic_template_collapse_sm.hide();
+      this.generic_template_collapse_md.hide();
+      this.nssi_view_collapse_sm.hide();
+      this.nssi_view_collapse_md.hide();
     }
   }
 }

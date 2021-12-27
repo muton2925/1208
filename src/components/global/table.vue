@@ -95,6 +95,8 @@ export default {
   },
   data() {
     return {
+      a: false,
+      b: false,
       currentEntries: 5, // 當前每頁筆數
       showEntries: [5,10,50,100], // 每頁筆數列表
       currentPage: 1, // 當前頁數

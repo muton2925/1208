@@ -8,7 +8,7 @@
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_md'" data-bs-parent="#sidebar-parent">
               <ul class="py-2">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="changeCollapseStatus()"> {{ child.name }} </router-link>
+                  <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="closeCollapse()"> {{ child.name }} </router-link>
                 </li>
               </ul>
             </div>
@@ -17,14 +17,14 @@
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_sm'" data-bs-parent="#sidebar-parent">
               <ul class="py-2">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="changeCollapseStatus()"> {{ child.name }} </router-link>
+                  <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="closeCollapse()"> {{ child.name }} </router-link>
                 </li>
               </ul>
             </div>
           </template>
         </template>
         <template v-else>
-          <router-link class="list-item" :to="{ path : '/' + item.url }" @click="changeCollapseStatus()">{{ item.name }}</router-link>
+          <router-link class="list-item" :to="{ path : '/' + item.url }" @click="closeCollapse()">{{ item.name }}</router-link>
         </template>
       </li>
     </ul>
@@ -60,7 +60,7 @@ export default {
     });
   },
   methods: {
-    changeCollapseStatus() {
+    closeCollapse() {
       if(this.windowWidth >= 768) {
         this.generic_template_md_ref = new Collapse(this.$refs.generic_template_md,{ toggle: false })
         this.nssi_view_md_ref = new Collapse(this.$refs.nssi_view_md,{ toggle: false })

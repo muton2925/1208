@@ -120,19 +120,21 @@ export default {
       modalCreate,modalUpdate,uploadData_update,uploadData_create,
     }
   },
-  created() {
-    const { PluginList } = Share();
-    PluginList()
-    .then(res => {
-      for(let i of res.data){
-        this.td_list.push(i);
-      }
-      this.status = true;
-    })
-    .catch(res => {
-      console.log(res);
-      this.status = true;
-    })
+  async created() {
+    // const { PluginList } = Share();
+    // PluginList()
+    // .then(res => {
+    //   for(let i of res.data){
+    //     this.td_list.push(i);
+    //   }
+    //   this.status = true;
+    // })
+    // .catch(res => {
+    //   console.log(res);
+    //   this.status = true;
+    // })
+    await this.getTableData();
+    this.status = true;
   },
   data() {
     return {
@@ -180,6 +182,19 @@ export default {
     }
   },
   methods: {
+    async getTableData(){
+      const { PluginList } = Share();
+      await PluginList()
+      .then(res => {
+        this.td_list = [];
+        for(let i of res.data){     
+          this.td_list.push(i);
+        }
+      })
+      .catch(res => {
+        console.log(res);
+        })
+      },
     updateData(val) {  // emit
       this.filterEntries = val;
     },
@@ -228,17 +243,8 @@ export default {
         form.append("name", this.fileName);
         form.append("pluginFile", this.fileData[0]);
         createPluginList(form)
-        .then(res => {
-          let obj = {
-            name: res.data.name,
-            allocate_nssi: 'allocate/main.py',
-            deallocate_nssi: 'deallocate/main.py',
-            pluginFile: res.data.pluginFile,
-            nm_host: '10.20.1.57:8081',
-            nfvo_host: '10.0.0.16:30888',
-            subscription_host: '10.0.1.108:8082'
-          };
-          this.td_list.push(obj);
+        .then(() => {
+          this.getTableData();
           this.$refs.modalCreate.closeModalEvent();
           this.removeCreateData();
         })

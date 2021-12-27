@@ -10,9 +10,7 @@
       </button>
     </div>
   </nav>
-  <template v-if="windowWidth <= 580">
-    <Offcanvas></Offcanvas>
-  </template>
+  <Offcanvas></Offcanvas>
 </template>
 <script>
 import Offcanvas from './offcanvas.vue';
@@ -20,16 +18,6 @@ export default {
   components: {
     Offcanvas,
   },
-  data() {
-    return {
-      windowWidth: window.innerWidth,
-    } 
-  },
-  mounted() {
-    window.addEventListener("resize", () => {
-      this.windowWidth = window.innerWidth;
-    });
-  }
 };
 </script>
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-  <aside class="d-inline-block w-0 w-sm-102px w-md-224px aside_height bg-blue">
+  <aside class="d-none d-sm-inline-block w-sm-102px w-md-224px aside_height bg-blue">
     <ul id="sidebar-parent" class="text-white">
       <li class="position-relative" v-for="item in menuData" :key="item.name">
         <template v-if="item.childNodes.length > 0">

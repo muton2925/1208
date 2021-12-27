@@ -10,120 +10,29 @@
       </button>
     </div>
   </nav>
-  <div v-show="windowWidth < 576" id="nav-offcanvas" class="offcanvas offcanvas-end offcanvas-custom" ref="offcanvas_ref">
-    <ul id="accordion-basic">
-      <offcanvas v-for="item in menuData" :key="item.name" :title="item.name" :icon="item.icon" :childs="item.childNodes" :url="item.url"></offcanvas>
-    </ul>
-  </div>
-  <!-- <div class="nav-height a a-manu nav-offcanvas " ></div> -->
+  <template v-if="windowWidth <= 580">
+    <Offcanvas></Offcanvas>
+  </template>
 </template>
 <script>
-import { ref } from 'vue';
-import { Offcanvas } from 'bootstrap/dist/js/bootstrap.bundle.js';
-import offcanvas from './offcanvas.vue';
+import Offcanvas from './offcanvas.vue';
 export default {
   components: {
-    offcanvas
-  },
-  setup() {
-    const offcanvas_ref = ref(null)
-    return{
-      offcanvas_ref,
-    }
+    Offcanvas,
   },
   data() {
     return {
-      offcanvas: '',
-      menuData: [
-        {
-          name: "Dashboard",
-          icon: "bi bi-clipboard",
-          url: "dashboard",
-          childNodes: [],
-        },
-        {
-          name: "NFV MANO Plugin",
-          icon: "bi bi-award",
-          url: "nfv_mano_plugin",
-          childNodes: [],
-        },
-        {
-          name: "Generic Template",
-          icon: "bi bi-bell",
-          url: "generic_template",
-          childNodes: [
-            {
-              name: "VNF Template",
-              url: "vnf_template"
-            },
-            {
-              name: "NSD Template",
-              url: "nsd_template"
-            },
-            {
-              name: "NRM Template",
-              url: "nrm_template"
-            },
-          ],
-        },
-        {
-          name: "NSS template",
-          icon: "bi bi-bootstrap",
-          url: "nss_template",
-          childNodes: [],
-        },
-        {
-          name: "NSSI View",
-          icon: "bi bi-brightness-high",
-          url: "nssi_view",
-          childNodes: [
-            {
-              name: "Graph View",
-              url: "nssi_topology"
-            },
-            {
-              name: "List View",
-              url: "NSS_Instance"
-            },
-          ],
-        },
-      ],
       windowWidth: window.innerWidth,
-    };
-  },
-  watch: {
-    windowWidth: function (newValue) {
-      if(newValue >= 576)
-        this.changeOffcanvasStatus();
-    },
+    } 
   },
   mounted() {
     window.addEventListener("resize", () => {
       this.windowWidth = window.innerWidth;
     });
-    this.offcanvas = new Offcanvas(this.$refs.offcanvas_ref,{})
-  },
-  methods: {
-    changeOffcanvasStatus() {
-      this.offcanvas.hide();
-    }
   }
 };
 </script>
 <style scoped>
-/* .nav-height {
-  min-height: calc(100vh - 70px);
-}
-.a{
-  width: 100vw;
-  position: absolute;
-  z-index: 1;
-  background-color: rgba(0,0,0,.15);
-}` */
-.offcanvas-custom {
-  top: 70px;
-  width: 180px;
-}
 .navbar_custom {
   width: 90px;
   margin: 0 16px;

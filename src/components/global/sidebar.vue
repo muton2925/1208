@@ -4,20 +4,24 @@
       <li class="position-relative" v-for="item in menuData" :key="item.name">
         <template v-if="item.childNodes.length > 0">
           <a class="list-item" data-bs-toggle="collapse" :data-bs-target="'#' + item.url">{{ item.name }}</a>
-          <div v-show="windowWidth >= 768" :id="item.url" class="collapse collapse-item" :ref="item.url + '_md'" data-bs-parent="#sidebar-parent">
+          <template v-if="windowWidth >= 768">
+            <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_md'" data-bs-parent="#sidebar-parent">
               <ul class="py-2">
                 <li v-for="child in item.childNodes" :key="child.name">
                   <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="changeCollapseStatus()"> {{ child.name }} </router-link>
                 </li>
               </ul>
-          </div>
-          <div v-show="windowWidth >= 576 && windowWidth < 768" :id="item.url" class="collapse collapse-item" :ref="item.url + '_sm'" data-bs-parent="#sidebar-parent">
+            </div>
+          </template>
+          <template v-else-if="windowWidth >= 576 && windowWidth <768">
+            <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_sm'" data-bs-parent="#sidebar-parent">
               <ul class="py-2">
                 <li v-for="child in item.childNodes" :key="child.name">
                   <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="changeCollapseStatus()"> {{ child.name }} </router-link>
                 </li>
               </ul>
-          </div>
+            </div>
+          </template>
         </template>
         <template v-else>
           <router-link class="list-item" :to="{ path : '/' + item.url }" @click="changeCollapseStatus()">{{ item.name }}</router-link>
@@ -44,40 +48,31 @@ export default {
     return {
       changeStatus: false,
       windowWidth: window.innerWidth,
-      generic_template_collapse: '',
-      nssi_view_collapse: ''
+      generic_template_md_ref: '',
+      generic_template_sm_ref: '',
+      nssi_view_md_ref: '',
+      nssi_view_sm_ref: '',
     };
-  },
-  watch: {
-    windowWidth: function(newVal,oldVal) {
-      if(newVal >= 768) {
-        if(oldVal < 768) 
-          this.changeCollapseStatus(); // 767(sm) -> 768(md)
-      }
-      else if(newVal < 768) {
-        if(newVal < 576) { // 576(sm) -> 575(sm)
-          this.changeCollapseStatus();
-        }
-        if(oldVal >= 768)  // 768(sm) -> 767(sm)
-          this.changeCollapseStatus();
-      }
-    }
   },
   mounted() {
     window.addEventListener("resize", () => {
       this.windowWidth = window.innerWidth;
     });
-    this.generic_template_collapse_sm = new Collapse(this.$refs.generic_template_sm,{ toggle: false })
-    this.generic_template_collapse_md = new Collapse(this.$refs.generic_template_md,{ toggle: false })
-    this.nssi_view_collapse_sm = new Collapse(this.$refs.nssi_view_sm,{ toggle: false })
-    this.nssi_view_collapse_md = new Collapse(this.$refs.nssi_view_md,{ toggle: false })
   },
   methods: {
     changeCollapseStatus() {
-      this.generic_template_collapse_sm.hide();
-      this.generic_template_collapse_md.hide();
-      this.nssi_view_collapse_sm.hide();
-      this.nssi_view_collapse_md.hide();
+      if(this.windowWidth >= 768) {
+        this.generic_template_md_ref = new Collapse(this.$refs.generic_template_md,{ toggle: false })
+        this.nssi_view_md_ref = new Collapse(this.$refs.nssi_view_md,{ toggle: false })
+        this.generic_template_md_ref.hide();
+        this.nssi_view_md_ref.hide();
+      }
+      else {
+        this.generic_template_sm_ref = new Collapse(this.$refs.generic_template_sm,{ toggle: false })
+        this.nssi_view_sm_ref = new Collapse(this.$refs.nssi_view_sm,{ toggle: false })
+        this.generic_template_sm_ref.hide();
+        this.nssi_view_sm_ref.hide();
+      }
     }
   }
 }

@@ -4,12 +4,12 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
-            Delete Service Mapping Plugin
+            <slot name="header"></slot>
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="cancelEvent"></button>
         </div>
         <div class="modal-body mx-1">
-          是否刪除此 Plugin ?
+          是否刪除此檔案 ?
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelEvent">Cancel</button>

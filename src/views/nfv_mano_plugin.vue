@@ -92,7 +92,11 @@
       <button type="button" class="btn btn-warning text-white" @click="update_plugin_modal">Update</button>
     </template>
   </Modalupdate>
-  <Modaldelete @delete="deleteData" @remove="removeFile"></Modaldelete>
+  <Modaldelete @delete="deleteData" @remove="removeFile">
+    <template v-slot:header>
+      Delete Service Mapping Plugin
+    </template>
+  </Modaldelete>
 </template>
 <script>
 import Modalcreate from '../components/global/modal-create.vue';
@@ -115,7 +119,6 @@ export default {
     const modalUpdate = ref(null)
     const uploadData_create = ref(null)
     const uploadData_update = ref(null)
-    
     return{
       modalCreate,modalUpdate,uploadData_update,uploadData_create,
     }
@@ -132,9 +135,9 @@ export default {
         { name: "name", text: "Plugin Name", sort: true, status: 'none' },
         { name: "allocate_nssi", text: "Allocate NSSI File", sort: true, status: 'none' },
         { name: "dellocate_nssi", text: "Deallocate NSSI File", sort: true, status: 'none' },
-        { name: "update_plugin", text: "Update Plugin", sort: false, status: 'none' },
-        { name: "plugin_file", text: "Plugin File", sort: false, status: 'none' },
-        { name: "delete_plugin", text: "Delete Plugin", sort: false, status: 'none' },
+        { name: "update_plugin", text: "Update", sort: false, status: 'none' },
+        { name: "plugin_file", text: "Download", sort: false, status: 'none' },
+        { name: "delete_plugin", text: "Delete", sort: false, status: 'none' },
       ],
       td_list:[],
       columnSort: ['name','allocate_nssi','dellocate_nssi'],

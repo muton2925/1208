@@ -1,39 +1,43 @@
 <template>
-  <Table v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateData">
-    <template v-slot:header>
-      NFV MANO Plugin
-    </template>
-    <template v-slot:button>
-      Create Plugin
-    </template>
-    <template v-slot:table-name>
-      NFV MANO Plugin List
-    </template>
-    <template v-slot:table-td>
-      <tr v-for="item in filterEntries" :key="item.name">
-        <td>{{ item.name }}</td>
-        <td>{{ item.allocate_nssi }}</td>
-        <td>{{ item.deallocate_nssi }}</td>
-        <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_plugin(item.name)">
-            <i class="bi bi-wrench"></i>
-          </div>
-        </td>
-        <td class="w-0">
-          <a :href="item.pluginFile">
-          <div class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" >
-            <i class="bi bi-arrow-down"></i>
-          </div>
-          </a>
-        </td>
-        <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="delete_plugin(item)">
-            <i class="bi bi-trash"></i>
-          </div>
-        </td>
-      </tr>
-    </template>
-  </Table>
+  <div class="grid-custom">
+    <div class="grid-main-custom" style="overflow: hidden">
+      <Table v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateData">
+        <template v-slot:header>
+          NFV MANO Plugin
+        </template>
+        <template v-slot:button>
+          Create Plugin
+        </template>
+        <template v-slot:table-name>
+          NFV MANO Plugin List
+        </template>
+        <template v-slot:table-td>
+          <tr v-for="item in filterEntries" :key="item.name">
+            <td>{{ item.name }}</td>
+            <td>{{ item.allocate_nssi }}</td>
+            <td>{{ item.deallocate_nssi }}</td>
+            <td class="w-0">
+              <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_plugin(item.name)">
+                <i class="bi bi-wrench"></i>
+              </div>
+            </td>
+            <td class="w-0">
+              <a :href="item.pluginFile">
+              <div class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" >
+                <i class="bi bi-arrow-down"></i>
+              </div>
+              </a>
+            </td>
+            <td class="w-0">
+              <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="delete_plugin(item)">
+                <i class="bi bi-trash"></i>
+              </div>
+            </td>
+          </tr>
+        </template>
+      </Table>
+    </div>
+  </div>
   <Modalcreate ref="modalCreate" @remove="removeCreateData">
     <template v-slot:header>
       Create new NFV MANO Plugin
@@ -284,4 +288,28 @@ export default {
   }
 }
 </script>
+<style scoped>
+.grid-custom {
+  display: grid;
+  grid-template-rows: 70px 1fr;
+  grid-template-columns: 1fr;
+}
+.grid-main-custom {
+  grid-row: 2 / 3;
+  grid-column: 1 / 2;
+}
+@media (min-width: 576px) {
+  .grid-custom {
+    grid-template-columns: 102px 1fr;
+  }
+  .grid-main-custom {
+    grid-column: 2 / 3;
+  }
+}
+@media (min-width: 768px) {
+  .grid-custom {
+    grid-template-columns: 224px 1fr;
+  }
+}
+</style>
 

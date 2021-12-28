@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column container-outer user-select-none" style="overflow:hidden">
+  <div class="d-flex flex-column p-4 user-select-none">
     <div class="container-header d-flex justify-content-between align-items-center flex-wrap mb-4">
       <h3>
         <slot name="header"></slot>
@@ -30,7 +30,7 @@
             <input type="text" class="form-control form-control" placeholder="Search" v-model="searchInput" @input="searchEvent">
           </div>
         </div>
-        <div class="table-responsive mb-2 mb-lg-3 table-custom">
+        <div class="mb-2 mb-lg-3 table-custom" style="min-height: 115px">
           <table class="table table-bordered table-striped table-hover align-middle mb-0">
             <thead>
               <tr>
@@ -61,7 +61,7 @@
         </div>
         <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center">
           <div class="col-12 text-center col-lg-auto mb-2 mb-lg-0">Show {{ showInfo.start }} to {{ showInfo.end }} of {{ showInfo.length }} entries</div>
-          <ul class="pagination col-auto">
+          <ul class="pagination justify-content-center flex-wrap col-lg-auto" :class="{ 'pagination-sm' : windowWidth < 576 }">
             <li class="page-item" :class="{ disabled : currentPage == 1 }">
               <a class="page-link" href="#" @click.prevent="paginateEvent(1)">First</a>
             </li>
@@ -95,8 +95,8 @@ export default {
   },
   data() {
     return {
-      currentEntries: 5, // 當前每頁筆數
-      showEntries: [5,10,50,100], // 每頁筆數列表
+      currentEntries: 10, // 當前每頁筆數
+      showEntries: [10,50,100], // 每頁筆數列表
       currentPage: 1, // 當前頁數
       searchInput: '',
       searchEntries: [],
@@ -105,6 +105,7 @@ export default {
       sortAsc: '',
       sortDesc: '',
       sortCol: '',
+      windowWidth: window.innerWidth,
     }
   },
   props:{
@@ -129,6 +130,11 @@ export default {
   created() {
     this.filterEntries = $array.paginate(this.entries, this.currentPage, this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
     this.$emit('update', this.filterEntries); // 過濾好的資料丟回
+  },
+  mounted() {
+    window.addEventListener("resize", () => {
+      this.windowWidth = window.innerWidth;
+    });
   },
   watch: {
     entrie: {
@@ -229,10 +235,6 @@ export default {
 }
 </script>
 <style>
-.container-outer {
-  flex: 1 1 auto;
-  padding: 1.5rem;
-}
 .container-header h3 {
   margin: 0;
   flex: none;
@@ -254,6 +256,7 @@ export default {
   font-weight: 900;
 }
 .form-select-custom {
+  width: auto !important;
   padding-left: 0.75rem !important;
 }
 thead tr th {
@@ -271,8 +274,8 @@ tbody tr td {
   height: 48px;
 }
 .table-custom {
-  min-height: 96px;
   max-height: calc(100vh - 399px);
+  overflow-x: scroll !important;
   overflow-y: scroll;
   border-top:0.1px solid #dee2e6;
 }

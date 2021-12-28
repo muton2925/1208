@@ -1,9 +1,9 @@
 <template>
   <Header></Header>
-  <div class="d-flex main-custom">
+    <main>
+      <router-view></router-view>
+    </main>
     <Sidebar :menuData="menuData"></Sidebar>
-    <router-view></router-view>
-  </div>
 </template>
 <script>
 import Header from "./components/global/header.vue";
@@ -103,9 +103,5 @@ ul {
 .offcanvas-backdrop {
   width: 100% !important;
   height: 100% !important;
-}
-.main-custom {
-  position: relative;
-  top: 70px;
 }
 </style>

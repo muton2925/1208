@@ -1,5 +1,5 @@
 <template>
-  <aside class="d-none d-sm-inline-block w-sm-102px w-md-224px aside_height bg-blue">
+  <aside class="sidebar-custom bg-blue">
     <ul id="sidebar-parent" class="text-white">
       <li class="position-relative" v-for="item in menuData" :key="item.name">
         <template v-if="item.childNodes.length > 0">
@@ -78,6 +78,12 @@ export default {
 }
 </script>
 <style scoped>
+.sidebar-custom {
+  display: none;
+  position: fixed;
+  top: 70px;
+  bottom: 0;
+}
 .list-item {
   display: flex;
   width: 102px;
@@ -93,7 +99,7 @@ export default {
   position: absolute;
   top: 15px;
   left: 110px;
-  z-index: 999;
+  z-index: 20;
   box-shadow: 0 0.15rem 1.75rem 0 rgb(58 59 69 / 15%);
   border-radius: 5px;
   background-color: #FFF;
@@ -104,7 +110,16 @@ export default {
   padding: .75rem 1.5rem;
   white-space: nowrap;
 }
+@media (min-width: 576px) {
+  .sidebar-custom {
+    display: block;
+    width: 102px;
+  }
+}
 @media (min-width: 768px) {
+  .sidebar-custom {
+    width: 224px;
+  }
   .list-item {
     width: 224px;
     padding: 19px;

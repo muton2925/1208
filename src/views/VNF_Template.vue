@@ -9,7 +9,6 @@
     <template v-slot:table-name>
       VNF Template List
     </template>
- 
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.name">
         <td><i class=" text-white bg-info rounded-circle cursor-pointer bi bi-file-text-fill mx-2"></i>{{ item.templateId }}
@@ -39,7 +38,7 @@
       </tr>
     </template>
   </Table>
-  <Modalcreate>
+  <Modalcreate ref="modalCreate" @remove="removeCreateData">
     <template v-slot:header>
       Create new VNF Template
     </template>
@@ -47,30 +46,25 @@
       <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">Template Name :</label>
-          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" placeholder="Template Name" v-model="fileName">
+          <input type="text" class="form-control" id="InputFile" placeholder="Template Name" :class="{ 'is-invalid' : text_invalidated }" v-model="fileName">
           <div class="invalid-feedback">
-            <!-- <template v-if="repeatName">
-              此 Plugin 名稱已存在
-            </template>
-            <template v-else>
-              Plugin 名稱不得為空
-            </template> -->
             <template v-if="!repeatName">
-              Plugin 名稱不得為空
+              清輸入 Template Name
             </template>
           </div>
         </div>
-        <div class="mb-2">
+        <div class="mb-3">
           <label for="InputFile2" class="form-label">VNF Description :</label>
-          <input type="text" class="form-control" id="InputFile2" placeholder="VNF Description">
+          <input type="text" class="form-control" id="InputFile2" placeholder="NSD Description" v-model="templateDescription">
         </div>
-        <div class="mb-2">
-          <label for="NFVOName" class="form-label">NFVO Name :</label>
-          <select v-model="NFVOName" name="NFVOName" id="NFVOName" :class="{ 'is-invalid' : file_invalidated }">
-            <option v-for="item in NFVO_list" :value="item" :key="item">{{item}}</option>
+        <div>
+          <label for="InputFile3" class="form-label">NFVO Name :</label>
+          <select v-model="currentNFVMANO" class="form-select form-select mb-3" :class="{ 'is-invalid' : file_invalidated }" id="InputFile3" aria-label=".form-select example" @change="create_Template">
+            <option selected>請選擇 ...</option>
+            <option v-for="item in nfv_mano_list" :key="item" :value="item">{{ item }}</option>
           </select>
           <div class="invalid-feedback">
-            檔案不得為空
+            請選擇 NFVO
           </div>
         </div>
       </form>
@@ -145,17 +139,18 @@ export default {
         { name: "Type", text: "Type", sort: true, status: 'none' },
         { name: "NFVO", text: "NFVO", sort: true, status: 'none' },
         { name: "VNF_Status", text: "VNF Status", sort: true, status: 'none' },
-        { name: "update_template", text: "Update Template", sort: false, status: 'none' },
-        { name: "Template_Download", text: "Template Download", sort: false, status: 'none' },
-        { name: "delete_template", text: "Delete Template", sort: false, status: 'none' },
+        { name: "update_template", text: "Update", sort: false, status: 'none' },
+        { name: "Template_Download", text: "Download", sort: false, status: 'none' },
+        { name: "delete_template", text: "Delete", sort: false, status: 'none' },
       ],
       td_list:[],
       columnSort:["idList","name","Description","Type","NFVO","VNF_Status"],
       columnNumber:9,
-      NFVO_list:[],
+      nfv_mano_list:[],
       fileName:"",
       nfvoType:"",
-      NFVOName:"select a NFVO",
+      currentNFVMANO: '請選擇 ...',
+      templateDescription: '',
       fileData: {},
       text_invalidated: false, //文字是否未通過認證
       file_invalidated: false
@@ -166,8 +161,8 @@ export default {
     const {PluginList}  = Share();
     this.getTemplate()
     PluginList().then(res=>{
-      for (const idx in res.data) {
-        this.NFVO_list.push(res.data[idx].name)
+      for(let i of res.data){
+        this.nfv_mano_list.push(i.name);
       }
     })
   },
@@ -209,6 +204,9 @@ export default {
         console.log(err)
       })
     },
+    updateData(val) { //emit
+      this.filterEntries = val;
+    },
     validate_clear() {
       this.text_invalidated = false;
       this.file_invalidated = false;
@@ -220,19 +218,39 @@ export default {
       this.fileName = '';
       this.fileData = {};
     },
-    updateData(val) {
-      this.filterEntries = val;
-    },
     create_validate() {
       if(this.repeatName || this.fileName == '') {
         this.text_invalidated = true;
       }
-      // if(this.fileData[0] == null) {
-      //   this.file_invalidated = true;
-      // }
+      if(this.currentNFVMANO == '請選擇 ...') {
+        this.file_invalidated = true;
+      }
+    },
+    removeCreateData() {
+      this.removeData();
+      this.validate_clear();
+      this.currentNFVMANO = '請選擇 ...'
+      this.templateDescription = ''
+    },
+    create_Template(){
+      this.fileData = this.currentNFVMANO
     },
     create_template(){
-
+      this.create_validate();
+      if(this.isinvalidated == false) {
+        const { createGenericTemplate } = GenericTemplate();
+        let form = new FormData();
+        form.append("name", this.fileName);
+        form.append("description", this.templateDescription);
+        form.append("nfvoType", this.currentNFVMANO);
+        form.append("templateType", "VNF");
+        createGenericTemplate(form)
+        .then(res => {
+          this.td_list.push(res.data);
+          this.$refs.modalCreate.closeModalEvent();
+          this.removeCreateData();
+        })
+      }
     },
     add_Template(e) {
       this.fileData = e.target.files;

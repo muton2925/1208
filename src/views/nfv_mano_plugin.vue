@@ -95,6 +95,7 @@ export default {
     const { PluginList } = Share();
     PluginList()
     .then(res => {
+      console.log(res);
       for(let i of res.data){
         this.td_list.push(i);
       }

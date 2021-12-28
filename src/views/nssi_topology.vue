@@ -15,7 +15,7 @@
         </div>
         <div class="card-body">
             <div class="chart-area">
-            <div ref="dom" id="container" style="height: 200%"></div>
+            <div ref="dom" id="container" style="height: 200%" class=" d-flex justify-content-center"></div>
             <hr>
             </div>
         </div>
@@ -32,7 +32,8 @@
         <!-- Card Body -->
         <div class="card-body">
             <div class="chart-pie pt-4">
-            <div id="NS-view-Chart"></div>
+            <div ref="viewChart" id="NS-view-Chart"></div>
+              <p class="m-0" v-for="item in NSViewChartContent" :key="item">{{item}}</p>
             </div>
             <hr>
         </div>
@@ -51,30 +52,33 @@
 
 </template>
 <script>
-import {  ref ,onMounted} from '@vue/runtime-core';
+import {  ref ,onMounted, onBeforeUnmount, watch,  } from '@vue/runtime-core';
 // import Modal from '../components/global/modal.vue';
 // import Table from '../components/global/table.vue';
-import {show_nssi} from '../assets/js/01'
+import {show_nssi,nssiContent,myChartDbclick,myChartClick,NSViewChartContent} from '../assets/js/01'
 export default {
   components: {
     // Modal,
     // Table
   },
   setup(){
-
         const dom = ref(null);
+        const url = 'http://localhost:3000/data';
         onMounted(()=>{
-          console.log(dom.value)
-          show_nssi(dom.value)
+          let mychart = show_nssi(dom.value,false)
+          nssiContent(mychart,url)
+          myChartDbclick(mychart)
+          myChartClick(mychart,url)
+        })
+        watch(NSViewChartContent ,()=>{
+          return NSViewChartContent
+        })
+        onBeforeUnmount(()=>{
+          show_nssi(dom.value,true)
         })
         return{
-          dom
+          dom,NSViewChartContent
         }
-  },
-  data() {
-    return {
-      th_list :['Id List', 'Template Name', 'Description', 'Type',	'NFVO',	'VNF Status',	'Update Template',	'Template Download',	'Delete Template']
-    }
   }
 }
 </script>

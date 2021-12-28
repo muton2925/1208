@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_lst" @update="updateData">
+  <Table  v-if="status" :column="th_list" :entrie="td_lst" @update="updateData">
     <template v-slot:header>
       Virtualized Network Function Template
     </template>
@@ -53,7 +53,7 @@
         </div>
         <div class="mb-2">
           <label for="NFVOName" class="form-label">NFVO Name :</label>
-          <select name="NFVOName" id="NFVOName"></select>
+          <select ref= 'NFVOName' name="NFVOName" id="NFVOName"></select>
         </div>
       </form>
     </template>
@@ -75,6 +75,7 @@ export default {
   data() {
     return {
       filterEntries:[],
+      status:false,
        th_list: [
         { name: "idList", text: "Id List", sort: true, status: 'none' },
         { name: "name", text: "Template Name", sort: true, status: 'none' },
@@ -90,7 +91,6 @@ export default {
     }
   },
   created(){
-    console.log('VNF')
     const {TemplateList}  = Share();
     const th = this;
     TemplateList().then(res=>{
@@ -99,8 +99,10 @@ export default {
       VNF.forEach(element => {
         th.td_lst.push(element)
       });
+       this.status=true;
     }).catch(err=>{
       console.log(err)
+      this.status=true;
     })
  
   },

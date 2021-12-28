@@ -1,6 +1,6 @@
 <template>
   <Nav></Nav>
-  <div class="d-sm-flex">
+  <div class="d-sm-flex app">
     <Menucomponent></Menucomponent>
     <router-view></router-view>
   </div>
@@ -21,6 +21,9 @@ export default {
 };
 </script>
 <style>
+.app{
+  min-width: 500px;
+}
 ul {
   list-style: none !important;
   padding: 0 !important;
@@ -37,10 +40,12 @@ ul {
 .offcanvas-backdrop {
   top: 70px !important;
 }
+
 .madal{
   padding: 0 !important;
 }
 .madal-open{
+
   padding: 0 !important;
 }
 </style>

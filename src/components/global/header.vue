@@ -1,18 +1,22 @@
 <template>
-  <nav class="navbar navbar-expand-sm navbar-dark flex-nowrap py-0 bg-blue shadow-normal vw-mincontent">
+  <nav class="navbar navbar-expand-sm navbar-dark flex-nowrap py-0 bg-blue shadow-normal vw-mincontent" >
     <div class="container-fluid px-0">
       <div class="navbar-brand white-space-normal bg-white px-3 py-0">
         <img src="../../assets/free5gmano_icon.png" alt="free5gmano_icon" width="70" height="70"/>
         <h1 class="navbar_custom d-none d-md-inline-block align-middle">FREE 5G MANO</h1>
       </div>
-      <button class="navbar-toggler me-3" data-bs-toggle="offcanvas" data-bs-target="#nav-offcanvas">
+      <!-- <button class="navbar-toggler me-3 " data-bs-toggle="offcanvas" data-bs-target="#nav-offcanvas">
         <span class="navbar-toggler-icon"></span>
-      </button>
-      
+      </button> -->
     </div>
-
   </nav>
-  <div v-if="windowWidth < 576" id="nav-offcanvas" class="z offcanvas offcanvas-end offcanvas-custom" data-bs-backdrop="false">
+  <div class="b navbar-dark " style="height:70px">
+    <button class="navbar-toggler me-3   " data-bs-toggle="offcanvas" data-bs-target="#nav-offcanvas">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+  </div> 
+  <!-- <div class="navbar-dark bg-blue shadow-normal  py-0 nav" style=" height:70px"></div> -->
+  <div v-if="windowWidth < 576" id="nav-offcanvas" class=" offcanvas offcanvas-end offcanvas-custom" data-bs-backdrop="false">
     <ul id="accordion-basic">
       <Item v-for="item in menuData" :key="item.name" :title="item.name" :icon="item.icon" :childs="item.childNodes" :url="item.url"></Item>
     </ul>
@@ -115,9 +119,18 @@ export default {
   z-index: 1;
   background-color: rgba(0,0,0,.15);
 }` */
-.z{
-  z-index: 9999;
+nav{
+   min-width: 500px !important;
 }
+.b{
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
 .offcanvas-custom {
   top: 70px;
   width: 180px;

@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_lst" @update="updateData">
+  <Table v-if="status" :column="th_list" :entrie="td_lst" @update="updateData">
     <template v-slot:header>
       Network Service Descriptor Template
     </template>
@@ -77,7 +77,9 @@ export default {
   },
   data() {
     return {
-       th_list: [
+      status:false,
+      filterEntries:[],
+      th_list: [
         { name: "Id", text: "Id", sort: true, status: 'none' },
         { name: "name", text: "Template Name", sort: true, status: 'none' },
         { name: "Description", text: "Description", sort: true, status: 'none' },
@@ -108,6 +110,7 @@ export default {
         }
         th.td_lst.push(element)
       });
+       this.status=true;
     })
   },
   methods:{

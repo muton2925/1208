@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_lst" @update="updateData">
+  <Table v-if="status" :column="th_list" :entrie="td_lst" @update="updateData">
     <template v-slot:header>
       Network Resource Model Template
     </template>
@@ -72,6 +72,8 @@ export default {
   },
   data() {
     return {
+      status:false,
+      filterEntries:[],
        th_list: [
         { name: "Id", text: "Id", sort: true, status: 'none' },
         { name: "name", text: "Template Name", sort: true, status: 'none' },
@@ -91,10 +93,15 @@ export default {
     const {TemplateList}  = Share();
     const th = this;
     TemplateList().then(res=>{
+      console.log(res)
       const NRM = res.data.filter(x=>x.templateType == 'NRM')
       NRM.forEach(element => {
         th.td_lst.push(element)
+        th.status=true;
       });
+    }).catch(err=>{
+      console.log(err)
+      th.status=true;
     })
   },
   methods:{

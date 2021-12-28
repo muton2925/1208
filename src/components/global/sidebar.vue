@@ -1,134 +1,138 @@
 <template>
-  <aside class="d-none d-sm-inline-block w-sm-102px w-md-224px aside_height bg-blue">
-    <ul class="list-none text-white text-center text-md-start" id="accordionExample">
-      <template v-if="windowWidth >= 768">
-        <li class="list-item"><router-link to="/dashboard">Dashboard</router-link></li>
-        <li class="list-item"><router-link to="/nfv_mano_plugin">NFV MANO Plugin</router-link></li>
-        <li class="list-item">
-          <a class="mb-4" data-bs-toggle="collapse" data-bs-target="#collapseOne">Generic Template</a>
-          <div id="collapseOne" class="mt-3 collapse" data-bs-parent="#accordionExample">
-            <div class="accordion-body-custom">
-              <router-link class="list-item2" to="/VNF_Template">VNF Template</router-link>
-              <router-link class="list-item2" to="/NSD_Template">NSD Template</router-link>
-              <router-link class="list-item2" to="/NRM_Template">NRM Template</router-link>
+  <aside class="sidebar-custom bg-blue">
+    <ul id="sidebar-parent" class="text-white">
+      <li class="position-relative" v-for="item in menuData" :key="item.name">
+        <template v-if="item.childNodes.length > 0">
+          <a class="list-item" data-bs-toggle="collapse" :data-bs-target="'#' + item.url">{{ item.name }}</a>
+          <template v-if="windowWidth >= 768">
+            <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_md'" data-bs-parent="#sidebar-parent">
+              <ul class="py-2">
+                <li v-for="child in item.childNodes" :key="child.name">
+                  <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="closeCollapse()"> {{ child.name }} </router-link>
+                </li>
+              </ul>
             </div>
-          </div>
-        </li>
-        <li class="list-item"><router-link  to="/NSS_template">NSS template</router-link></li>
-        <li class="list-item">
-          <a data-bs-toggle="collapse" data-bs-target="#collapseTwo">NSSI View</a>
-          <div id="collapseTwo" class="mt-3 collapse" data-bs-parent="#accordionExample">
-            <div class="accordion-body-custom">
-              <router-link class="list-item2" to="/nssi_topology">Graph View</router-link>
-              <router-link class="list-item2" to="/NSS_Instance">List View</router-link>
+          </template>
+          <template v-else-if="windowWidth >= 576 && windowWidth <768">
+            <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_sm'" data-bs-parent="#sidebar-parent">
+              <ul class="py-2">
+                <li v-for="child in item.childNodes" :key="child.name">
+                  <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="closeCollapse()"> {{ child.name }} </router-link>
+                </li>
+              </ul>
             </div>
-          </div>
-        </li>
-      </template>
-      <template v-else>
-        <li class="list-item"><router-link to="/dashboard">Dashboard</router-link></li>
-        <li class="list-item"><router-link to="/nfv_mano_plugin">NFV MANO Plugin</router-link></li>
-        <li class="list-item">
-          <router-link to="/nfv_mano_plugin" data-bs-toggle="collapse" data-bs-target="#collapse1">Generic Template</router-link>
-          <div id="collapse1" class="collapse aaa" data-bs-parent="#accordionExample">
-            <div class="accordion-body-custom">
-              <router-link class="list-item2" to="/VNF_Template">VNF Template</router-link>
-              <router-link class="list-item2" to="/NSD_Template">NSD Template</router-link>
-              <router-link class="list-item2" to="/NRM_Template">NRM Template</router-link>
-            </div>
-          </div>
-        </li>
-        <li class="list-item"><router-link to="/nfv_mano_plugin">NSS Template</router-link></li>
-        <li class="list-item">
-          <router-link to="/nfv_mano_plugin" data-bs-toggle="collapse" data-bs-target="#collapse2">NSSI View</router-link>
-          <div id="collapse2" class="collapse aaa" data-bs-parent="#accordionExample">
-            <div class="accordion-body-custom">
-              <router-link class="list-item2" to="/VNF_Template">VNF Template</router-link>
-              <router-link class="list-item2" to="/NSD_Template">NSD Template</router-link>
-              <router-link class="list-item2" to="/NRM_Template">NRM Template</router-link>
-            </div>
-          </div>
-        </li>
-      </template>
+          </template>
+        </template>
+        <template v-else>
+          <router-link class="list-item" :to="{ path : '/' + item.url }" @click="closeCollapse()">{{ item.name }}</router-link>
+        </template>
+      </li>
     </ul>
   </aside>
 </template>
 <script>
+import { ref } from 'vue';
+import { Collapse } from 'bootstrap/dist/js/bootstrap.bundle.js'
 export default {
+  props: ['menuData'],
+  setup() {
+    const generic_template_sm = ref(null)
+    const generic_template_md = ref(null)
+    const nssi_view_sm = ref(null)
+    const nssi_view_md = ref(null)
+    return{
+      generic_template_sm,generic_template_md,nssi_view_sm,nssi_view_md
+    }
+  },
   data() {
     return {
+      changeStatus: false,
       windowWidth: window.innerWidth,
+      generic_template_md_ref: '',
+      generic_template_sm_ref: '',
+      nssi_view_md_ref: '',
+      nssi_view_sm_ref: '',
     };
-  },
-  watch: {
-    windowWidth: function (newValue,oldValue) {
-      if(oldValue < 768){
-        if (newValue >= 768) {
-          this.isOpen = false;
-        }
-      }
-      else{
-        if(newValue < 768) {
-          this.isOpen = false;
-        }        
-      }
-    },
   },
   mounted() {
     window.addEventListener("resize", () => {
       this.windowWidth = window.innerWidth;
     });
   },
+  methods: {
+    closeCollapse() {
+      if(this.windowWidth >= 768) {
+        this.generic_template_md_ref = new Collapse(this.$refs.generic_template_md,{ toggle: false })
+        this.nssi_view_md_ref = new Collapse(this.$refs.nssi_view_md,{ toggle: false })
+        this.generic_template_md_ref.hide();
+        this.nssi_view_md_ref.hide();
+      }
+      else {
+        this.generic_template_sm_ref = new Collapse(this.$refs.generic_template_sm,{ toggle: false })
+        this.nssi_view_sm_ref = new Collapse(this.$refs.nssi_view_sm,{ toggle: false })
+        this.generic_template_sm_ref.hide();
+        this.nssi_view_sm_ref.hide();
+      }
+    }
+  }
 }
 </script>
 <style scoped>
-li{
-    cursor: pointer;
-}
-.aaa {
-    position: absolute;
-    top: 0;
-    left: 110px;
-    box-shadow: 0 0.15rem 1.75rem 0 rgb(58 59 69 / 15%);
-    z-index: 999;
-}
-.accordion-body-custom {
-    background-color: #FFF;
-    border-radius: 5px;
-    padding: 8px 0;
-}
-.list-none {
-    padding-left: 0;
-    list-style: none;
+.sidebar-custom {
+  display: none;
+  position: fixed;
+  top: 70px;
+  bottom: 0;
 }
 .list-item {
+  display: flex;
+  width: 102px;
+  color: white;
+  font-size: .65rem;
+  padding: 12px 16px;
+  text-align: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.collapse-item {
+  position: absolute;
+  top: 15px;
+  left: 110px;
+  z-index: 20;
+  box-shadow: 0 0.15rem 1.75rem 0 rgb(58 59 69 / 15%);
+  border-radius: 5px;
+  background-color: #FFF;
+}
+.collapse-item .list-item {
+  width: 100%;
+  color: black;
+  padding: .75rem 1.5rem;
+  white-space: nowrap;
+}
+@media (min-width: 576px) {
+  .sidebar-custom {
     display: block;
-    font-size: .65rem;
-    padding: 12px 16px;
     width: 102px;
-    position: relative !important;
-}
-.list-item a{
-    color: white;
-    text-decoration: none;
-}
-.list-item2 {
-    padding: 0.5rem 1rem;
-    margin: 0 0.5rem;
-    display: block;
-    color: #494b5c !important;
-    text-decoration: none;
-    border: 0.35rem;
-    white-space: nowrap;
-}
-.bang {
-    position: absolute;
-
+  }
 }
 @media (min-width: 768px) {
-    .list-item {
-        padding: 19px;
-        width: 224px;
-    }
+  .sidebar-custom {
+    width: 224px;
+  }
+  .list-item {
+    width: 224px;
+    padding: 19px;
+    justify-content: start;
+  }
+  .collapse-item {
+    position: relative;
+    margin: 0 1rem;
+    top: 0;
+    left: 0;
+  }
+  .collapse-item .list-item {
+    padding: .75rem 1.5rem;
+  }
 }
 </style>

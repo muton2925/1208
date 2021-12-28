@@ -1,48 +1,48 @@
 <template>
-  <div class="modal fade" id="update_plugin_Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="update_plugin_Modal" ref="modal_update" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             <slot name="header"></slot>
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="cancelEvent"></button>
         </div>
         <div class="modal-body mx-1">
-          <form>
-            <div class="mb-3">
-              <label for="InputFile" class="form-label">
-                <slot name="plugin-name"></slot>
-              </label>
-              <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="plugin_name" readonly>
-            </div>
-            <div class="mb-2">
-              <label for="UploadFile" class="form-label">
-                <slot name="plugin-file"></slot>
-              </label>
-              <input type="file" class="form-control" id="UploadFile">
-            </div>
-          </form>
+          <slot name="body"></slot>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-warning text-white">Update</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelEvent">Cancel</button>
+          <slot name="footer"></slot>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import { ref } from 'vue';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
 export default {
-  props: ['filename'],
-  data() {
-    return {
-
+  setup() {
+    const modal_update = ref(null)
+    return{
+      modal_update,
     }
   },
-  computed: {
-    plugin_name() {
-      return this.filename
+  data() {
+    return {
+      modal: '',
+    }
+  },
+  mounted() {
+    this.modal = new Modal(this.$refs.modal_update, {})
+  },
+  methods: {
+    cancelEvent() {
+      this.$emit('remove')
+    },
+    closeModalEvent() {
+      this.modal.hide();
     }
   }
 }

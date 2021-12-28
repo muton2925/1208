@@ -1,17 +1,14 @@
 import axios from 'axios'
-
+// const baseURL = 'http://10.0.0.15:8081/'
 // const baseURL = 'http://localhost:3000/'
 const baseURL = 'http://127.0.0.1:8000/'
-// const baseURL = 'http://10.0.0.15:8081/'
 const instance  = axios.create({
     baseURL:baseURL
 })
 const Share = function(){
-
     const PluginList = ()=>instance.get(`plugin/management/`)
     // const PluginList = ()=>instance.get(`data`)
     const TemplateList = ()=>instance.get(`ObjectManagement/GenericTemplate/`)
-    // const TemplateList = ()=>instance.get(`data`)
     return {PluginList,TemplateList}
 }
 const nss_template = function(){
@@ -31,7 +28,8 @@ const GenericTemplate = function(){
 const nfv_mano_plugin = function(){
     const createPluginList = (form)=>instance.post(`plugin/management/`,form)
     const updatePlugin = (pluginName,form)=>instance.patch(`plugin/management/${pluginName}/`,form)
-    return{createPluginList, updatePlugin}
+    const deletePlugin = (templateId)=>instance.delete(`plugin/management/${templateId}/`)
+    return{ createPluginList, updatePlugin, deletePlugin }
 }
 const NSS_Instance = function(){
     const deleteNssi = (nssiId)=>instance.delete(`ObjectManagement/NetworkSliceSubnet/${nssiId}/?scope=[%27BASE_NTH_LEVEL%27,0]`)

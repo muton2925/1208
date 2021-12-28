@@ -1,9 +1,13 @@
 <template>
   <Header></Header>
-    <main>
-      <router-view></router-view>
-    </main>
-    <Sidebar :menuData="menuData"></Sidebar>
+  <main>
+    <div class="grid-custom">
+      <div class="grid-main-custom" style="overflow: hidden">
+        <router-view></router-view>
+      </div>
+    </div>
+  </main>
+  <Sidebar :menuData="menuData"></Sidebar>
 </template>
 <script>
 import Header from "./components/global/header.vue";
@@ -103,5 +107,27 @@ ul {
 .offcanvas-backdrop {
   width: 100% !important;
   height: 100% !important;
+}
+.grid-custom {
+  display: grid;
+  grid-template-rows: 70px 1fr;
+  grid-template-columns: 1fr;
+}
+.grid-main-custom {
+  grid-row: 2 / 3;
+  grid-column: 1 / 2;
+}
+@media (min-width: 576px) {
+  .grid-custom {
+    grid-template-columns: 102px 1fr;
+  }
+  .grid-main-custom {
+    grid-column: 2 / 3;
+  }
+}
+@media (min-width: 768px) {
+  .grid-custom {
+    grid-template-columns: 224px 1fr;
+  }
 }
 </style>

@@ -1,10 +1,10 @@
 <template>
   <div class="d-flex flex-column p-4 user-select-none">
-    <div class="container-header d-flex justify-content-between align-items-center flex-wrap mb-4">
+    <div class="container-header d-flex justify-content-between align-items-center mb-4">
       <h3>
         <slot name="header"></slot>
       </h3>
-      <button v-if="btn" class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#create_plugin_Modal">
+      <button v-if="btn" class="btn btn-primary ms-3 text-white" data-bs-toggle="modal" data-bs-target="#create_plugin_Modal">
         <i class="d-sm-none bi bi-folder-plus"></i>
         <span class="d-none d-sm-inline">
           <slot name="button"></slot>
@@ -96,7 +96,7 @@ export default {
   data() {
     return {
       currentEntries: 10, // 當前每頁筆數
-      showEntries: [10,50,100], // 每頁筆數列表
+      showEntries: [3,10,50,100], // 每頁筆數列表
       currentPage: 1, // 當前頁數
       searchInput: '',
       searchEntries: [],
@@ -237,13 +237,13 @@ export default {
 <style>
 .container-header h3 {
   margin: 0;
-  flex: none;
-  min-width: 0;
+  flex: 1;
+  /* min-width: 0; */
   font-size: 1.25rem;
 }
 .container-header button {
   flex:none;
-  min-width: 0;
+  /* min-width: 0; */
 }
 
 .card-header-custom {
@@ -282,13 +282,13 @@ tbody tr td {
 @media (min-width: 576px) {
   .container-header h3 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.375rem;
   }
 }
 @media (min-width: 768px) {
   .container-header h3 {
     margin: 0;
-    font-size: 1.75rem;
+    font-size: 1.625rem;
   }
 }
 @media (min-width: 992px) {

@@ -18,7 +18,7 @@
         <td>{{ item.nfvoType }}</td>
         <td>{{ item.operationStatus }}</td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-info rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" >
+          <div class="d-flex justify-content-center align-items-center text-white bg-info rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#show_plugin_Modal" @click="show_template(item)">
             <i class="bi bi-file-text-fill"></i>
           </div>
         </td>
@@ -28,7 +28,7 @@
           </div>
         </td>
         <td class="w-0">
-          <a :href="item.templateFile">
+          <a :href="item.templateFile" @click="download_template(item.templateFile)">
             <div class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px">
               <i class="bi bi-arrow-down"></i>
             </div>
@@ -69,6 +69,30 @@
       <button type="button" class="btn btn-primary text-white" @click="create_template">Create</button>
     </template>
   </Modalcreate>
+  <Modalshow ref="modalShow">
+    <template v-slot:header>
+      VNF List
+    </template>
+    <template v-slot:body>
+      <form>
+        <div class="mb-3">
+          <label for="InputFile" class="form-label">NSD Template ID :</label>
+          <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="templateId" readonly>
+        </div>
+        <div class="mb-3">
+          <label for="VnfList" class="form-label">VNF ID List :</label>
+            <ul class="list-group list-group-flush">
+              <template v-if="templateVNFList.length">
+                <li class="list-group-item" v-for="item in templateVNFList" :key="item">{{ item.vnfd_id }}</li>
+              </template>
+              <template v-else>
+                <li class="list-group-item">No Upload Network Service Description Template !!</li>
+              </template>
+            </ul>
+        </div>
+      </form>
+    </template>
+  </Modalshow>
   <Modalupdate ref="modalUpdate">
     <template v-slot:header>
       Update NSD Template
@@ -93,7 +117,7 @@
       <button type="button" class="btn btn-warning text-white" @click="update_template_modal">Update</button>
     </template>
   </Modalupdate>
-  <Modaldelete @delete="deleteData">
+  <Modaldelete ref="modalDelete" @delete="deleteData" @remove="removeFile">
     <template v-slot:header>
       Delete NSD Template
     </template>
@@ -101,15 +125,18 @@
 </template>
 <script>
 import Modalcreate from '../components/global/modal-create.vue';
+import Modalshow from '../components/global/modal-show.vue';
 import Modalupdate from '../components/global/modal-update.vue';
 import Modaldelete from '../components/global/modal-delete.vue';
 import Table from '../components/global/table.vue';
+// import { ref } from 'vue';
 import { $array } from 'alga-js';
 import { Share } from '../assets/js/api';
 import { GenericTemplate } from '../assets/js/api';
 export default {
   components: {
     Modalcreate,
+    Modalshow,
     Modalupdate,
     Modaldelete,
     Table
@@ -139,6 +166,7 @@ export default {
       templateName: '',
       templateDescription: '',
       templateData: {},
+      templateVNFList: [],
     }
   },
   async created(){
@@ -152,12 +180,14 @@ export default {
     });
     this.status = true;
   },
+  mounted() {
+
+  },
   methods:{
     async getTableData() {
       const { TemplateList }  = Share();
       TemplateList()
       .then(res => {
-        console.log(res)
         this.td_list = [];
         const array_nsd = res.data.filter(x => x.templateType == 'NSD');
         for(let i of array_nsd){
@@ -165,16 +195,22 @@ export default {
         }
       });
     },
+    removeFile() {
+      this.templateData = {};
+    },
     updateData(val) {  // emit
       this.filterEntries = val;
     },
-    deleteData() {
+    deleteData() { //emit
       const { deleteGenericTemplate } = GenericTemplate();
       deleteGenericTemplate(this.templateData.templateId)
       .then(() => {
         let index = this.td_list.indexOf(this.templateData);
         this.td_list = $array.destroy(this.td_list, index);
       })
+      .catch((res) => {
+        console.log(res);
+      })  
     },
     delete_template(file) {
       this.templateData = file;
@@ -191,6 +227,15 @@ export default {
         this.td_list.push(res.data);
       })
     },
+    show_template(item) {
+      this.templateId = item.templateId;
+      let topology_template_string = item.content[0].topology_template;
+      let topology_template_JSON = JSON.parse(topology_template_string.replace(/'/g, '"'));
+      let topology_template_array = topology_template_JSON.node_templates.NS1.properties.constituent_vnfd;
+      for(let i of topology_template_array){
+        this.templateVNFList.push(i);
+      }
+    },
     add_template(e) {
       this.templateData = e.target.files;
     },
@@ -204,12 +249,15 @@ export default {
       form.append("nfvoType", this.currentNFVMANO);
       form.append("templateType", "NSD");
       form.append("templateFile", this.templateData[0]);
-      console.log(this.currentNFVMANO)
-      console.log(this.templateData[0])
-      updateGenericTemplate(this.templateId,form)
+      updateGenericTemplate(this.templateId, form)
       .then(() => {
         this.getTableData();
       })
+    },
+    download_template(file) {
+      if(file == null) {
+        alert('未上傳 NSD Template File，無法下載');
+      }
     }
   }
 }

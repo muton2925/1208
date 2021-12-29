@@ -23,7 +23,7 @@
           </div>
         </td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" >
+          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_template(item.templateId, item.nfvoType)">
             <i class="bi bi-wrench"></i>
           </div>
         </td>
@@ -42,7 +42,7 @@
       </tr>
     </template>
   </Table>
-  <Modalcreate>
+  <Modalcreate ref="modalCreate">
     <template v-slot:header>
       Create new NSD Template
     </template>
@@ -69,6 +69,30 @@
       <button type="button" class="btn btn-primary text-white" @click="create_template">Create</button>
     </template>
   </Modalcreate>
+  <Modalupdate ref="modalUpdate">
+    <template v-slot:header>
+      Update NSD Template
+    </template>
+    <template v-slot:body>
+      <form>
+        <div class="mb-3">
+          <label for="InputFile" class="form-label">
+            NSD Template ID :
+          </label>
+          <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="templateId" readonly>
+        </div>
+        <div class="mb-2">
+          <label for="UploadFile2" class="form-label">
+            NSD Template File :
+          </label>
+          <input type="file" class="form-control" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="add_template">
+        </div>
+      </form>
+    </template>
+    <template v-slot:footer>
+      <button type="button" class="btn btn-warning text-white" @click="update_template_modal">Update</button>
+    </template>
+  </Modalupdate>
   <Modaldelete @delete="deleteData">
     <template v-slot:header>
       Delete NSD Template
@@ -77,6 +101,7 @@
 </template>
 <script>
 import Modalcreate from '../components/global/modal-create.vue';
+import Modalupdate from '../components/global/modal-update.vue';
 import Modaldelete from '../components/global/modal-delete.vue';
 import Table from '../components/global/table.vue';
 import { $array } from 'alga-js';
@@ -85,6 +110,7 @@ import { GenericTemplate } from '../assets/js/api';
 export default {
   components: {
     Modalcreate,
+    Modalupdate,
     Modaldelete,
     Table
   },
@@ -109,30 +135,36 @@ export default {
       columnSort: ['id','name','description','type','nfvo','nsd_status'],
       columnNumber: 10,
       currentNFVMANO: '請選擇 ...',
+      templateId: '',
       templateName: '',
       templateDescription: '',
       templateData: {},
     }
   },
-  created(){
-    const { TemplateList,PluginList }  = Share();
-    TemplateList()
-    .then(res => {
-      console.log(res)
-      const array_nsd = res.data.filter(x => x.templateType == 'NSD');
-      for(let i of array_nsd){
-        this.td_list.push(i);
-      }
-      this.status = true;
-    });
+  async created(){
+    await this.getTableData();
+    const { PluginList }  = Share();
     PluginList()
     .then(res => {
       for(let i of res.data){
         this.nfv_mano_list.push(i.name);
       }
     });
+    this.status = true;
   },
   methods:{
+    async getTableData() {
+      const { TemplateList }  = Share();
+      TemplateList()
+      .then(res => {
+        console.log(res)
+        this.td_list = [];
+        const array_nsd = res.data.filter(x => x.templateType == 'NSD');
+        for(let i of array_nsd){
+          this.td_list.push(i);
+        }
+      });
+    },
     updateData(val) {  // emit
       this.filterEntries = val;
     },
@@ -157,6 +189,26 @@ export default {
       createGenericTemplate(form)
       .then(res => {
         this.td_list.push(res.data);
+      })
+    },
+    add_template(e) {
+      this.templateData = e.target.files;
+    },
+    update_template(id,type) {
+      this.templateId = id;
+      this.currentNFVMANO = type; 
+    },
+    update_template_modal() {
+      const { updateGenericTemplate } = GenericTemplate();
+      let form = new FormData();
+      form.append("nfvoType", this.currentNFVMANO);
+      form.append("templateType", "NSD");
+      form.append("templateFile", this.templateData[0]);
+      console.log(this.currentNFVMANO)
+      console.log(this.templateData[0])
+      updateGenericTemplate(this.templateId,form)
+      .then(() => {
+        this.getTableData();
       })
     }
   }

@@ -334,13 +334,17 @@ export default {
     },
     delete_template_button(file) { // 點擊 Delete Modal 按鈕
       this.templateData = file;
+      console.log(this.templateData)
     },
     delete_template_modal() { // 點擊 Delete Modal 內刪除按鈕
       const { deleteGenericTemplate } = GenericTemplate();
       deleteGenericTemplate(this.templateData.templateId)
       .then(() => {
         let index = this.td_list.indexOf(this.templateData);
+        console.log(index)
+        console.log(this.td_list)
         this.td_list = $array.destroy(this.td_list, index);
+        console.log(this.td_list)
       })
       .catch((res) => {
         console.log(res);

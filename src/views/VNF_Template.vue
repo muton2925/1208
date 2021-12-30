@@ -134,7 +134,6 @@ import Modalcreate from '../components/global/modal-create.vue';
 import Modalupdate from '../components/global/modal-update.vue';
 import Modaldelete from '../components/global/modal-delete.vue';
 import Modalshow from '../components/global/modal-show.vue';
-import { $array } from 'alga-js';
 import Table from '../components/global/table.vue';
 import { ref } from 'vue';
 import {Share,GenericTemplate} from '../assets/js/api'
@@ -338,17 +337,12 @@ export default {
       this.fileData = file;
     },
     delete_template_modal() { // emit
-    console.log(this.fileData)
-    console.log(this.td_list)
       const { deleteGenericTemplate } = GenericTemplate()
       deleteGenericTemplate(this.fileData.templateId).then(()=>{
-        let index = this.td_list.indexOf(this.fileData);
-        this.td_list = $array.destroy(this.td_list, index);
-        this.removeFile();
+        this.getTemplate();
       })
       .catch(res => {
         console.log(res)
-        this.removeFile();
       })
     }
   }

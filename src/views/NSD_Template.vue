@@ -1,5 +1,5 @@
 <template>
-  <Table v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateData">
+  <Table v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData">
     <template v-slot:header>
       Network Service Descriptor Template
     </template>
@@ -18,24 +18,24 @@
         <td>{{ item.nfvoType }}</td>
         <td>{{ item.operationStatus }}</td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-info rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#show_plugin_Modal" @click="show_template(item)">
+          <div class="d-flex justify-content-center align-items-center text-white bg-info rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#show_plugin_Modal" @click="show_template_button(item)">
             <i class="bi bi-file-text-fill"></i>
           </div>
         </td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_template(item.templateId, item.nfvoType)">
+          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_template_button(item.templateId, item.nfvoType)">
             <i class="bi bi-wrench"></i>
           </div>
         </td>
         <td class="w-0">
-          <a :href="item.templateFile" @click="download_template(item.templateFile)">
+          <a :href="item.templateFile" @click="download_template_button(item.templateFile)">
             <div class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px">
               <i class="bi bi-arrow-down"></i>
             </div>
           </a>
         </td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="delete_template(item)">
+          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="delete_template_button(item)">
             <i class="bi bi-trash"></i>
           </div>
         </td>
@@ -77,7 +77,7 @@
       </form>
     </template>
     <template v-slot:footer>
-      <button type="button" class="btn btn-primary text-white" @click="create_template">Create</button>
+      <button type="button" class="btn btn-primary text-white" @click="create_template_modal">Create</button>
     </template>
   </Modalcreate>
   <Modalshow ref="modalShow" @remove="removeShowData">
@@ -120,7 +120,7 @@
           <label for="UploadFile2" class="form-label">
             NSD Template File :
           </label>
-          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="add_template">
+          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="update_template_file">
           <div class="invalid-feedback">
             檔案不得為空
           </div>
@@ -131,7 +131,7 @@
       <button type="button" class="btn btn-warning text-white" @click="update_template_modal">Update</button>
     </template>
   </Modalupdate>
-  <Modaldelete ref="modalDelete" @delete="deleteData" @remove="removeDeleteData">
+  <Modaldelete ref="modalDelete" @delete="delete_template_modal" @remove="removeDeleteData">
     <template v-slot:header>
       Delete NSD Template
     </template>
@@ -170,12 +170,12 @@ export default {
       status: false,
       filterEntries: [],
       th_list: [
-        { name: "id", text: "Id", sort: true, status: 'none' },
+        { name: "templateId", text: "Id", sort: true, status: 'none' },
         { name: "name", text: "Template Name", sort: true, status: 'none' },
         { name: "description", text: "Description", sort: true, status: 'none' },
-        { name: "type", text: "Type", sort: true, status: 'none' },
-        { name: "nfvo", text: "NFVO", sort: true, status: 'none' },
-        { name: "nsd_status", text: "NSD Status", sort: true, status: 'none' },
+        { name: "templateType", text: "Type", sort: true, status: 'none' },
+        { name: "nfvoType", text: "NFVO", sort: true, status: 'none' },
+        { name: "operationStatus", text: "NSD Status", sort: true, status: 'none' },
         { name: "vnf_list", text: "VNF List", sort: false, status: 'none' },
         { name: "update_template", text: "Update", sort: false, status: 'none' },
         { name: "template_Download", text: "Download", sort: false, status: 'none' },
@@ -183,7 +183,7 @@ export default {
       ],
       td_list:[],
       nfv_mano_list: [],
-      columnSort: ['id','name','description','type','nfvo','nsd_status'],
+      columnSort: ['templateId','name','description','templateType','nfvoType','operationStatus'],
       columnNumber: 10,
       currentNFVMANO: '請選擇 ...',
       templateId: '',
@@ -207,16 +207,16 @@ export default {
         this.text_invalidated = false;
       }
     },
+    templateData: {
+      handler: function() {
+        this.file_invalidated = false;
+      }
+    },
     currentNFVMANO : {
       handler: function() {
         this.select_invalidated = false;
       }
     },
-    templateData: {
-      handler: function() {
-        this.file_invalidated = false;
-      }
-    }
   },
   async created(){
     await this.getTableData();
@@ -229,11 +229,8 @@ export default {
     });
     this.status = true;
   },
-  mounted() {
-
-  },
   methods:{
-    async getTableData() {
+    async getTableData() {  // 顯示 Table 資料
       const { TemplateList }  = Share();
       TemplateList()
       .then(res => {
@@ -245,33 +242,31 @@ export default {
         }
       });
     },
-    updateData(val) {  // emit
+    updateTableData(val) {  // 每次執行 Table 操作，更新資料 
       this.filterEntries = val;
     },
-
-    removeCreateData() {
+    removeCreateData() { // 關閉 Create Modal
       this.templateName = '';
       this.templateDescription = '';
       this.currentNFVMANO = '請選擇 ...';
       this.text_invalidated = false;
       this.select_invalidated = false;
     },
-    removeShowData() {
+    removeShowData() { // 關閉 Show Modal
       this.templateId = '';
       this.templateVNFList = [];
     },
-    removeUpdateData() {
+    removeUpdateData() { // 關閉 Update Modal
+      this.templateId = '';
       this.templateData = {};
+      this.currentNFVMANO = '請選擇 ...';
       this.file_invalidated = false;
       this.$refs.uploadData_update.value = null;
     },
-    removeDeleteData() {
+    removeDeleteData() { // 關閉 Delete Modal
       this.templateData = {};
     },
-
-
-
-    create_validate() {
+    create_validate() { // 驗證 Create Modal
       if(this.repeatName || this.templateName == '') {
         this.text_invalidated = true;
       }
@@ -279,7 +274,7 @@ export default {
         this.select_invalidated = true;
       }
     },
-    create_template() {
+    create_template_modal() { // 點擊 Create Modal 內創建按鈕
       this.create_validate();
       const { createGenericTemplate } = GenericTemplate();
       if(!this.text_invalidated) {
@@ -296,11 +291,7 @@ export default {
         })
       }
     },
-
-
-
-
-    show_template(item) {
+    show_template_button(item) { // 點擊 Show Modal 按鈕
       this.templateId = item.templateId;
       if(item.operationStatus == 'UPLOAD') {
         let topology_template_string = item.content[0].topology_template;
@@ -311,25 +302,19 @@ export default {
         }
       }
     },
-
-
-
-
-
-
-    add_template(e) {
-      this.templateData = e.target.files;
-    },
-    update_validate() {
+    update_validate() { // 驗證 Update Modal
       if(this.templateData[0] == null) {
         this.file_invalidated = true;
       } 
     },
-    update_template(id,type) {
+    update_template_file(e) {  // 更新 Upate Modal 內檔案
+      this.templateData = e.target.files;
+    },
+    update_template_button(id,type) { // 點擊 Update Modal 按鈕
       this.templateId = id;
       this.currentNFVMANO = type; 
     },
-    update_template_modal() {
+    update_template_modal() { // 點擊 Update Modal 內更新按鈕
       this.update_validate();
       if(!this.file_invalidated) {
         const { updateGenericTemplate } = GenericTemplate();
@@ -344,28 +329,15 @@ export default {
         })
       }
     },
-
-
-
-
-
-
-
-
-
-    download_template(file) {
+    download_template_button(file) { // 點擊 Download Modal 按鈕
       if(file == null) {
         alert('未上傳 NSD Template File，無法下載');
       }
     },
-
-
-
-
-
-
-
-    deleteData() { //emit
+    delete_template_button(file) { // 點擊 Delete Modal 按鈕
+      this.templateData = file;
+    },
+    delete_template_modal() { // 點擊 Delete Modal 內刪除按鈕
       const { deleteGenericTemplate } = GenericTemplate();
       deleteGenericTemplate(this.templateData.templateId)
       .then(() => {
@@ -375,9 +347,6 @@ export default {
       .catch((res) => {
         console.log(res);
       })  
-    },
-    delete_template(file) {
-      this.templateData = file;
     },
   }
 }

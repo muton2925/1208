@@ -104,7 +104,6 @@ import Modalupdate from '../components/global/modal-update.vue';
 import Modaldelete from '../components/global/modal-delete.vue';
 import Table from '../components/global/table.vue';
 import { ref } from 'vue';
-import { $array } from 'alga-js';
 import { Share } from '../assets/js/api';
 import { nfv_mano_plugin } from '../assets/js/api';
 export default {
@@ -261,8 +260,7 @@ export default {
       const { deletePlugin } = nfv_mano_plugin();
       deletePlugin(this.fileData.name)
       .then(() => {
-        let index = this.td_list.indexOf(this.fileData);
-        this.td_list = $array.destroy(this.td_list, index);
+        this.getTableData();
       })
       .catch(res => {
         console.log(res)

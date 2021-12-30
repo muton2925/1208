@@ -144,7 +144,6 @@ import Modalupdate from '../components/global/modal-update.vue';
 import Modaldelete from '../components/global/modal-delete.vue';
 import Table from '../components/global/table.vue';
 import { ref } from 'vue';
-import { $array } from 'alga-js';
 import { Share } from '../assets/js/api';
 import { GenericTemplate } from '../assets/js/api';
 export default {
@@ -314,7 +313,7 @@ export default {
     },
     update_template_modal() { // 點擊 Update Modal 內更新按鈕
       this.update_template_validate();
-      if(!this.file_invalidated) {
+      if(!this.file_invalidated && !this.select_invalidated) {
         const { updateGenericTemplate } = GenericTemplate();
         let form = new FormData();
         form.append("nfvoType", this.currentNFVMANO);
@@ -340,11 +339,7 @@ export default {
       const { deleteGenericTemplate } = GenericTemplate();
       deleteGenericTemplate(this.templateData.templateId)
       .then(() => {
-        let index = this.td_list.indexOf(this.templateData);
-        console.log(index)
-        console.log(this.td_list)
-        this.td_list = $array.destroy(this.td_list, index);
-        console.log(this.td_list)
+        this.getTableData();
       })
       .catch((res) => {
         console.log(res);

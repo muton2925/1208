@@ -292,7 +292,6 @@ export default {
         .then(res => {
           this.td_list.push(res.data);
           this.$refs.modalCreate.closeModalEvent();
-          this.removeCreateData();
         })
       }
     },
@@ -310,7 +309,7 @@ export default {
     },
     update_template_modal() {
       this.update_validate();
-      if(this.isinvalidated == false) {
+      if(!this.isinvalidated) {
         const { updateGenericTemplate } = GenericTemplate();
         let form = new FormData();
         form.append("nfvoType", this.nfvoType);
@@ -319,12 +318,10 @@ export default {
         updateGenericTemplate(this.fileName,form)
         .then(() => {
           this.$refs.modalUpdate.closeModalEvent();
-          this.removeUpdateData();
           this.getTemplate()
         })
         .catch(res => {
           console.log(res);
-          this.removeUpdateData();
         })
       }
     },

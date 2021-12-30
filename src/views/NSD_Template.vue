@@ -144,7 +144,6 @@ import Modalupdate from '../components/global/modal-update.vue';
 import Modaldelete from '../components/global/modal-delete.vue';
 import Table from '../components/global/table.vue';
 import { ref } from 'vue';
-import { $array } from 'alga-js';
 import { Share } from '../assets/js/api';
 import { GenericTemplate } from '../assets/js/api';
 export default {
@@ -234,7 +233,6 @@ export default {
       const { TemplateList }  = Share();
       TemplateList()
       .then(res => {
-        console.log(res)
         this.td_list = [];
         const array_nsd = res.data.filter(x => x.templateType == 'NSD');
         for(let i of array_nsd){
@@ -340,8 +338,7 @@ export default {
       const { deleteGenericTemplate } = GenericTemplate();
       deleteGenericTemplate(this.templateData.templateId)
       .then(() => {
-        let index = this.td_list.indexOf(this.templateData);
-        this.td_list = $array.destroy(this.td_list, index);
+        this.getTableData();
       })
       .catch((res) => {
         console.log(res);

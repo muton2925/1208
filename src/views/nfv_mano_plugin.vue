@@ -261,8 +261,7 @@ export default {
       const { deletePlugin } = nfv_mano_plugin();
       deletePlugin(this.fileData.name)
       .then(() => {
-        let index = this.td_list.indexOf(this.fileData);
-        this.td_list = $array.destroy(this.td_list, index);
+        this.getTableData();
       })
       .catch(res => {
         console.log(res)

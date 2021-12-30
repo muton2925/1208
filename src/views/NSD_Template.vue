@@ -275,7 +275,7 @@ export default {
     create_template_modal() { // 點擊 Create Modal 內創建按鈕
       this.create_template_validate();
       const { createGenericTemplate } = GenericTemplate();
-      if(!this.text_invalidated) {
+      if(!this.text_invalidated && !this.select_invalidated) {
         let form = new FormData();
         form.append("name", this.templateName);
         form.append("description", this.templateDescription);

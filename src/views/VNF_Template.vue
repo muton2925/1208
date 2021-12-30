@@ -1,5 +1,5 @@
 <template>
-  <Table  v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateData">
+  <Table  v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData">
     <template v-slot:header>
       Virtualized Network Function Template
     </template>
@@ -11,7 +11,11 @@
     </template>
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.name">
-        <td><i class=" text-white bg-info rounded-circle cursor-pointer bi bi-file-text-fill mx-2"></i>{{ item.templateId }}
+        <td>
+          <div data-bs-toggle="modal" data-bs-target="#show_plugin_Modal" @click="show_template_button(item.templateId,item.content)">
+            <i class=" text-white bg-info rounded-circle cursor-pointer bi bi-file-text-fill mx-2" ></i>
+            {{ item.templateId }}
+          </div>
         </td>
         <td>{{ item.name }}</td>
         <td>{{ item.description }}</td>
@@ -19,7 +23,7 @@
         <td>{{ item.nfvoType }}</td>
         <td>{{ item.operationStatus }}</td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_Template(item.templateId,item.nfvoType)">
+          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_template_button(item.templateId,item.nfvoType)">
             <i class="bi bi-wrench"></i>
           </div>
         </td>
@@ -31,13 +35,32 @@
           </a>
         </td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px"  data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="delete_template(item)">
+          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px"  data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="delete_template_button(item)">
             <i class="bi bi-trash"></i>
           </div>
         </td>
       </tr>
     </template>
   </Table>
+  <Modalshow ref="modalShow" @remove="removeShowData">
+    <template v-slot:header>
+      VNF List
+    </template>
+    <template v-slot:body>
+      <form>
+        <div class="mb-3">
+          <label for="InputFile" class="form-label">VNF Template ID :</label>
+          <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="templateId" readonly>
+        </div>
+        <div class="mb-3">
+          <label for="VnfList" class="form-label">VNF  List :</label>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item" v-for="item in nfv_list[templateId]" :key="item">{{ item }}</li>
+            </ul>
+        </div>
+      </form>
+    </template>
+  </Modalshow>
   <Modalcreate ref="modalCreate" @remove="removeCreateData">
     <template v-slot:header>
       Create new VNF Template
@@ -48,8 +71,11 @@
           <label for="InputFile" class="form-label">Template Name :</label>
           <input type="text" class="form-control" id="InputFile" placeholder="Template Name" :class="{ 'is-invalid' : text_invalidated }" v-model="fileName">
           <div class="invalid-feedback">
-            <template v-if="!repeatName">
-              清輸入 Template Name
+            <template v-if="repeatName">
+              此 Template Name 已存在
+            </template>
+            <template else>
+              請輸入 Template Name
             </template>
           </div>
         </div>
@@ -59,7 +85,7 @@
         </div>
         <div>
           <label for="InputFile3" class="form-label">NFVO Name :</label>
-          <select v-model="currentNFVMANO" class="form-select form-select mb-3" :class="{ 'is-invalid' : file_invalidated }" id="InputFile3" aria-label=".form-select example" @change="create_Template">
+          <select v-model="currentNFVMANO" class="form-select form-select mb-3" :class="{ 'is-invalid' : file_invalidated }" id="InputFile3" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
             <option v-for="item in nfv_mano_list" :key="item" :value="item">{{ item }}</option>
           </select>
@@ -70,7 +96,7 @@
       </form>
     </template>
     <template v-slot:footer>
-      <button type="button" class="btn btn-primary text-white" @click="create_template">Create</button>
+      <button type="button" class="btn btn-primary text-white" @click="create_template_button">Create</button>
     </template>
   </Modalcreate>
   <Modalupdate ref="modalUpdate" @remove="removeUpdateData">
@@ -78,7 +104,7 @@
       Update Service Mapping Plugin
     </template>
     <template v-slot:body>
-      <form :class="{ 'was-invalidated': isinvalidated }">
+      <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">
              VNF Template ID :
@@ -89,7 +115,7 @@
           <label for="UploadFile2" class="form-label">
              VNF Template File :
           </label>
-          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="add_Template">
+          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="update_template_file">
           <div class="invalid-feedback">
             檔案不得為空
           </div>
@@ -97,17 +123,17 @@
       </form>
     </template>
     <template v-slot:footer>
-      <button type="button" class="btn btn-warning text-white" @click="update_Template_modal">Update</button>
+      <button type="button" class="btn btn-warning text-white" @click="update_template_modal">Update</button>
     </template>
   </Modalupdate>
-  <Modaldelete @delete="deleteData" @remove="removeFile">
-
+  <Modaldelete @delete="delete_template_modal" @remove="removeFile">
   </Modaldelete>
 </template>
 <script>
 import Modalcreate from '../components/global/modal-create.vue';
 import Modalupdate from '../components/global/modal-update.vue';
 import Modaldelete from '../components/global/modal-delete.vue';
+import Modalshow from '../components/global/modal-show.vue';
 import { $array } from 'alga-js';
 import Table from '../components/global/table.vue';
 import { ref } from 'vue';
@@ -117,36 +143,39 @@ export default {
     Modalcreate,
     Modalupdate,
     Modaldelete,
+    Modalshow,
     Table
   },
   setup() {
-  const modalCreate = ref(null)
-  const modalUpdate = ref(null)
-  const uploadData_create = ref(null)
-  const uploadData_update = ref(null)
-  return{
-    modalCreate,modalUpdate,uploadData_update,uploadData_create,
-  }
+    const modalCreate = ref(null)
+    const modalUpdate = ref(null)
+    const uploadData_create = ref(null)
+    const uploadData_update = ref(null)
+    return{
+      modalCreate,modalUpdate,uploadData_update,uploadData_create,
+    }
   },
   data() {
     return {
       filterEntries:[],
       status:false,
        th_list: [
-        { name: "idList", text: "Id List", sort: true, status: 'none' },
+        { name: "templateId", text: "Id List", sort: true, status: 'none' },
         { name: "name", text: "Template Name", sort: true, status: 'none' },
-        { name: "Description", text: "Description", sort: true, status: 'none' },
-        { name: "Type", text: "Type", sort: true, status: 'none' },
-        { name: "NFVO", text: "NFVO", sort: true, status: 'none' },
-        { name: "VNF_Status", text: "VNF Status", sort: true, status: 'none' },
+        { name: "description", text: "Description", sort: true, status: 'none' },
+        { name: "templateType", text: "Type", sort: true, status: 'none' },
+        { name: "nfvoType", text: "NFVO", sort: true, status: 'none' },
+        { name: "operationStatus", text: "VNF Status", sort: true, status: 'none' },
         { name: "update_template", text: "Update", sort: false, status: 'none' },
         { name: "Template_Download", text: "Download", sort: false, status: 'none' },
         { name: "delete_template", text: "Delete", sort: false, status: 'none' },
       ],
       td_list:[],
-      columnSort:["idList","name","Description","Type","NFVO","VNF_Status"],
+      columnSort:["templateId","name","description","templateType","nfvoType","operationStatus"],
       columnNumber:9,
       nfv_mano_list:[],
+      nfv_list:{},
+      templateId:"",
       fileName:"",
       nfvoType:"",
       currentNFVMANO: '請選擇 ...',
@@ -158,7 +187,7 @@ export default {
   },
   
   created(){
-    const {PluginList}  = Share();
+    const { PluginList }  = Share();
     this.getTemplate()
     PluginList().then(res=>{
       for(let i of res.data){
@@ -171,19 +200,19 @@ export default {
       return this.text_invalidated || this.file_invalidated;
     },
     repeatName() {
-      return this.td_list.map(function(e) { return e.templateId }).includes(this.fileName);
+      return this.td_list.map( function(e) { return e.templateId }).includes(this.fileName);
     }
   },
   watch: {
     fileName: {
-      handler: function() {
+      handler: function () {
         if(this.isinvalidated) {
           this.text_invalidated = false;
         }
       }
     },
     fileData: {
-      handler: function() {
+      handler: function () {
         if(this.isinvalidated) {
           this.file_invalidated = false;
         }
@@ -196,15 +225,15 @@ export default {
       this.td_list=[];
       TemplateList().then(res=>{
         const VNF = res.data.filter(x=>x.templateType == 'VNF')
-        VNF.forEach(element => {
-          this.td_list.push(element)
-        });
-         this.status=true;
+        for (const iterator of VNF) {
+          this.td_list.push(iterator)
+        }
+        this.status=true;
       }).catch(err=>{
         console.log(err)
       })
     },
-    updateData(val) { //emit
+    updateTableData(val) { //emit
       this.filterEntries = val;
     },
     validate_clear() {
@@ -218,6 +247,31 @@ export default {
       this.fileName = '';
       this.fileData = {};
     },
+    show_template_button(Id,content){
+      this.templateId = Id;
+      const map = new Map();
+      map.set(Id,content)
+      for (const value of map) {
+        this.nfv_list[value[0]]=[]
+        if ( value[1].length == 0){
+          const str = "No Upload Virtualized Network Function Template!!"
+          this.nfv_list[value[0]].push(str)
+        }
+        for (const item of value[1]) {
+          let tojson = JSON.parse(item.topology_template.replace(/'/g,'"').replace(/:[ ]*False/,":false").replace(/:[ ]*True/,":true"));
+          this.nfv_list[value[0]].push(tojson.node_templates.VNF1.properties.descriptor_id)
+        }
+      }
+    },
+    removeShowData(){
+      
+    },
+    removeCreateData() {
+      this.removeData();
+      this.validate_clear();
+      this.currentNFVMANO = '請選擇 ...'
+      this.templateDescription = ''
+    },
     create_validate() {
       if(this.repeatName || this.fileName == '') {
         this.text_invalidated = true;
@@ -226,18 +280,9 @@ export default {
         this.file_invalidated = true;
       }
     },
-    removeCreateData() {
-      this.removeData();
-      this.validate_clear();
-      this.currentNFVMANO = '請選擇 ...'
-      this.templateDescription = ''
-    },
-    create_Template(){
-      this.fileData = this.currentNFVMANO
-    },
-    create_template(){
+    create_template_button(){
       this.create_validate();
-      if(this.isinvalidated == false) {
+      if(!this.isinvalidated) {
         const { createGenericTemplate } = GenericTemplate();
         let form = new FormData();
         form.append("name", this.fileName);
@@ -252,7 +297,7 @@ export default {
         })
       }
     },
-    add_Template(e) {
+    update_template_file(e) {
       this.fileData = e.target.files;
     },
     update_validate() {
@@ -260,11 +305,11 @@ export default {
         this.file_invalidated = true;
       } 
     },
-    update_Template(name,nfvo) {
+    update_template_button(name,nfvo) {
       this.fileName = name;
       this.nfvoType = nfvo;
     },
-    update_Template_modal() {
+    update_template_modal() {
       this.update_validate();
       if(this.isinvalidated == false) {
         const { updateGenericTemplate } = GenericTemplate();
@@ -274,9 +319,9 @@ export default {
         form.append("templateFile", this.fileData[0]);
         updateGenericTemplate(this.fileName,form)
         .then(() => {
-          this.getTemplate()
           this.$refs.modalUpdate.closeModalEvent();
           this.removeUpdateData();
+          this.getTemplate()
         })
         .catch(res => {
           console.log(res);
@@ -289,11 +334,13 @@ export default {
       this.validate_clear();
       this.$refs.uploadData_update.value = null;
     },
-    delete_template(file) {
+    delete_template_button(file) {
       this.fileData = file;
     },
-    deleteData() { // emit
-      const {deleteGenericTemplate}=GenericTemplate()
+    delete_template_modal() { // emit
+    console.log(this.fileData)
+    console.log(this.td_list)
+      const { deleteGenericTemplate } = GenericTemplate()
       deleteGenericTemplate(this.fileData.templateId).then(()=>{
         let index = this.td_list.indexOf(this.fileData);
         this.td_list = $array.destroy(this.td_list, index);

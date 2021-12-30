@@ -234,7 +234,6 @@ export default {
       const { TemplateList }  = Share();
       TemplateList()
       .then(res => {
-        console.log(res)
         this.td_list = [];
         const array_nsd = res.data.filter(x => x.templateType == 'NSD');
         for(let i of array_nsd){

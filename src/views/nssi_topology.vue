@@ -62,23 +62,23 @@ export default {
     // Table
   },
   setup(){
-        const dom = ref(null);
-        const url = 'http://localhost:3000/data';
-        onMounted(()=>{
-          let mychart = show_nssi(dom.value,false)
-          nssiContent(mychart,url)
-          myChartDbclick(mychart)
-          myChartClick(mychart,url)
-        })
-        watch(NSViewChartContent ,()=>{
-          return NSViewChartContent
-        })
-        onBeforeUnmount(()=>{
-          show_nssi(dom.value,true)
-        })
-        return{
-          dom,NSViewChartContent
-        }
+    const dom = ref(null);
+    const url = 'http://localhost:3000/data';
+    onMounted(()=>{
+      let mychart = show_nssi(dom.value,false)
+      nssiContent(mychart,url)
+      myChartDbclick(mychart)
+      myChartClick(mychart,url)
+    })
+    watch(NSViewChartContent ,()=>{
+      return NSViewChartContent
+    })
+    onBeforeUnmount(()=>{
+      show_nssi(dom.value,true)
+    })
+    return{
+      dom,NSViewChartContent
+    }
   }
 }
 </script>

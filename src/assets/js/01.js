@@ -22,7 +22,6 @@ function show_nssi(dom,unmount) {
 function nssiContent(myChart,url){
     
   axios.get(url).then(response => {
-      
       if (response.data.length) {
         for (var i = 1; i < response.data.length; i++) {
           var node_tal = response.data[0].nodes;

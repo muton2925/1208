@@ -266,7 +266,7 @@ export default {
     removeDeleteData() { // 關閉 Delete Modal
       this.templateData = {};
     },
-    create_validate() { // 驗證 Create Modal
+    create_template_validate() { // 驗證 Create Modal
       if(this.repeatName || this.templateName == '') {
         this.text_invalidated = true;
       }
@@ -275,7 +275,7 @@ export default {
       }
     },
     create_template_modal() { // 點擊 Create Modal 內創建按鈕
-      this.create_validate();
+      this.create_template_validate();
       const { createGenericTemplate } = GenericTemplate();
       if(!this.text_invalidated) {
         let form = new FormData();
@@ -287,7 +287,6 @@ export default {
         .then(res => {
           this.$refs.modalCreate.closeModalEvent();
           this.td_list.push(res.data);
-          console.log(this.td_list)
         })
       }
     },
@@ -302,7 +301,7 @@ export default {
         }
       }
     },
-    update_validate() { // 驗證 Update Modal
+    update_template_validate() { // 驗證 Update Modal
       if(this.templateData[0] == null) {
         this.file_invalidated = true;
       } 
@@ -315,7 +314,7 @@ export default {
       this.currentNFVMANO = type; 
     },
     update_template_modal() { // 點擊 Update Modal 內更新按鈕
-      this.update_validate();
+      this.update_template_validate();
       if(!this.file_invalidated) {
         const { updateGenericTemplate } = GenericTemplate();
         let form = new FormData();

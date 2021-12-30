@@ -15,7 +15,7 @@
         <td>{{ item.allocate_nssi }}</td>
         <td>{{ item.deallocate_nssi }}</td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_plugin(item.name)">
+          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_plugin_button(item.name)">
             <i class="bi bi-wrench"></i>
           </div>
         </td>
@@ -27,7 +27,7 @@
           </a>
         </td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="delete_plugin(item)">
+          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="delete_plugin_button(item)">
             <i class="bi bi-trash"></i>
           </div>
         </td>
@@ -54,7 +54,7 @@
         </div>
         <div class="mb-2">
           <label for="UploadFile" class="form-label">Plugin File :</label>
-          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile" ref="uploadData_create" accept=".zip" @change="add_plugin">
+          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile" ref="uploadData_create" accept=".zip" @change="create_plugin_file">
           <div class="invalid-feedback">
             檔案不得為空
           </div>
@@ -62,7 +62,7 @@
       </form>
     </template>
     <template v-slot:footer>
-      <button type="button" class="btn btn-primary text-white" @click="create_plugin">Create</button>
+      <button type="button" class="btn btn-primary text-white" @click="create_plugin_modal">Create</button>
     </template>
   </Modalcreate>
   <Modalupdate ref="modalUpdate" @remove="removeUpdateData">
@@ -81,7 +81,7 @@
           <label for="UploadFile2" class="form-label">
             Plugin File :
           </label>
-          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="add_plugin">
+          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="update_plugin_file">
           <div class="invalid-feedback">
             檔案不得為空
           </div>
@@ -92,7 +92,7 @@
       <button type="button" class="btn btn-warning text-white" @click="update_plugin_modal">Update</button>
     </template>
   </Modalupdate>
-  <Modaldelete @delete="deleteData" @remove="removeFile">
+  <Modaldelete @delete="delete_plugin_modal" @remove="removeDeleteData">
     <template v-slot:header>
       Delete Service Mapping Plugin
     </template>
@@ -166,7 +166,7 @@ export default {
     }
   },
   methods: {
-    async getTableData(){
+    async getTableData() {
       const { PluginList } = Share();
       await PluginList()
       .then(res => {
@@ -182,63 +182,26 @@ export default {
     updateTableData(val) {  // emit
       this.filterEntries = val;
     },
-    deleteData() { // emit
-      const { deletePlugin } = nfv_mano_plugin();
-      deletePlugin(this.fileData.name)
-      .then(() => {
-        let index = this.td_list.indexOf(this.fileData);
-        this.td_list = $array.destroy(this.td_list, index);
-        this.removeFile();
-      })
-      .catch(res => {
-        console.log(res)
-        this.removeFile();
-      })
-    },
-    validate_clear() {
-      this.text_invalidated = false;
-      this.file_invalidated = false;
-    },
-    removeFile() {
-      this.fileData = {};
-    },
-    removeData() {
+    removeCreateData() {
       this.fileName = '';
       this.fileData = {};
-    },
-    removeCreateData() {
-      this.removeData();
-      this.validate_clear();
+      this.text_invalidated = false;
+      this.file_invalidated = false;
       this.$refs.uploadData_create.value = null;
     },
     removeUpdateData() {
-      this.removeData();
-      this.validate_clear();
+      this.fileName = '';
+      this.fileData = {};
+      this.file_invalidated = false;
       this.$refs.uploadData_update.value = null;
     },
-    add_plugin(e) {
+    removeDeleteData() {
+      this.fileData = {};
+    },
+    create_plugin_file(e) {
       this.fileData = e.target.files;
     },
-    create_plugin() {
-      this.create_validate(); 
-      if(this.text_invalidated == false && this.file_invalidated == false) {
-        const { createPluginList } = nfv_mano_plugin();
-        let form = new FormData();
-        form.append("name", this.fileName);
-        form.append("pluginFile", this.fileData[0]);
-        createPluginList(form)
-        .then(() => {
-          this.getTableData();
-          this.$refs.modalCreate.closeModalEvent();
-          this.removeCreateData();
-        })
-        .catch(res => {
-          console.log(res);
-          this.removeCreateData();
-        })
-      }
-    },
-    create_validate() {
+    create_plugin_validate() {
       if(this.repeatName || this.fileName == '') {
         this.text_invalidated = true;
       }
@@ -246,36 +209,64 @@ export default {
         this.file_invalidated = true;
       }
     },
-    update_validate() {
+    create_plugin_modal() {
+      this.create_plugin_validate(); 
+      if(this.text_invalidated == false && this.file_invalidated == false) {
+        const { createPluginList } = nfv_mano_plugin();
+        let form = new FormData();
+        form.append("name", this.fileName);
+        form.append("pluginFile", this.fileData[0]);
+        createPluginList(form)
+        .then(() => {
+          this.$refs.modalCreate.closeModalEvent();
+          this.getTableData();
+        })
+        .catch(res => {
+          console.log(res);
+        })
+      }
+    },
+    update_plugin_file(e) {
+      this.fileData = e.target.files;
+    },
+    update_plugin_validate() {
       if(this.fileData[0] == null) {
         this.file_invalidated = true;
       } 
     },
-    update_plugin(name) {
+    update_plugin_button(name) {
       this.fileName = name;
     },
     update_plugin_modal() {
-      this.update_validate();
+      this.update_plugin_validate();
       if(this.file_invalidated == false) {
         const { updatePlugin } = nfv_mano_plugin();
         let form = new FormData();
         form.append("name", this.fileName);
         form.append("pluginFile", this.fileData[0]);
         updatePlugin(this.fileName,form)
-        .then((res) => {
-          const index = this.td_list.map(function(e) { return e.name }).indexOf(this.fileName);
-          this.td_list[index].pluginFile = res.data.pluginFile;
+        .then(() => {
           this.$refs.modalUpdate.closeModalEvent();
-          this.removeUpdateData();
+          this.getTableData();
         })
         .catch(res => {
           console.log(res);
-          this.removeUpdateData();
         })
       }
     },
-    delete_plugin(file) {
+    delete_plugin_button(file) {
       this.fileData = file;
+    },
+    delete_plugin_modal() { // emit
+      const { deletePlugin } = nfv_mano_plugin();
+      deletePlugin(this.fileData.name)
+      .then(() => {
+        let index = this.td_list.indexOf(this.fileData);
+        this.td_list = $array.destroy(this.td_list, index);
+      })
+      .catch(res => {
+        console.log(res)
+      })
     },
   }
 }

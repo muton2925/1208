@@ -6,13 +6,13 @@
           <h5 class="modal-title" id="exampleModalLabel">
             <slot name="header"></slot>
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="cancelEvent"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body mx-1">
           <slot name="body"></slot>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelEvent">Cancel</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <slot name="footer"></slot>
         </div>
       </div>
@@ -35,7 +35,11 @@ export default {
     }
   },
   mounted() {
-    this.modal = new Modal(this.$refs.modal_create, {})
+    const th = this; 
+    this.$refs.modal_create.addEventListener('hidden.bs.modal', function () {
+      th.cancelEvent();
+    });
+    this.modal = new Modal(this.$refs.modal_create, {});
   },
   methods: {
     cancelEvent() {

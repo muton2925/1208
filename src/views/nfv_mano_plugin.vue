@@ -39,7 +39,7 @@
       Create new NFV MANO Plugin
     </template>
     <template v-slot:body>
-      <form :class="{ 'was-invalidated': isinvalidated }">
+      <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">Plugin Name :</label>
           <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="fileName">
@@ -70,7 +70,7 @@
       Update Service Mapping Plugin
     </template>
     <template v-slot:body>
-      <form :class="{ 'was-invalidated': isinvalidated }">
+      <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">
             Plugin Name :
@@ -149,9 +149,6 @@ export default {
     };
   },
   computed: {
-    isinvalidated() {
-      return this.text_invalidated || this.file_invalidated;
-    },
     repeatName() {
       return this.td_list.map(function(e) { return e.name }).includes(this.fileName);
     }
@@ -159,16 +156,12 @@ export default {
   watch: {
     fileName: {
       handler: function() {
-        if(this.isinvalidated) {
-          this.text_invalidated = false;
-        }
+        this.text_invalidated = false;
       }
     },
     fileData: {
       handler: function() {
-        if(this.isinvalidated) {
-          this.file_invalidated = false;
-        }
+        this.file_invalidated = false;
       }
     }
   },
@@ -228,7 +221,7 @@ export default {
     },
     create_plugin() {
       this.create_validate(); 
-      if(this.isinvalidated == false) {
+      if(this.text_invalidated == false && this.file_invalidated == false) {
         const { createPluginList } = nfv_mano_plugin();
         let form = new FormData();
         form.append("name", this.fileName);
@@ -263,7 +256,7 @@ export default {
     },
     update_plugin_modal() {
       this.update_validate();
-      if(this.isinvalidated == false) {
+      if(this.file_invalidated == false) {
         const { updatePlugin } = nfv_mano_plugin();
         let form = new FormData();
         form.append("name", this.fileName);

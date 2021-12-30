@@ -1,5 +1,5 @@
 <template>
-  <Table v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateData">
+  <Table v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData">
     <template v-slot:header>
       NFV MANO Plugin
     </template>
@@ -179,7 +179,7 @@ export default {
         console.log(res);
         })
       },
-    updateData(val) {  // emit
+    updateTableData(val) {  // emit
       this.filterEntries = val;
     },
     deleteData() { // emit

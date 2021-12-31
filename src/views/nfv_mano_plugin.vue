@@ -128,8 +128,8 @@ export default {
   },
   data() {
     return {
-      filterEntries: [],
       status: true,
+      filterEntries: [],
       th_list: [
         { name: "name", text: "Plugin Name", sort: true, status: 'none' },
         { name: "allocate_nssi", text: "Allocate NSSI File", sort: true, status: 'none' },
@@ -138,7 +138,7 @@ export default {
         { name: "plugin_file", text: "Download", sort: false, status: 'none' },
         { name: "delete_plugin", text: "Delete", sort: false, status: 'none' },
       ],
-      td_list:[],
+      td_list: [],
       columnSort: ['name','allocate_nssi','dellocate_nssi'],
       columnNumber: 6,
       fileName: '',

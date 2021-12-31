@@ -10,7 +10,7 @@
       NSD Template List
     </template>
     <template v-slot:table-td>
-      <tr v-for="item in filterEntries" :key="item.id">
+      <tr v-for="item in filterEntries" :key="item.templateId">
         <td class="nsd_id">{{ item.templateId }}</td>
         <td>{{ item.name }}</td>
         <td>{{ item.description }}</td>
@@ -50,13 +50,13 @@
       <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">Template Name :</label>
-          <input type="text" class="form-control" id="InputFile" :class="{ 'is-invalid' : text_invalidated }" placeholder="Template Name" v-model="templateName">
+          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" placeholder="Template Name" v-model="templateName">
           <div class="invalid-feedback">
             <template v-if="repeatName">
-              此 Plugin 名稱已存在
+              此 Template 名稱已存在
             </template>
             <template v-else>
-              Plugin 名稱不得為空
+              Template 名稱不得為空
             </template>
           </div>
         </div>
@@ -180,7 +180,7 @@ export default {
         { name: "template_Download", text: "Download", sort: false, status: 'none' },
         { name: "delete_template", text: "Delete", sort: false, status: 'none' },
       ],
-      td_list:[],
+      td_list: [],
       nfv_mano_list: [],
       columnSort: ['templateId','name','description','templateType','nfvoType','operationStatus'],
       columnNumber: 10,
@@ -217,7 +217,7 @@ export default {
       }
     },
   },
-  async created(){
+  async created() {
     await this.getTableData();
     const { PluginList }  = Share();
     PluginList()
@@ -228,7 +228,7 @@ export default {
     });
     this.status = true;
   },
-  methods:{
+  methods: {
     async getTableData() {  // 顯示 Table 資料
       const { TemplateList }  = Share();
       TemplateList()
@@ -299,13 +299,13 @@ export default {
         }
       }
     },
+    update_template_file(e) {  // 更新 Upate Modal 內檔案
+      this.templateData = e.target.files;
+    },
     update_template_validate() { // 驗證 Update Modal
       if(this.templateData[0] == null) {
         this.file_invalidated = true;
       } 
-    },
-    update_template_file(e) {  // 更新 Upate Modal 內檔案
-      this.templateData = e.target.files;
     },
     update_template_button(id,type) { // 點擊 Update Modal 按鈕
       this.templateId = id;
@@ -313,7 +313,7 @@ export default {
     },
     update_template_modal() { // 點擊 Update Modal 內更新按鈕
       this.update_template_validate();
-      if(!this.file_invalidated && !this.select_invalidated) {
+      if(!this.file_invalidated) {
         const { updateGenericTemplate } = GenericTemplate();
         let form = new FormData();
         form.append("nfvoType", this.currentNFVMANO);
@@ -324,6 +324,9 @@ export default {
           this.$refs.modalUpdate.closeModalEvent();
           this.getTableData();
         })
+        .catch(res => {
+          console.log(res);
+        })
       }
     },
     download_template_button(file) { // 點擊 Download Modal 按鈕
@@ -333,7 +336,6 @@ export default {
     },
     delete_template_button(file) { // 點擊 Delete Modal 按鈕
       this.templateData = file;
-      console.log(this.templateData)
     },
     delete_template_modal() { // 點擊 Delete Modal 內刪除按鈕
       const { deleteGenericTemplate } = GenericTemplate();

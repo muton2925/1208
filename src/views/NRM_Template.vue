@@ -10,7 +10,7 @@
       NRM Template List
     </template>
     <template v-slot:table-td>
-      <tr v-for="item in filterEntries" :key="item.id">
+      <tr v-for="item in filterEntries" :key="item.templateId">
         <td class="nrm_id">{{ item.templateId }}</td>
         <td>{{ item.name }}</td>
         <td>{{ item.description }}</td>
@@ -45,13 +45,13 @@
       <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">Template Name :</label>
-          <input type="text" class="form-control" id="InputFile" :class="{ 'is-invalid' : text_invalidated }" placeholder="Template Name" v-model="templateName">
+          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" placeholder="Template Name" v-model="templateName">
           <div class="invalid-feedback">
             <template v-if="repeatName">
-              此 Plugin 名稱已存在
+              此 Template 名稱已存在
             </template>
             <template v-else>
-              Plugin 名稱不得為空
+              Template 名稱不得為空
             </template>
           </div>
         </div>
@@ -148,7 +148,7 @@ export default {
         { name: "template_Download", text: "Download", sort: false, status: 'none' },
         { name: "delete_template", text: "Delete", sort: false, status: 'none' },
       ],
-      td_list:[],
+      td_list: [],
       nfv_mano_list: [],
       columnSort: ['templateId','name','description','templateType','nfvoType','operationStatus'],
       columnNumber: 9,
@@ -184,7 +184,7 @@ export default {
       }
     },
   },
-  async created(){
+  async created() {
     await this.getTableData();
     const { PluginList }  = Share();
     PluginList()
@@ -195,12 +195,11 @@ export default {
     });
     this.status = true;
   },
-  methods:{
+  methods: {
     async getTableData() {  // 顯示 Table 資料
       const { TemplateList }  = Share();
       TemplateList()
       .then(res => {
-        console.log(res)
         this.td_list = [];
         const array_nrm = res.data.filter(x => x.templateType == 'NRM');
         for(let i of array_nrm){
@@ -252,13 +251,13 @@ export default {
         })
       }
     },
+    update_template_file(e) {  // 更新 Upate Modal 內檔案
+      this.templateData = e.target.files;
+    },
     update_template_validate() { // 驗證 Update Modal
       if(this.templateData[0] == null) {
         this.file_invalidated = true;
       } 
-    },
-    update_template_file(e) {  // 更新 Upate Modal 內檔案
-      this.templateData = e.target.files;
     },
     update_template_button(id,type) { // 點擊 Update Modal 按鈕
       this.templateId = id;

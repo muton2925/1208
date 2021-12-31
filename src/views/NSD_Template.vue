@@ -313,7 +313,7 @@ export default {
     },
     update_template_modal() { // 點擊 Update Modal 內更新按鈕
       this.update_template_validate();
-      if(!this.file_invalidated) {
+      if(!this.file_invalidated && !this.select_invalidated) {
         const { updateGenericTemplate } = GenericTemplate();
         let form = new FormData();
         form.append("nfvoType", this.currentNFVMANO);
@@ -333,6 +333,7 @@ export default {
     },
     delete_template_button(file) { // 點擊 Delete Modal 按鈕
       this.templateData = file;
+      console.log(this.templateData)
     },
     delete_template_modal() { // 點擊 Delete Modal 內刪除按鈕
       const { deleteGenericTemplate } = GenericTemplate();
@@ -355,3 +356,4 @@ export default {
   text-overflow: ellipsis;
 }
 </style>
+

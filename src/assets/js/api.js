@@ -1,13 +1,10 @@
 import axios from 'axios'
-// const baseURL = 'http://10.0.0.15:8081/'
-// const baseURL = 'http://localhost:3000/'
 const baseURL = 'http://127.0.0.1:8000/'
 const instance  = axios.create({
     baseURL:baseURL
 })
 const Share = function(){
     const PluginList = ()=>instance.get(`plugin/management/`)
-    // const PluginList = ()=>instance.get(`data`)
     const TemplateList = ()=>instance.get(`ObjectManagement/GenericTemplate/`)
     return {PluginList,TemplateList}
 }

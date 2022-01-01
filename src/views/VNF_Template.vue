@@ -60,7 +60,7 @@
         </div>
         <div class="mb-3">
           <label for="InputFile2" class="form-label">VNF Description :</label>
-          <input type="text" class="form-control" id="InputFile2" placeholder="NSD Description" v-model="templateDescription">
+          <input type="text" class="form-control" id="InputFile2" placeholder="VNF Description" v-model="templateDescription">
         </div>
         <div>
           <label for="InputFile3" class="form-label">NFVO Name :</label>
@@ -149,10 +149,9 @@ export default {
   setup() {
     const modalCreate = ref(null)
     const modalUpdate = ref(null)
-    const uploadData_create = ref(null)
     const uploadData_update = ref(null)
     return{
-      modalCreate,modalUpdate,uploadData_update,uploadData_create,
+      modalCreate,modalUpdate,uploadData_update
     }
   },
   data() {
@@ -207,9 +206,9 @@ export default {
       }
     },
   },
-  created() {
+  async created() {
     const { PluginList } = Share();
-    this.getTemplate();
+    await this.getTemplate();
     PluginList()
     .then(res => {
       for(let i of res.data) {
@@ -219,7 +218,7 @@ export default {
     this.status = true;
   },
   methods:{
-    getTemplate() {
+    async getTemplate() {
       const { TemplateList }  = Share();
       this.td_list = [];
       TemplateList()

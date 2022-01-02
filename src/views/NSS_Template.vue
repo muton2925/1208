@@ -271,6 +271,7 @@ export default {
       const { nssTemplateList }  = nss_template();
       nssTemplateList()
       .then(res => {
+        this.td_list = []
         for(let i of res.data) {
           let obj = {
             description: i.description,

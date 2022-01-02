@@ -11,15 +11,15 @@
     </template>
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.templateId">
-        <td class="vnf_id">
+        <td  class="tablecell-custom">
           <i class="bi bi-list cursor-pointer me-1" data-bs-toggle="modal" data-bs-target="#show_plugin_Modal" @click="show_template_button(item.templateId,item.content)"></i>
           {{ item.templateId }}
         </td>
-        <td>{{ item.name }}</td>
-        <td>{{ item.description }}</td>
-        <td>{{ item.templateType }}</td>
-        <td>{{ item.nfvoType }}</td>
-        <td>{{ item.operationStatus }}</td>
+        <td class="tablecell-custom">{{ item.name }}</td>
+        <td class="tablecell-custom">{{ item.description }}</td>
+        <td class="tablecell-custom">{{ item.templateType }}</td>
+        <td class="tablecell-custom">{{ item.nfvoType }}</td>
+        <td class="tablecell-custom">{{ item.operationStatus }}</td>
         <td class="w-0">
           <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_template_button(item.templateId,item.nfvoType)">
             <i class="bi bi-wrench"></i>
@@ -60,7 +60,7 @@
         </div>
         <div class="mb-3">
           <label for="InputFile2" class="form-label">VNF Description :</label>
-          <input type="text" class="form-control" id="InputFile2" placeholder="VNF Description" v-model="templateDescription">
+          <input type="text" class="form-control" id="InputFile2" placeholder="Description" v-model="templateDescription">
         </div>
         <div>
           <label for="InputFile3" class="form-label">NFVO Name :</label>
@@ -159,7 +159,7 @@ export default {
       status: false,
       filterEntries: [],
        th_list: [
-        { name: "templateId", text: "Id List", sort: true, status: 'none' },
+        { name: "templateId", text: "ID List", sort: true, status: 'none' },
         { name: "name", text: "Template Name", sort: true, status: 'none' },
         { name: "description", text: "Description", sort: true, status: 'none' },
         { name: "templateType", text: "Type", sort: true, status: 'none' },
@@ -215,10 +215,13 @@ export default {
         this.nfv_mano_list.push(i.name);
       }
     })
+    .catch(res => {
+      console.log(res)
+    })
     this.status = true;
   },
   methods:{
-    async getTemplate() {
+    async getTemplate() { // 顯示 Table 資料
       const { TemplateList }  = Share();
       this.td_list = [];
       TemplateList()
@@ -229,11 +232,11 @@ export default {
         }
         this.status = true;
       })
-      .catch(err => {
-        console.log(err)
+      .catch(res => {
+        console.log(res)
       })
     },
-    updateTableData(val) { //emit
+    updateTableData(val) { // 每次執行 Table 操作，更新資料 
       this.filterEntries = val;
     },
     removeCreateData() { // 關閉 Create Modal
@@ -247,7 +250,7 @@ export default {
       this.templateId = '';
       this.templateVNFList = {};
     },
-    removeUpdateData() {
+    removeUpdateData() { // 關閉 Update Modal
       this.templateId = '';
       this.templateData = {};
       this.currentNFVMANO = '請選擇 ...';
@@ -257,7 +260,7 @@ export default {
     removeDeleteData() { // 關閉 Delete Modal
       this.templateData = {};
     },
-    show_template_button(id,content) {
+    show_template_button(id,content) { // 點擊 Show Modal 按鈕
       this.templateId = id;
       const map = new Map();
       map.set(id,content);
@@ -295,21 +298,24 @@ export default {
           this.$refs.modalCreate.closeModalEvent();
           this.td_list.push(res.data);
         })
+        .catch(res => {
+          console.log(res)
+        })
       }
     },
-    update_template_file(e) {
+    update_template_file(e) { // 更新 Update Modal 內檔案
       this.templateData = e.target.files;
     },
-    update_template_validate() {
+    update_template_validate() { // 驗證 Update Modal
       if(this.templateData[0] == null) {
         this.file_invalidated = true;
       } 
     },
-    update_template_button(id,type) {
+    update_template_button(id,type) { // 點擊 Update Modal 按鈕
       this.templateId = id;
       this.currentNFVMANO = type;
     },
-    update_template_modal() {
+    update_template_modal() { // 點擊 Update Modal 內更新按鈕
       this.update_template_validate();
       if(!this.file_invalidated) {
         const { updateGenericTemplate } = GenericTemplate();
@@ -332,10 +338,10 @@ export default {
         alert('未上傳 VNF Template File，無法下載');
       }
     },
-    delete_template_button(file) {
+    delete_template_button(file) { // 點擊 Delete Modal 按鈕
       this.templateData = file;
     },
-    delete_template_modal() { // emit
+    delete_template_modal() { // 點擊 Delete Modal 內刪除按鈕
       const { deleteGenericTemplate } = GenericTemplate()
       deleteGenericTemplate(this.templateData.templateId)
       .then(() => {
@@ -348,11 +354,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.vnf_id {
-  max-width: 150px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-</style>

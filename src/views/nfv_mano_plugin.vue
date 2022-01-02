@@ -11,9 +11,9 @@
     </template>
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.name">
-        <td>{{ item.name }}</td>
-        <td>{{ item.allocate_nssi }}</td>
-        <td>{{ item.deallocate_nssi }}</td>
+        <td class="tablecell-custom">{{ item.name }}</td>
+        <td class="tablecell-custom">{{ item.allocate_nssi }}</td>
+        <td class="tablecell-custom">{{ item.deallocate_nssi }}</td>
         <td class="w-0">
           <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_plugin_button(item.name)">
             <i class="bi bi-wrench"></i>
@@ -122,10 +122,6 @@ export default {
       modalCreate,modalUpdate,uploadData_update,uploadData_create,
     }
   },
-  async created() {
-    await this.getTableData();
-    this.status = true;
-  },
   data() {
     return {
       status: true,
@@ -164,8 +160,12 @@ export default {
       }
     }
   },
+  async created() {
+    await this.getTableData();
+    this.status = true;
+  },
   methods: {
-    async getTableData() {
+    async getTableData() { // 顯示 Table 資料
       const { PluginList } = Share();
       await PluginList()
       .then(res => {
@@ -178,29 +178,29 @@ export default {
         console.log(res);
         })
       },
-    updateTableData(val) {  // emit
+    updateTableData(val) {  // 每次執行 Table 操作，更新資料 
       this.filterEntries = val;
     },
-    removeCreateData() {
+    removeCreateData() { // 關閉 Create Modal
       this.fileName = '';
       this.fileData = {};
       this.text_invalidated = false;
       this.file_invalidated = false;
       this.$refs.uploadData_create.value = null;
     },
-    removeUpdateData() {
+    removeUpdateData() { // 關閉 Update Modal
       this.fileName = '';
       this.fileData = {};
       this.file_invalidated = false;
       this.$refs.uploadData_update.value = null;
     },
-    removeDeleteData() {
+    removeDeleteData() { // 關閉 Delete Modal
       this.fileData = {};
     },
-    create_plugin_file(e) {
+    create_plugin_file(e) { // 新增 Update Modal 內檔案
       this.fileData = e.target.files;
     },
-    create_plugin_validate() {
+    create_plugin_validate() { // 驗證 Create Modal
       if(this.repeatName || this.fileName == '') {
         this.text_invalidated = true;
       }
@@ -208,7 +208,7 @@ export default {
         this.file_invalidated = true;
       }
     },
-    create_plugin_modal() {
+    create_plugin_modal() { // 點擊 Create Modal 內創建按鈕
       this.create_plugin_validate(); 
       if(this.text_invalidated == false && this.file_invalidated == false) {
         const { createPluginList } = nfv_mano_plugin();
@@ -225,18 +225,18 @@ export default {
         })
       }
     },
-    update_plugin_file(e) {
+    update_plugin_file(e) { // 更新 Update Modal 內檔案
       this.fileData = e.target.files;
     },
-    update_plugin_validate() {
-      if(this.fileData[0] == null) {
+    update_plugin_validate() { 
+      if(this.fileData[0] == null) { // 驗證 Update Modal
         this.file_invalidated = true;
       } 
     },
-    update_plugin_button(name) {
+    update_plugin_button(name) { // 點擊 Update Modal 按鈕
       this.fileName = name;
     },
-    update_plugin_modal() {
+    update_plugin_modal() { // 點擊 Update Modal 內更新按鈕
       this.update_plugin_validate();
       if(this.file_invalidated == false) {
         const { updatePlugin } = nfv_mano_plugin();
@@ -253,10 +253,10 @@ export default {
         })
       }
     },
-    delete_plugin_button(file) {
+    delete_plugin_button(file) { // 點擊 Delete Modal 按鈕
       this.fileData = file;
     },
-    delete_plugin_modal() { // emit
+    delete_plugin_modal() { // 點擊 Delete Modal 內刪除按鈕
       const { deletePlugin } = nfv_mano_plugin();
       deletePlugin(this.fileData.name)
       .then(() => {
@@ -269,4 +269,3 @@ export default {
   }
 }
 </script>
-

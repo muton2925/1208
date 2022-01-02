@@ -117,6 +117,13 @@ ul {
   grid-row: 2 / 3;
   grid-column: 1 / 2;
 }
+.tablecell-custom {
+  min-width: 150px;
+  max-width: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 @media (min-width: 576px) {
   .grid-custom {
     grid-template-columns: 102px 1fr;

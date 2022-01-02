@@ -349,6 +349,7 @@ export default {
     create_template_modal() { // 點擊 Create Modal 內創建按鈕
       this.create_template_validate();
       const { createNssTemplate }  = nss_template();
+      console.log(this.currrentNRM)
       if(!this.is_invalidated) {
         let form = new FormData();
         form.append("nfvoType", this.currentNFVMANO);

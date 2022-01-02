@@ -8,6 +8,7 @@ const Share = function(){
     const TemplateList = ()=>instance.get(`ObjectManagement/GenericTemplate/`)
     return {PluginList,TemplateList}
 }
+//axios.post(url + 'ObjectManagement/SliceTemplate/', form)
 const nss_template = function(){
     const selected = (TemplateId)=>instance.get(`ObjectManagement/GenericTemplate/${TemplateId}/`)
     const nssTemplateList = ()=>instance.get(`ObjectManagement/SliceTemplate/`)

@@ -12,16 +12,8 @@
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.templateId">
         <td class="nsd_id">{{ item.templateId }}</td>
-        <td>{{ item.name }}</td>
         <td>{{ item.description }}</td>
-        <td>{{ item.templateType }}</td>
-        <td>{{ item.nfvoType }}</td>
-        <td>{{ item.operationStatus }}</td>
-        <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-info rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#show_plugin_Modal" @click="show_template_button(item)">
-            <i class="bi bi-file-text-fill"></i>
-          </div>
-        </td>
+        <td>{{ item.nfvoType[0] }}</td>
         <td class="w-0">
           <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_template_button(item.templateId, item.nfvoType)">
             <i class="bi bi-wrench"></i>
@@ -54,6 +46,10 @@
             <option selected>請選擇 ...</option>
             <option v-for="item in templateCollection.templateVNFList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
+          <div class="mt-2" v-if="currentVNF != '請選擇 ...'">
+            <div>VNF ID : {{ currentVNF }}</div>
+            <div>VNF Description : {{ currentVNFDescription }}</div>
+          </div>
           <div class="invalid-feedback">
             請選擇一個 VNF Template
           </div>
@@ -64,6 +60,10 @@
             <option selected>請選擇 ...</option>
             <option v-for="item in templateCollection.templateNSDList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
+          <div class="mt-2" v-if="currentNSD != '請選擇 ...'">
+            <div>VNF ID : {{ currentNSD }}</div>
+            <div>VNF Description : {{ currentNSDDescription }}</div>
+          </div>
           <div class="invalid-feedback">
             請選擇一個 NSD Template
           </div>
@@ -74,13 +74,17 @@
             <option selected>請選擇 ...</option>
             <option v-for="item in templateCollection.templateNRMList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
+          <div class="mt-2" v-if="currentNRM != '請選擇 ...'">
+            <div>VNF ID : {{ currentNRM }}</div>
+            <div>VNF Description : {{ currentNRMDescription }}</div>
+          </div>
           <div class="invalid-feedback">
             請選擇一個 NRM Template
           </div>
         </div>
         <div class="mb-3">
           <label for="InputFile" class="form-label">NSS Description :</label>
-          <input type="text" class="form-control" id="InputFile" placeholder="NSS Description" v-model="templateDescription">
+          <input type="text" class="form-control" id="InputFile" placeholder="Description" v-model="templateDescription">
         </div>
         <div class="mb-3">
           <label for="select4" class="form-label">NFVO Name :</label>
@@ -189,19 +193,15 @@ export default {
       filterEntries: [],
       th_list: [
         { name: "templateId", text: "Id", sort: true, status: 'none' },
-        { name: "name", text: "Template Name", sort: true, status: 'none' },
         { name: "description", text: "Description", sort: true, status: 'none' },
-        { name: "templateType", text: "Type", sort: true, status: 'none' },
         { name: "nfvoType", text: "NFVO", sort: true, status: 'none' },
-        { name: "operationStatus", text: "NSD Status", sort: true, status: 'none' },
-        { name: "vnf_list", text: "VNF List", sort: false, status: 'none' },
-        { name: "update_template", text: "Update", sort: false, status: 'none' },
-        { name: "template_Download", text: "Download", sort: false, status: 'none' },
-        { name: "delete_template", text: "Delete", sort: false, status: 'none' },
+        { name: "template_list", text: "Template List", sort: false, status: 'none' },
+        { name: "allocate_nssi", text: "Allocate NSSI", sort: false, status: 'none' },
+        { name: "delete_template", text: "Delete Template", sort: false, status: 'none' },
       ],
       td_list: [],
       nfv_mano_list: [],
-      columnSort: ['templateId','name','description','templateType','nfvoType','operationStatus'],
+      columnSort: ['templateId','description','nfvoType'],
       columnNumber: 10,
       currentNFVMANO: '請選擇 ...',
       currentVNF: '請選擇 ...',
@@ -231,7 +231,19 @@ export default {
     },
     is_invalidated() {
       return this.select_vnf_invalidated || this.select_nsd_invalidated || this.select_nrm_invalidated || this.select_nfvmano_invalidated;
-    }
+    },
+    currentVNFDescription() {
+      const index = this.templateCollection.templateVNFList.findIndex(x => x.templateId == this.currentVNF);
+      return this.templateCollection.templateVNFList[index].description;
+    },
+    currentNSDDescription() {
+      const index = this.templateCollection.templateNSDList.findIndex(x => x.templateId == this.currentNSD);
+      return this.templateCollection.templateNSDList[index].description;
+    },
+    currentNRMDescription() {
+      const index = this.templateCollection.templateNRMList.findIndex(x => x.templateId == this.currentNRM);
+      return this.templateCollection.templateNRMList[index].description;
+    },
   },
   watch: {
     templateName: {
@@ -272,7 +284,7 @@ export default {
     this.status = true;
   },
   methods: {
-    async getTableData() {  
+    async getTableData() {  // 獲取 VNF NSD NRM 資料
       const { TemplateList }  = Share();
       TemplateList()
       .then(res => {
@@ -293,10 +305,9 @@ export default {
             }
           }
         }
-        console.log(this.templateCollection)
       });
     },
-    async getNfvManoData() {
+    async getNfvManoData() { // 獲取 NFVMANO 資料
       const { PluginList }  = Share();
       PluginList()
       .then(res => {
@@ -305,21 +316,29 @@ export default {
         }
       });
     },
-    async getNssData() {
+    async getNssData() { // 獲取 NSS Template 資料
       const { nssTemplateList }  = nss_template();
       nssTemplateList()
       .then(res => {
-        console.log(res)
+        for(let i of res.data) {
+          this.td_list.push(i);
+        }
+        console.log(this.td_list)
       });
     },
     updateTableData(val) {  // 每次執行 Table 操作，更新資料 
       this.filterEntries = val;
     },
     removeCreateData() { // 關閉 Create Modal
-      this.templateName = '';
       this.templateDescription = '';
+      this.currentVNF = '請選擇 ...';
+      this.currentNSD = '請選擇 ...';
+      this.currentNRM = '請選擇 ...';
       this.currentNFVMANO = '請選擇 ...';
       this.text_invalidated = false;
+      this.select_vnf_invalidated = false;
+      this.select_nsd_invalidated = false;
+      this.select_nrm_invalidated = false;
       this.select_nfvmano_invalidated = false;
     },
     removeShowData() { // 關閉 Show Modal
@@ -342,7 +361,7 @@ export default {
       if(this.currentNSD == '請選擇 ...')
         this.select_nsd_invalidated = true;
       if(this.currentNRM == '請選擇 ...')
-        this.select_NRM_invalidated = true;
+        this.select_nrm_invalidated = true;
       if(this.currentNFVMANO == '請選擇 ...') 
         this.select_nfvmano_invalidated = true;
     },
@@ -355,7 +374,7 @@ export default {
         form.append("nfvoType", this.currentNFVMANO);
         form.append("genericTemplates", this.currentVNF);
         form.append("genericTemplates", this.currentNSD);
-        form.append("genericTemplates", this.currrentNRM);
+        form.append("genericTemplates", this.currentNRM);
         form.append("description", this.templateDescription);
         createNssTemplate(form)
         .then(res => {

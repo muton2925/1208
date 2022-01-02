@@ -13,7 +13,7 @@
       <tr v-for="item in filterEntries" :key="item.templateId">
         <td class="nsd_id">{{ item.templateId }}</td>
         <td>{{ item.description }}</td>
-        <td>{{ item.nfvoType[0] }}</td>
+        <td>{{ item.nfvoType }}</td>
         <td class="w-0">
           <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_template_button(item.templateId, item.nfvoType)">
             <i class="bi bi-wrench"></i>
@@ -321,7 +321,10 @@ export default {
       nssTemplateList()
       .then(res => {
         for(let i of res.data) {
-          this.td_list.push(i);
+          const {nfvoType, ...rest} = i
+          const obj = JSON.parse(JSON.stringify(rest))
+          obj['nfvoType'] = nfvoType[0]
+          this.td_list.push(obj);
         }
         console.log(this.td_list)
       });
@@ -368,7 +371,6 @@ export default {
     create_template_modal() { // 點擊 Create Modal 內創建按鈕
       this.create_template_validate();
       const { createNssTemplate }  = nss_template();
-      console.log(this.currrentNRM)
       if(!this.is_invalidated) {
         let form = new FormData();
         form.append("nfvoType", this.currentNFVMANO);
@@ -379,7 +381,11 @@ export default {
         createNssTemplate(form)
         .then(res => {
           this.$refs.modalCreate.closeModalEvent();
-          this.td_list.push(res.data);
+          const {nfvoType, ...rest} = res.data
+          const obj = JSON.parse(JSON.stringify(rest))
+          obj['nfvoType'] = nfvoType[0]
+          this.td_list.push(obj);
+          console.log(this.td_list)
         })
         .catch(res => {
           console.log(res)

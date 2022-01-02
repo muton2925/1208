@@ -13,7 +13,7 @@ const nss_template = function(){
     const selected = (TemplateId)=>instance.get(`ObjectManagement/GenericTemplate/${TemplateId}/`)
     const nssTemplateList = ()=>instance.get(`ObjectManagement/SliceTemplate/`)
     const createNssTemplate = (from)=>instance.post(`ObjectManagement/SliceTemplate/`,from)
-    const deleteNssTemplate = (templateId)=>instance.delete(`/ObjectManagement/NSS/SliceProfiles/${templateId}/`)
+    const deleteNssTemplate = (templateId)=>instance.delete(`/ObjectManagement/SliceTemplate/${templateId}/`)
     return {selected, nssTemplateList, createNssTemplate, deleteNssTemplate}
 }
 const GenericTemplate = function(){

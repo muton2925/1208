@@ -11,12 +11,12 @@
     </template>
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.templateId">
-        <td class="nrm_id">{{ item.templateId }}</td>
-        <td>{{ item.name }}</td>
-        <td>{{ item.description }}</td>
-        <td>{{ item.templateType }}</td>
-        <td>{{ item.nfvoType }}</td>
-        <td>{{ item.operationStatus }}</td>
+        <td class="tablecell-custom">{{ item.templateId }}</td>
+        <td class="tablecell-custom">{{ item.name }}</td>
+        <td class="tablecell-custom">{{ item.description }}</td>
+        <td class="tablecell-custom">{{ item.templateType }}</td>
+        <td class="tablecell-custom">{{ item.nfvoType }}</td>
+        <td class="tablecell-custom">{{ item.operationStatus }}</td>
         <td class="w-0">
           <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_template_button(item.templateId, item.nfvoType)">
             <i class="bi bi-wrench"></i>
@@ -57,7 +57,7 @@
         </div>
         <div class="mb-3">
           <label for="InputFile2" class="form-label">NRM Description :</label>
-          <input type="text" class="form-control" id="InputFile2" placeholder="NRM Description" v-model="templateDescription">
+          <input type="text" class="form-control" id="InputFile2" placeholder="Description" v-model="templateDescription">
         </div>
         <div class="mb-3">
           <label for="InputFile3" class="form-label">NFVO Name :</label>
@@ -138,7 +138,7 @@ export default {
       status: false,
       filterEntries: [],
       th_list: [
-        { name: "templateId", text: "Id", sort: true, status: 'none' },
+        { name: "templateId", text: "ID", sort: true, status: 'none' },
         { name: "name", text: "Template Name", sort: true, status: 'none' },
         { name: "description", text: "Description", sort: true, status: 'none' },
         { name: "templateType", text: "Type", sort: true, status: 'none' },
@@ -192,7 +192,10 @@ export default {
       for(let i of res.data){
         this.nfv_mano_list.push(i.name);
       }
-    });
+    })
+    .catch(res => {
+      console.log(res)
+    })
     this.status = true;
   },
   methods: {
@@ -205,7 +208,10 @@ export default {
         for(let i of array_nrm){
           this.td_list.push(i);
         }
-      });
+      })
+      .catch(res => {
+        console.log(res)
+      })
     },
     updateTableData(val) {  // 每次執行 Table 操作，更新資料 
       this.filterEntries = val;
@@ -249,9 +255,12 @@ export default {
           this.$refs.modalCreate.closeModalEvent();
           this.td_list.push(res.data);
         })
+        .catch(res => {
+          console.log(res)
+        })
       }
     },
-    update_template_file(e) {  // 更新 Upate Modal 內檔案
+    update_template_file(e) {  // 更新 Update Modal 內檔案
       this.templateData = e.target.files;
     },
     update_template_validate() { // 驗證 Update Modal
@@ -276,6 +285,9 @@ export default {
           this.$refs.modalUpdate.closeModalEvent();
           this.getTableData();
         })
+        .catch(res => {
+          console.log(res)
+        })
       }
     },
     download_template_button(file) { // 點擊 Download Modal 按鈕
@@ -299,11 +311,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.nrm_id {
-  max-width: 150px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-</style>

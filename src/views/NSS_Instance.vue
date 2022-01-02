@@ -21,7 +21,7 @@ export default {
   },
   data() {
     return {
-      th_list :['Network Slice Subnet Instance(NSSI)','Id', 'Network Service(NS)', 'Administrative State', 'Operational State',	'Graph',	'Deallocate', '	Delete NSSI']
+      th_list :['Network Slice Subnet Instance(NSSI)','ID', 'Network Service(NS)', 'Administrative State', 'Operational State',	'Graph',	'Deallocate', '	Delete NSSI']
     }
   }
 }

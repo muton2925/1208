@@ -59,8 +59,8 @@
             <option v-for="item in templateNSDList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
           <div class="mt-2" v-if="currentNSD != '請選擇 ...'">
-            <div>VNF ID : {{ currentNSD }}</div>
-            <div>VNF Description : {{ currentNSDDescription }}</div>
+            <div>NSD ID : {{ currentNSD }}</div>
+            <div>NSD Description : {{ currentNSDDescription }}</div>
           </div>
           <div class="invalid-feedback">
             請選擇一個 NSD Template
@@ -73,8 +73,8 @@
             <option v-for="item in templateNRMList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
           <div class="mt-2" v-if="currentNRM != '請選擇 ...'">
-            <div>VNF ID : {{ currentNRM }}</div>
-            <div>VNF Description : {{ currentNRMDescription }}</div>
+            <div>NRM ID : {{ currentNRM }}</div>
+            <div>NRM Description : {{ currentNRMDescription }}</div>
           </div>
           <div class="invalid-feedback">
             請選擇一個 NRM Template
@@ -331,16 +331,9 @@ export default {
         form.append("genericTemplates", this.currentNRM);
         form.append("description", this.templateDescription);
         createNssTemplate(form)
-        .then(res => {
+        .then(() => {
           this.$refs.modalCreate.closeModalEvent();
-          let obj = {
-            description: res.data.description,
-            genericTemplates: res.data.genericTemplates,
-            instanceId: res.data.instanceId,
-            templateId: res.data.templateId,
-            nfvoType: res.data.nfvoType[0]
-          }
-          this.td_list.push(obj);
+          this.getNssData();
         })
         .catch(res => {
           console.log(res)

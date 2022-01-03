@@ -223,9 +223,9 @@ export default {
   methods:{
     async getTemplate() { // 顯示 Table 資料
       const { TemplateList }  = Share();
-      this.td_list = [];
       TemplateList()
       .then(res => {
+        this.td_list = [];
         const VNF = res.data.filter(x => x.templateType == 'VNF');
         for (const iterator of VNF) {
           this.td_list.push(iterator)

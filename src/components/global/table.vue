@@ -1,86 +1,92 @@
 <template>
   <div class="d-flex flex-column p-4 user-select-none">
-    <div class="container-header d-flex justify-content-between align-items-center mb-4">
-      <h3>
-        <slot name="header"></slot>
-      </h3>
-      <button v-if="btn" class="btn btn-primary ms-3 text-white" data-bs-toggle="modal" data-bs-target="#create_plugin_Modal">
-        <i class="d-sm-none bi bi-folder-plus"></i>
-        <span class="d-none d-sm-inline">
-          <slot name="button"></slot>
-        </span>
-      </button>
-    </div>
-    <div class="card shadow-sm">
-      <div class="card-header card-header-custom py-3">
-        <h6>
-          <slot name="table-name"></slot>
-        </h6>
+    <template v-if="pageStatus">
+      <div class="container-header d-flex justify-content-between align-items-center mb-4">
+        <h3>
+          <slot name="header"></slot>
+        </h3>
+        <button v-if="btn" class="btn btn-primary ms-3 text-white" data-bs-toggle="modal" data-bs-target="#create_plugin_Modal">
+          <i class="d-sm-none bi bi-folder-plus"></i>
+          <span class="d-none d-sm-inline">
+            <slot name="button"></slot>
+          </span>
+        </button>
       </div>
-      <div class="d-flex flex-column card-body">
-        <div class="d-flex mb-3 align-items-center">
-          <div class="d-flex align-items-baseline me-2">
-            Show
-            <select v-model="currentEntries" class="form-select form-select-sm form-select-custom mx-2" @change="paginateEntries">
-              <option v-for="option in showEntries" :key="option" :value="option">{{ option }}</option>
-            </select>
-            entries
-          </div>
-          <div class="d-flex ms-auto">
-            <input type="text" class="form-control form-control" placeholder="Search" v-model="searchInput" @input="searchEvent">
-          </div>
+      <div class="card shadow-sm">
+        <div class="card-header card-header-custom py-3">
+          <h6>
+            <slot name="table-name"></slot>
+          </h6>
         </div>
-        <div class="mb-2 mb-lg-3 table-custom" style="min-height: 115px">
-          <table class="table table-bordered table-striped table-hover align-middle mb-0">
-            <thead>
-              <tr>
-                <th class="cursor-pointer" scope="col" v-for="item in columns" :key="item" @click="sortColumn(item.name,item.status)">
-                  <template v-if="item.sort == true">
-                    <div class="d-flex justify-content-between">
-                      <span>{{ item.text }}</span>
-                      <i class="bi bi-filter ms-2"></i>
-                    </div>
-                  </template>
-                  <template v-else>
-                    <div>{{ item.text }}</div>
-                  </template>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-if="filterEntries.length > 0">
-                <slot name="table-td"></slot>
-              </template>
-              <template v-else>
-                <tr class="text-center">
-                  <td :colspan="columnNumber">No matching data found</td>  
+        <div class="d-flex flex-column card-body">
+          <div class="d-flex mb-3 align-items-center">
+            <div class="d-flex align-items-baseline me-2">
+              Show
+              <select v-model="currentEntries" class="form-select form-select-sm form-select-custom mx-2" @change="paginateEntries">
+                <option v-for="option in showEntries" :key="option" :value="option">{{ option }}</option>
+              </select>
+              entries
+            </div>
+            <div class="d-flex ms-auto">
+              <input type="text" class="form-control form-control" placeholder="Search" v-model="searchInput" @input="searchEvent">
+            </div>
+          </div>
+          <div class="mb-2 mb-lg-3 table-custom" style="min-height: 115px">
+            <table class="table table-bordered table-striped table-hover align-middle mb-0">
+              <thead>
+                <tr>
+                  <th class="cursor-pointer" scope="col" v-for="item in columns" :key="item" @click="sortColumn(item.name,item.status)">
+                    <template v-if="item.sort == true">
+                      <div class="d-flex justify-content-between">
+                        <span>{{ item.text }}</span>
+                        <i class="bi bi-filter ms-2"></i>
+                      </div>
+                    </template>
+                    <template v-else>
+                      <div>{{ item.text }}</div>
+                    </template>
+                  </th>
                 </tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
-        <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center">
-          <div class="col-12 text-center col-lg-auto mb-2 mb-lg-0">Show {{ showInfo.start }} to {{ showInfo.end }} of {{ showInfo.length }} entries</div>
-          <ul class="pagination justify-content-center flex-wrap col-lg-auto" :class="{ 'pagination-sm' : windowWidth < 576 }">
-            <li class="page-item" :class="{ disabled : currentPage == 1 }">
-              <a class="page-link" href="#" @click.prevent="paginateEvent(1)">First</a>
-            </li>
-            <li class="page-item" :class="{ disabled : currentPage == 1 }">
-              <a class="page-link" href="#" @click="paginateEvent(currentPage-1)"><i class="bi bi-chevron-left"></i></a>
-            </li>
-            <li class="page-item" v-for="page in showPagination" :key="page" :class="[{ active: page == currentPage },{ disabled: page == '...'}]">
-              <a class="page-link" href="#" @click="paginateEvent(page)">{{ page }}</a>
-            </li>
-            <li class="page-item" :class="{ disabled : currentPage == allPages }">
-              <a class="page-link" href="#" @click="paginateEvent(currentPage+1)"><i class="bi bi-chevron-right"></i></a>
-            </li>
-            <li class="page-item" :class="{ disabled : currentPage == allPages }">
-              <a class="page-link" href="#" @click.prevent="paginateEvent(allPages)">Last</a>
-            </li>
-          </ul>
+              </thead>
+              <tbody>
+                <template v-if="filterEntries.length > 0">
+                  <slot name="table-td"></slot>
+                </template>
+                <template v-else>
+                  <tr class="text-center">
+                    <td :colspan="columnNumber">No matching data found</td>  
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center">
+            <div class="col-12 text-center col-lg-auto mb-2 mb-lg-0">Show {{ showInfo.start }} to {{ showInfo.end }} of {{ showInfo.length }} entries</div>
+            <ul class="pagination justify-content-center flex-wrap col-lg-auto" :class="{ 'pagination-sm' : windowWidth < 576 }">
+              <li class="page-item" :class="{ disabled : currentPage == 1 }">
+                <a class="page-link" href="#" @click.prevent="paginateEvent(1)">First</a>
+              </li>
+              <li class="page-item" :class="{ disabled : currentPage == 1 }">
+                <a class="page-link" href="#" @click="paginateEvent(currentPage-1)"><i class="bi bi-chevron-left"></i></a>
+              </li>
+              <li class="page-item" v-for="page in showPagination" :key="page" :class="[{ active: page == currentPage },{ disabled: page == '...'}]">
+                <a class="page-link" href="#" @click="paginateEvent(page)">{{ page }}</a>
+              </li>
+              <li class="page-item" :class="{ disabled : currentPage == allPages }">
+                <a class="page-link" href="#" @click="paginateEvent(currentPage+1)"><i class="bi bi-chevron-right"></i></a>
+              </li>
+              <li class="page-item" :class="{ disabled : currentPage == allPages }">
+                <a class="page-link" href="#" @click.prevent="paginateEvent(allPages)">Last</a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
+    <template v-else>
+
+    </template>
+
   </div>
 </template>
 <script>
@@ -125,7 +131,11 @@ export default {
     },
     columnNumber: {
       typeof: Number
-    }
+    },
+    status: {
+      typeof: Boolean,
+      default: false
+    },
   },
   created() {
     this.filterEntries = $array.paginate(this.entries, this.currentPage, this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
@@ -161,6 +171,9 @@ export default {
     }
   },
   computed: {
+    pageStatus() {
+      return this.status;
+    },
     allPages: {
       get() {
         if(this.entries.length != 0)

@@ -1,5 +1,5 @@
 <template>
-  <Table v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData">
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status">
     <template v-slot:header>
       Network Slice Subnet Template
     </template>
@@ -30,6 +30,14 @@
           </div>
         </td>
       </tr>
+      <!-- <tr v-for="i in 5" :key="i" class="placeholder-glow">
+        <td><div class="placeholder col-12"></div></td>
+        <td><div class="placeholder col-12"></div></td>
+        <td><div class="placeholder col-12"></div></td>
+        <td class="w-0"><div class="placeholder col-12"></div></td>
+        <td class="w-0"><div class="placeholder col-12"></div></td>
+        <td class="w-0"><div class="placeholder col-12"></div></td>
+      </tr> -->
     </template>
   </Table>
   <Modalcreate ref="modalCreate" @remove="removeCreateData">
@@ -84,7 +92,7 @@
           <label for="InputFile" class="form-label">NSS Description :</label>
           <input type="text" class="form-control" id="InputFile" placeholder="Description" v-model="templateDescription">
         </div>
-        <div class="mb-3">
+        <div class="mb-2">
           <label for="select4" class="form-label">NFVO Name :</label>
           <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_nfvmano_invalidated }" id="select4" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
@@ -110,7 +118,7 @@
           <label for="InputFile" class="form-label">NSS Template ID :</label>
           <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="templateId" readonly>
         </div>
-        <div class="mb-3">
+        <div>
           <label for="VnfList" class="form-label">Template ID List :</label>
             <ul class="list-group list-group-flush">
               <li class="list-group-item">VNF : {{ templateVNFId }}</li>
@@ -227,7 +235,9 @@ export default {
     await this.getTableData();
     await this.getNfvManoData();
     await this.getNssData();
-    this.status = true;
+    setTimeout(() => {
+      this.status = true;
+    }, 1000);
   },
   methods: {
     async getTableData() {  // 獲取 VNF NSD NRM 資料

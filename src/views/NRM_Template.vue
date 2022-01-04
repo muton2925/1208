@@ -57,7 +57,7 @@
           <label for="InputFile2" class="form-label">NRM Description :</label>
           <input type="text" class="form-control" id="InputFile2" placeholder="Description" v-model="templateDescription">
         </div>
-        <div class="mb-3">
+        <div class="mb-2">
           <label for="InputFile3" class="form-label">NFVO Name :</label>
           <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_invalidated }" id="InputFile3" aria-label=".form-select example">
             <option selected>請選擇 ...</option>

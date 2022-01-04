@@ -21,7 +21,6 @@
 </template>
 <script>
 import { ref } from 'vue';
-// import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
 export default {
   setup() {
     const modal_delete = ref(null)

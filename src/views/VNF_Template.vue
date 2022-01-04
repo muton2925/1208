@@ -60,9 +60,9 @@
           <label for="InputFile2" class="form-label">VNF Description :</label>
           <input type="text" class="form-control" id="InputFile2" placeholder="Description" v-model="templateDescription">
         </div>
-        <div>
+        <div class="mb-2">
           <label for="InputFile3" class="form-label">NFVO Name :</label>
-          <select v-model="currentNFVMANO" class="form-select form-select mb-3" :class="{ 'is-invalid' : select_invalidated }" id="InputFile3" aria-label=".form-select example">
+          <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_invalidated }" id="InputFile3" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
             <option v-for="item in nfv_mano_list" :key="item" :value="item">{{ item }}</option>
           </select>
@@ -86,7 +86,7 @@
           <label for="InputFile" class="form-label">VNF Template ID :</label>
           <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="templateId" readonly>
         </div>
-        <div class="mb-3">
+        <div>
           <label for="VnfList" class="form-label">VNF ID List :</label>
           <ul class="list-group list-group-flush">
               <li class="list-group-item" v-for="item in templateVNFList[templateId]" :key="item">{{ item }}</li>

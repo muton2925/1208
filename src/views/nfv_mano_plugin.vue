@@ -99,19 +99,20 @@
   </Modaldelete>
 </template>
 <script>
-import Modalcreate from '../components/global/modal-create.vue';
-import Modalupdate from '../components/global/modal-update.vue';
-import Modaldelete from '../components/global/modal-delete.vue';
-import Table from '../components/global/table.vue';
 import { ref } from 'vue';
 import { Share } from '../assets/js/api';
+import { defineAsyncComponent } from 'vue';
 import { nfv_mano_plugin } from '../assets/js/api';
+import Table from '../components/global/table.vue';
+const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
+const Modalupdate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalupdate" */ '../components/global/modal-update.vue'));
+const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Modaldelete" */ '../components/global/modal-delete.vue'));
 export default {
   components: {
+    Table,
     Modalcreate,
     Modalupdate,
     Modaldelete,
-    Table
   },
   setup() {
     const modalCreate = ref(null)
@@ -119,7 +120,10 @@ export default {
     const uploadData_create = ref(null)
     const uploadData_update = ref(null)
     return{
-      modalCreate,modalUpdate,uploadData_update,uploadData_create,
+      modalCreate,
+      modalUpdate,
+      uploadData_update,
+      uploadData_create,
     }
   },
   data() {

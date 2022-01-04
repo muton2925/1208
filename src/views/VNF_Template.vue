@@ -131,27 +131,30 @@
   </Modaldelete>
 </template>
 <script>
-import Modalcreate from '../components/global/modal-create.vue';
-import Modalupdate from '../components/global/modal-update.vue';
-import Modaldelete from '../components/global/modal-delete.vue';
-import Modalshow from '../components/global/modal-show.vue';
-import Table from '../components/global/table.vue';
 import { ref } from 'vue';
-import {Share,GenericTemplate} from '../assets/js/api'
+import { defineAsyncComponent } from 'vue';
+import Table from '../components/global/table.vue';
+import { Share, GenericTemplate } from '../assets/js/api';
+const Modalshow = defineAsyncComponent(() => import(/* webpackChunkName: "Modalshow" */ '../components/global/modal-show.vue'));
+const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
+const Modalupdate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalupdate" */ '../components/global/modal-update.vue'));
+const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Modaldelete" */ '../components/global/modal-delete.vue'));
 export default {
   components: {
+    Table,
+    Modalshow,
     Modalcreate,
     Modalupdate,
     Modaldelete,
-    Modalshow,
-    Table
   },
   setup() {
     const modalCreate = ref(null)
     const modalUpdate = ref(null)
     const uploadData_update = ref(null)
     return{
-      modalCreate,modalUpdate,uploadData_update
+      modalCreate,
+      modalUpdate,
+      uploadData_update,
     }
   },
   data() {

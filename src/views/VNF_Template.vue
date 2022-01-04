@@ -26,10 +26,8 @@
           </div>
         </td>
         <td class="w-0">
-          <a :href="item.templateFile" @click="download_template_button(item.templateFile)">
-            <div class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px">
-              <i class="bi bi-arrow-down"></i>
-            </div>
+          <a :href="item.templateFile" @click="download_template_button(item.templateFile)" class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px">
+            <i class="bi bi-arrow-down"></i>
           </a>
         </td>
         <td class="w-0">

@@ -20,10 +20,8 @@
           </div>
         </td>
         <td class="w-0">
-          <a :href="item.pluginFile">
-          <div class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" >
+          <a :href="item.pluginFile" class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" >
             <i class="bi bi-arrow-down"></i>
-          </div>
           </a>
         </td>
         <td class="w-0">

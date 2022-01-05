@@ -84,9 +84,54 @@
       </div>
     </template>
     <template v-else>
-
+      <div class="placeholder-glow d-flex justify-content-between mt-2 mb-4">
+        <div class="placeholder placeholder-lg rounded-pill col-6 col-lg-3 col-xxl-2"></div>
+        <div class="placeholder placeholder-lg rounded-pill col-2 col-sm-3 col-lg-1"></div>
+      </div>
+      <div>
+      <div class="card shadow-sm placeholder-glow">
+        <div class="card-header card-header-custom py-3">
+          <h6 class="placeholder bg-dark rounded-pill col-2 col-lg-1"></h6>
+        </div>
+        <div class="d-flex flex-column card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="placeholder placeholder rounded-pill col-3 col-lg-2 col-xl-1"></div>
+            <div class="placeholder placeholder rounded-pill col-2 col-lg-2 col-xl-1"></div>
+          </div>
+          <div class="mb-3 mb-lg-3">
+            <table class="table table-bordered table-striped table-hover align-middle mb-0">
+              <thead>
+                <tr>
+                  <th v-for="i in 5" :key="i"><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="i in 6" :key="i" class="placeholder-glow">
+                  <td><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
+                  <td><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
+                  <td><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
+                  <td><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
+                  <td><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center">
+            <div class="d-flex col-12 col-lg-2 col-xl-1 justify-content-center mb-3 mb-lg-0">
+              <div class="placeholder rounded-pill col-5 col-lg-12"></div>
+            </div>
+            <div class="d-flex col-12 col-lg-3 col-xl-2 justify-content-center justify-content-lg-end">
+              <div class="placeholder rounded-pill col-1 col-lg mx-1"></div>
+              <div class="placeholder rounded-pill col-1 col-lg mx-1"></div>
+              <div class="placeholder rounded-pill col-1 col-lg mx-1"></div>
+              <div class="placeholder rounded-pill col-1 col-lg mx-1"></div>
+              <div class="placeholder rounded-pill col-1 col-lg mx-1"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
     </template>
-
   </div>
 </template>
 <script>
@@ -260,7 +305,9 @@ export default {
 }
 
 .card-header-custom {
-  background-color: #f8f9fc ;
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fc;
 }
 .card-header h6 {
   margin: 0;

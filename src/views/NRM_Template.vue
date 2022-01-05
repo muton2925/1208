@@ -1,5 +1,5 @@
 <template>
-  <Table v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData">
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status">
     <template v-slot:header>
       Network Resource Model Template
     </template>
@@ -195,7 +195,9 @@ export default {
     .catch(res => {
       console.log(res)
     })
-    this.status = true;
+    setTimeout(() => {
+      this.status = true;
+    }, 700);
   },
   methods: {
     async getTableData() {  // 顯示 Table 資料

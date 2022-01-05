@@ -1,5 +1,5 @@
 <template>
-  <Table v-if="status" :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData">
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status">
     <template v-slot:header>
       Virtualized Network Function Template
     </template>
@@ -219,7 +219,9 @@ export default {
     .catch(res => {
       console.log(res)
     })
-    this.status = true;
+    setTimeout(() => {
+      this.status = true;
+    }, 700);
   },
   methods:{
     async getTemplate() { // 顯示 Table 資料
@@ -231,7 +233,6 @@ export default {
         for (const iterator of VNF) {
           this.td_list.push(iterator)
         }
-        this.status = true;
       })
       .catch(res => {
         console.log(res)

@@ -30,14 +30,6 @@
           </div>
         </td>
       </tr>
-      <!-- <tr v-for="i in 5" :key="i" class="placeholder-glow">
-        <td><div class="placeholder col-12"></div></td>
-        <td><div class="placeholder col-12"></div></td>
-        <td><div class="placeholder col-12"></div></td>
-        <td class="w-0"><div class="placeholder col-12"></div></td>
-        <td class="w-0"><div class="placeholder col-12"></div></td>
-        <td class="w-0"><div class="placeholder col-12"></div></td>
-      </tr> -->
     </template>
   </Table>
   <Modalcreate ref="modalCreate" @remove="removeCreateData">
@@ -237,7 +229,7 @@ export default {
     await this.getNssData();
     setTimeout(() => {
       this.status = true;
-    }, 1000);
+    }, 700);
   },
   methods: {
     async getTableData() {  // 獲取 VNF NSD NRM 資料

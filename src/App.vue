@@ -36,6 +36,7 @@ export default {
           name: "Generic Template",
           icon: "bi bi-bell",
           url: "generic_template",
+          isActive: false,
           childNodes: [
             {
               name: "VNF Template",
@@ -55,6 +56,7 @@ export default {
           name: "NSS template",
           icon: "bi bi-bootstrap",
           url: "nss_template",
+          isActive: false,
           childNodes: [],
         },
         {

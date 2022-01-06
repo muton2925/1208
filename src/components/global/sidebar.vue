@@ -6,7 +6,7 @@
           <a class="list-item" data-bs-toggle="collapse" :data-bs-target="'#' + item.url">{{ item.name }}</a>
           <template v-if="windowWidth >= 768">
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_md'" data-bs-parent="#sidebar-parent">
-              <ul class="py-2">
+              <ul class="p-2">
                 <li v-for="child in item.childNodes" :key="child.name">
                   <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="closeCollapse()"> {{ child.name }} </router-link>
                 </li>
@@ -15,7 +15,7 @@
           </template>
           <template v-else-if="windowWidth >= 576 && windowWidth <768">
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_sm'" data-bs-parent="#sidebar-parent">
-              <ul class="py-2">
+              <ul class="p-2">
                 <li v-for="child in item.childNodes" :key="child.name">
                   <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="closeCollapse()"> {{ child.name }} </router-link>
                 </li>
@@ -107,8 +107,15 @@ export default {
 .collapse-item .list-item {
   width: 100%;
   color: black;
-  padding: .75rem 1.5rem;
+  padding: .75rem 1rem;
+  border-radius: 5px;
   white-space: nowrap;
+}
+.collapse-item .list-item:hover {
+  background-color: #F5F5F5;
+}
+.collapse-item .list-item:active {
+  background-color: #DCDCDC;
 }
 @media (min-width: 576px) {
   .sidebar-custom {
@@ -130,9 +137,6 @@ export default {
     margin: 0 1rem;
     top: 0;
     left: 0;
-  }
-  .collapse-item .list-item {
-    padding: .75rem 1.5rem;
   }
 }
 </style>

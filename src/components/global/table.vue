@@ -257,7 +257,7 @@ export default {
       this.loadingStatus = true;
       setTimeout(() => {
         this.loadingStatus = false;
-      },700)
+      },500)
     },
     paginateEntries() { 
       this.currentPage = 1; // currentPage 固定為 1

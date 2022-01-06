@@ -49,13 +49,27 @@
                 </tr>
               </thead>
               <tbody>
-                <template v-if="filterEntries.length > 0">
-                  <slot name="table-td"></slot>
+                <template v-if="loadingStatus">
+                  <tr class="text-center">
+                    <td :colspan="columnNumber">
+                      <div class="d-flex justify-content-center align-items-center">
+                        <span class="spinner-grow spinner-grow-sm" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </span>
+                        <strong class="ms-3">Loading ...</strong>
+                      </div>
+                    </td>  
+                  </tr>
                 </template>
                 <template v-else>
-                  <tr class="text-center">
-                    <td :colspan="columnNumber">No matching data found</td>  
-                  </tr>
+                  <template v-if="filterEntries.length > 0">
+                    <slot name="table-td"></slot>
+                  </template>
+                  <template v-else>
+                    <tr class="text-center">
+                      <td :colspan="columnNumber">No matching data found</td>  
+                    </tr>
+                  </template>
                 </template>
               </tbody>
             </table>
@@ -156,6 +170,7 @@ export default {
       sortAsc: '',
       sortDesc: '',
       sortCol: '',
+      loadingStatus: false,
       windowWidth: window.innerWidth,
     }
   },
@@ -181,10 +196,6 @@ export default {
       typeof: Boolean,
       default: false
     },
-  },
-  created() {
-    this.filterEntries = $array.paginate(this.entries, this.currentPage, this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 )
-    this.$emit('update', this.filterEntries); // 過濾好的資料丟回
   },
   mounted() {
     window.addEventListener("resize", () => {
@@ -230,13 +241,9 @@ export default {
         return newVal;
       }
     },
-    filterEntries: {
-      get() {
-        return $array.paginate(this.entries, this.currentPage, this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 );
-      },
-      set(newVal) {
-        return newVal;
-      }
+    filterEntries() {
+      this.loadingEvent();
+      return $array.paginate(this.entries, this.currentPage, this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 );
     },
     showInfo() {
       return $array.pageInfo(this.entries, this.currentPage, this.currentEntries) // pageInfo ( 所有資料 , 當前頁數 , 每頁幾筆 )
@@ -246,6 +253,12 @@ export default {
     }
   },
   methods: {
+    loadingEvent() { // 表格 loading 效果
+      this.loadingStatus = true;
+      setTimeout(() => {
+        this.loadingStatus = false;
+      },700)
+    },
     paginateEntries() { 
       this.currentPage = 1; // currentPage 固定為 1
     },

@@ -126,6 +126,7 @@
       Delete NSS Template
     </template>
   </Modaldelete>
+  <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
 </template>
 <script>
 import { ref } from 'vue';
@@ -133,12 +134,14 @@ import { Share } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
 import { nss_template } from '../assets/js/api';
 import Table from '../components/global/table.vue';
+const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalshow = defineAsyncComponent(() => import(/* webpackChunkName: "Modalshow" */ '../components/global/modal-show.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
 const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Modaldelete" */ '../components/global/modal-delete.vue'));
 export default {
   components: {
     Table,
+    Alert,
     Modalshow,
     Modalcreate,
     Modaldelete,
@@ -182,6 +185,14 @@ export default {
       templateVNFId: '',
       templateNSDId: '',
       templateNRMId: '',
+      alertInfo: {
+        alertExist: false,
+        alertStatus: false,
+        alertColor: '',
+        alertIcon: '',
+        alertTitle: '',
+        alertContent: '',
+      }
     }
   },
   computed: {
@@ -255,7 +266,7 @@ export default {
         }
       })
       .catch(res => {
-        console.log(res)
+        console.log(res);
       })
     },
     async getNfvManoData() { // 獲取 NFVMANO 資料
@@ -267,14 +278,14 @@ export default {
         }
       })
       .catch(res => {
-        console.log(res)
+        console.log(res);
       })
     },
     async getNssData() { // 獲取 NSS Template 資料
       const { nssTemplateList }  = nss_template();
       nssTemplateList()
       .then(res => {
-        this.td_list = []
+        this.td_list = [];
         for(let i of res.data) {
           let obj = {
             description: i.description,
@@ -287,8 +298,28 @@ export default {
         }
       })
       .catch(res => {
-        console.log(res)
+        console.log(res);
       })
+    },
+    setAlertData(color,icon,title,content) { // alert 的樣式
+      this.alertInfo.alertStatus = false; // 避免重複動作太快
+      this.alertInfo.alertExist = false; // 避免重複動作太快
+      this.alertInfo.alertColor = color;
+      this.alertInfo.alertIcon = icon;
+      this.alertInfo.alertTitle = title;
+      this.alertInfo.alertContent = content;
+      this.alertInfo.alertStatus = true;
+      this.alertInfo.alertExist = true;
+      setTimeout(() => {
+        this.alertInfo.alertStatus = false;
+        setTimeout(() => {
+          this.alertInfo.alertExist = false;
+          this.alertInfo.alertColor = '';
+          this.alertInfo.alertIcon = '';
+          this.alertInfo.alertTitle = '';
+          this.alertInfo.alertContent = '';
+        },100);
+      },1500);
     },
     updateTableData(val) {  // 每次執行 Table 操作，更新資料 
       this.filterEntries = val;
@@ -337,9 +368,12 @@ export default {
         .then(() => {
           this.$refs.modalCreate.closeModalEvent();
           this.getNssData();
+          this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NSS Template has been created !');
         })
         .catch(res => {
-          console.log(res)
+          this.$refs.modalCreate.closeModalEvent();
+          this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to create the NSS Template !');
+          console.log(res);
         })
       }
     },
@@ -363,8 +397,10 @@ export default {
       deleteNssTemplate(this.templateData.templateId)
       .then(() => {
         this.getNssData();
+        this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NSS Template has been deleted !');
       })
       .catch((res) => {
+        this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to delete the NSS Template !');
         console.log(res);
       })  
     },

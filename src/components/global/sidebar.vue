@@ -13,7 +13,7 @@
               </ul>
             </div>
           </template>
-          <template v-else-if="windowWidth >= 576 && windowWidth <768">
+          <template v-else-if="windowWidth >= 576 && windowWidth < 768">
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_sm'" data-bs-parent="#sidebar-parent">
               <ul class="p-2">
                 <li v-for="child in item.childNodes" :key="child.name">

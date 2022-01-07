@@ -95,6 +95,7 @@
       Delete Service Mapping Plugin
     </template>
   </Modaldelete>
+  <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
 </template>
 <script>
 import { ref } from 'vue';
@@ -102,12 +103,14 @@ import { Share } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
 import { nfv_mano_plugin } from '../assets/js/api';
 import Table from '../components/global/table.vue';
+const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
 const Modalupdate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalupdate" */ '../components/global/modal-update.vue'));
 const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Modaldelete" */ '../components/global/modal-delete.vue'));
 export default {
   components: {
     Table,
+    Alert,
     Modalcreate,
     Modalupdate,
     Modaldelete,
@@ -142,7 +145,15 @@ export default {
       fileName: '',
       fileData: {},
       text_invalidated: false, //文字是否未通過認證
-      file_invalidated: false
+      file_invalidated: false,
+      alertInfo: {
+        alertExist: false,
+        alertStatus: false,
+        alertColor: '',
+        alertIcon: '',
+        alertTitle: '',
+        alertContent: '',
+      }
     };
   },
   computed: {
@@ -182,6 +193,26 @@ export default {
         console.log(res);
         })
       },
+    setAlertData(color,icon,title,content) { // alert 的樣式
+      this.alertInfo.alertStatus = false; // 避免重複動作太快
+      this.alertInfo.alertExist = false; // 避免重複動作太快
+      this.alertInfo.alertColor = color;
+      this.alertInfo.alertIcon = icon;
+      this.alertInfo.alertTitle = title;
+      this.alertInfo.alertContent = content;
+      this.alertInfo.alertStatus = true;
+      this.alertInfo.alertExist = true;
+      setTimeout(() => {
+        this.alertInfo.alertStatus = false;
+        setTimeout(() => {
+          this.alertInfo.alertExist = false;
+          this.alertInfo.alertColor = '';
+          this.alertInfo.alertIcon = '';
+          this.alertInfo.alertTitle = '';
+          this.alertInfo.alertContent = '';
+        },100);
+      },1500);
+    },
     updateTableData(val) {  // 每次執行 Table 操作，更新資料 
       this.filterEntries = val;
     },
@@ -223,8 +254,11 @@ export default {
         .then(() => {
           this.$refs.modalCreate.closeModalEvent();
           this.getTableData();
+          this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NFV MANO Plugin has been created !');
         })
         .catch(res => {
+          this.$refs.modalCreate.closeModalEvent();
+          this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to create the NFV MANO Plugin !');
           console.log(res);
         })
       }
@@ -251,8 +285,11 @@ export default {
         .then(() => {
           this.$refs.modalUpdate.closeModalEvent();
           this.getTableData();
+          this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NFV MANO Plugin has been updated !');
         })
         .catch(res => {
+          this.$refs.modalUpdate.closeModalEvent();
+          this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to update the NFV MANO Plugin !');
           console.log(res);
         })
       }
@@ -265,9 +302,11 @@ export default {
       deletePlugin(this.fileData.name)
       .then(() => {
         this.getTableData();
+        this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NFV MANO Plugin has been deleted !');
       })
       .catch(res => {
-        console.log(res)
+        this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to delete the NFV MANO Plugin !');
+        console.log(res);
       })
     },
   }

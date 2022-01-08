@@ -160,8 +160,8 @@ export default {
   },
   data() {
     return {
-      currentEntries: 2, // 當前每頁筆數
-      showEntries: [2,10,50,100], // 每頁筆數列表
+      currentEntries: 10, // 當前每頁筆數
+      showEntries: [10,50,100], // 每頁筆數列表
       currentPage: 1, // 當前頁數
       searchInput: '',
       searchEntries: [],

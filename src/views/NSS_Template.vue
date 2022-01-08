@@ -106,16 +106,16 @@
     </template>
     <template v-slot:body>
       <form>
-        <div class="mb-3">
+        <div :class="[ template ? 'mb-3' : 'mb-1' ]">
           <label for="InputFile" class="form-label">NSS Template ID :</label>
           <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="templateId" readonly>
         </div>
-        <div>
+        <div v-show="template">
           <label for="VnfList" class="form-label">Template ID List :</label>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item">VNF : {{ templateVNFId }}</li>
-              <li class="list-group-item">NSD : {{ templateNSDId }}</li>
-              <li class="list-group-item">NRM : {{ templateNRMId }}</li>
+              <li v-if="templateVNFId" class="list-group-item">VNF : {{ templateVNFId }}</li>
+              <li v-if="templateNSDId" class="list-group-item">NSD : {{ templateNSDId }}</li>
+              <li v-if="templateNRMId" class="list-group-item">NRM : {{ templateNRMId }}</li>
             </ul>
         </div>
       </form>
@@ -196,6 +196,9 @@ export default {
     }
   },
   computed: {
+    template() {
+      return this.templateVNFId || this.templateNSDId || this.templateNRMId;
+    },
     is_invalidated() { // Create Modal 驗證 
       return this.select_vnf_invalidated || this.select_nsd_invalidated || this.select_nrm_invalidated || this.select_nfvmano_invalidated;
     },
@@ -287,12 +290,16 @@ export default {
       .then(res => {
         this.td_list = [];
         for(let i of res.data) {
+          let nfvoType = '';
+          if(i.nfvoType.length != 0) {
+            nfvoType = i.nfvoType[0];
+          }
           let obj = {
             description: i.description,
             genericTemplates: i.genericTemplates,
             instanceId: i.instanceId,
             templateId: i.templateId,
-            nfvoType: i.nfvoType[0]
+            nfvoType: nfvoType,
           }
           this.td_list.push(obj);
         }
@@ -382,9 +389,18 @@ export default {
       const indexVNF = item.genericTemplates.findIndex(x=>x.templateType == "VNF");
       const indexNSD = item.genericTemplates.findIndex(x=>x.templateType == "NSD");
       const indexNRM = item.genericTemplates.findIndex(x=>x.templateType == "NRM");
-      this.templateVNFId = item.genericTemplates[indexVNF].templateId;
-      this.templateNSDId = item.genericTemplates[indexNSD].templateId;
-      this.templateNRMId = item.genericTemplates[indexNRM].templateId;
+      if(indexVNF != -1)
+        this.templateVNFId = item.genericTemplates[indexVNF].templateId;
+      else
+        this.templateVNFId = '';
+      if(indexNSD != -1)
+        this.templateNSDId = item.genericTemplates[indexNSD].templateId;
+      else
+        this.templateNSDId = '';
+      if(indexNRM != -1)
+        this.templateNRMId = item.genericTemplates[indexNRM].templateId;
+      else
+        this.templateNRMId = '';
     },
     allocate_template_button(item) { // 點擊 Allocate Modal 按鈕
       this.$router.push({ path:'/nssi_topology/', query: { id: item.templateId, status: 'allocate'}});

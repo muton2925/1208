@@ -309,8 +309,8 @@ export default {
       })
     },
     setAlertData(color,icon,title,content) { // alert 的樣式
-      this.alertInfo.alertStatus = false; // 避免重複動作太快
       this.alertInfo.alertExist = false; // 避免重複動作太快
+      this.alertInfo.alertStatus = false; // 避免重複動作太快
       this.alertInfo.alertColor = color;
       this.alertInfo.alertIcon = icon;
       this.alertInfo.alertTitle = title;

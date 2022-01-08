@@ -20,7 +20,7 @@
           </div>
         </td>
         <td class="w-0">
-          <a :href="item.pluginFile" class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" >
+          <a :href="item.pluginFile" @click="download_template_button(item.pluginFile)" class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px">
             <i class="bi bi-arrow-down"></i>
           </a>
         </td>
@@ -293,6 +293,12 @@ export default {
           console.log(res);
         })
       }
+    },
+    download_template_button(file) { // 點擊 Download Modal 按鈕
+      if(file == null)
+        this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to download the NFV MANO Plugin !');
+      else
+        this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NFV MANO Plugin has been downloaded !');
     },
     delete_plugin_button(file) { // 點擊 Delete Modal 按鈕
       this.fileData = file;

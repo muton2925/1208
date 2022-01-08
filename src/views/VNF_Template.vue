@@ -373,9 +373,10 @@ export default {
       }
     },
     download_template_button(file) { // 點擊 Download Modal 按鈕
-      if(file == null) {
-        alert('未上傳 VNF Template File，無法下載');
-      }
+      if(file == null)
+        this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to download the VNF Template !');
+      else
+        this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','VNF Template has been downloaded !');
     },
     delete_template_button(file) { // 點擊 Delete Modal 按鈕
       this.templateData = file;

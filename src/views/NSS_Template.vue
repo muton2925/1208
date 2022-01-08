@@ -42,7 +42,7 @@
           <label for="select1" class="form-label">VNF Template :</label>
           <select v-model="currentVNF" class="form-select form-select" :class="{ 'is-invalid' : select_vnf_invalidated }" id="select1" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
-            <option v-for="item in templateVNFList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
+            <option v-for="item in sortTemplateVNFList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
           <div class="mt-2" v-if="currentVNF != '請選擇 ...'">
             <div>VNF ID : {{ currentVNF }}</div>
@@ -56,7 +56,7 @@
           <label for="select2" class="form-label">NSD Template :</label>
           <select v-model="currentNSD" class="form-select form-select" :class="{ 'is-invalid' : select_nsd_invalidated }" id="select2" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
-            <option v-for="item in templateNSDList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
+            <option v-for="item in sortTemplateNSDList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
           <div class="mt-2" v-if="currentNSD != '請選擇 ...'">
             <div>NSD ID : {{ currentNSD }}</div>
@@ -70,7 +70,7 @@
           <label for="select3" class="form-label">NRM Template :</label>
           <select v-model="currentNRM" class="form-select form-select" :class="{ 'is-invalid' : select_nrm_invalidated }" id="select3" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
-            <option v-for="item in templateNRMList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
+            <option v-for="item in sortTemplateNRMList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
           <div class="mt-2" v-if="currentNRM != '請選擇 ...'">
             <div>NRM ID : {{ currentNRM }}</div>
@@ -88,7 +88,7 @@
           <label for="select4" class="form-label">NFVO Name :</label>
           <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_nfvmano_invalidated }" id="select4" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
-            <option v-for="item in nfv_mano_list" :key="item" :value="item">{{ item }}</option>
+            <option v-for="item in sortNFVMANOList" :key="item.name" :value="item.name">{{ item.name }}</option>
           </select>
           <div class="invalid-feedback">
             請選擇一個 NFVO
@@ -130,6 +130,7 @@
 </template>
 <script>
 import { ref } from 'vue';
+import { $array } from 'alga-js';
 import { Share } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
 import { nss_template } from '../assets/js/api';
@@ -201,6 +202,18 @@ export default {
     },
     is_invalidated() { // Create Modal 驗證 
       return this.select_vnf_invalidated || this.select_nsd_invalidated || this.select_nrm_invalidated || this.select_nfvmano_invalidated;
+    },
+    sortTemplateVNFList() {
+      return $array.sortBy(this.templateVNFList, 'name', 'asc');
+    },
+    sortTemplateNSDList() {
+      return $array.sortBy(this.templateNSDList, 'name', 'asc');
+    },
+    sortTemplateNRMList() {
+      return $array.sortBy(this.templateNRMList, 'name', 'asc');
+    },
+    sortNFVMANOList() {
+      return $array.sortBy(this.nfv_mano_list, 'name', 'asc');
     },
     currentVNFDescription() { // Create Modal 內 VNF Description
       const index = this.templateVNFList.findIndex(x => x.templateId == this.currentVNF);
@@ -277,7 +290,7 @@ export default {
       PluginList()
       .then(res => {
         for(let i of res.data){
-          this.nfv_mano_list.push(i.name);
+          this.nfv_mano_list.push(i);
         }
       })
       .catch(res => {
@@ -309,8 +322,8 @@ export default {
       })
     },
     setAlertData(color,icon,title,content) { // alert 的樣式
-      this.alertInfo.alertExist = false; // 避免重複動作太快
       this.alertInfo.alertStatus = false; // 避免重複動作太快
+      this.alertInfo.alertExist = false; // 避免重複動作太快
       this.alertInfo.alertColor = color;
       this.alertInfo.alertIcon = icon;
       this.alertInfo.alertTitle = title;

@@ -149,8 +149,8 @@
   </div>
 </template>
 <script>
-import { $array } from 'alga-js'
-import { ref } from 'vue'
+import { $array } from 'alga-js';
+import { ref } from 'vue';
 export default {
   setup(props) {
     const btn = ref(props.showBtn)

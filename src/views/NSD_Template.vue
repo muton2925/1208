@@ -66,7 +66,7 @@
           <label for="InputFile3" class="form-label">NFVO Name :</label>
           <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_invalidated }" id="InputFile3" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
-            <option v-for="item in nfv_mano_list" :key="item" :value="item">{{ item }}</option>
+            <option v-for="item in sortNFVMANOList" :key="item.name" :value="item.name">{{ item.name }}</option>
           </select>
           <div class="invalid-feedback">
             請選擇一個 NFVO
@@ -138,6 +138,7 @@
 </template>
 <script>
 import { ref } from 'vue';
+import { $array } from 'alga-js';
 import { Share } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
 import { GenericTemplate } from '../assets/js/api';
@@ -208,7 +209,10 @@ export default {
   computed: {
     repeatName() {
       return this.td_list.map(function(e) { return e.name }).includes(this.templateName);
-    }
+    },
+    sortNFVMANOList() {
+      return $array.sortBy(this.nfv_mano_list, 'name', 'asc');
+    },
   },
   watch: {
     templateName: {
@@ -233,7 +237,7 @@ export default {
     PluginList()
     .then(res => {
       for(let i of res.data){
-        this.nfv_mano_list.push(i.name);
+        this.nfv_mano_list.push(i);
       }
     })
     .catch(res => {
@@ -259,8 +263,8 @@ export default {
       })
     },
     setAlertData(color,icon,title,content) { // alert 的樣式
-      this.alertInfo.alertExist = false; // 避免重複動作太快
       this.alertInfo.alertStatus = false; // 避免重複動作太快
+      this.alertInfo.alertExist = false; // 避免重複動作太快
       this.alertInfo.alertColor = color;
       this.alertInfo.alertIcon = icon;
       this.alertInfo.alertTitle = title;

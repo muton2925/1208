@@ -177,7 +177,7 @@ export default {
   props:{
     showBtn:{
       typeof: Boolean,
-      default: true
+      default: true,
     },
     column: {
       typeof: Array,
@@ -190,7 +190,7 @@ export default {
       typeof: Array,
     },
     columnNumber: {
-      typeof: Number
+      typeof: Number,
     },
     status: {
       typeof: Boolean,
@@ -223,23 +223,18 @@ export default {
           this.currentPage -= 1 ;
         this.$emit('update', newVal);
       },
-      deep:true,
+      deep: true,
     }
   },
   computed: {
     pageStatus() {
       return this.status;
     },
-    allPages: {
-      get() {
-        if(this.entries.length != 0)
-          return $array.pages(this.entries, this.currentEntries);
-        else
-          return 1;
-      },
-      set(newVal) {
-        return newVal;
-      }
+    allPages() {
+      if(this.entries.length != 0)
+        return $array.pages(this.entries, this.currentEntries);
+      else
+        return 1;
     },
     filterEntries() {
       this.loadingEvent();

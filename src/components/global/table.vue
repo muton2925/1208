@@ -304,12 +304,10 @@ export default {
 .container-header h3 {
   margin: 0;
   flex: 1;
-  /* min-width: 0; */
   font-size: 1.25rem;
 }
 .container-header button {
   flex:none;
-  /* min-width: 0; */
 }
 
 .card-header-custom {

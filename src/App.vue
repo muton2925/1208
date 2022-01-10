@@ -1,5 +1,4 @@
 <template>
-  <Header></Header>
   <main>
     <div class="grid-custom">
       <div class="grid-main-custom" style="overflow: hidden;">
@@ -7,6 +6,7 @@
       </div>
     </div>
   </main>
+  <Header></Header>
   <Sidebar :menuData="menuData"></Sidebar>
 </template>
 <script>

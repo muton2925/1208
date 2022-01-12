@@ -35,11 +35,11 @@
             <table class="table table-bordered table-striped table-hover align-middle mb-0">
               <thead>
                 <tr>
-                  <th class="cursor-pointer" scope="col" v-for="item in columns" :key="item" @click="sortColumn(item.name,item.status)">
+                  <th class="table-light cursor-pointer" scope="col" v-for="item in columns" :key="item" @click="sortColumn(item.name,item.status,item.sort)">
                     <template v-if="item.sort == true">
                       <div class="d-flex justify-content-between">
                         <span>{{ item.text }}</span>
-                        <i class="bi bi-filter ms-2"></i>
+                        <i class="ms-2" :class="[[item.status == 'none' || item.status == 'asc' ? 'bi bi-sort-alpha-down': 'bi bi-sort-alpha-up'],{ 'text-danger' : item.status != 'none' }]"></i>
                       </div>
                     </template>
                     <template v-else>
@@ -270,31 +270,33 @@ export default {
     paginateEvent(page) { // 換頁事件
       this.currentPage = page; // currentPage 等於點擊的頁數
     },
-    sortColumn(name,status) { // 排序事件
-      let index = this.columns.map(function(e) { return e.name }).indexOf(name); // 當前欄位名稱 (name) 在 columns 的索引
-      if(this.sortCol != name && this.sortCol != '') { // 若 sortCol (上一次排序的 name) 跟 name ( 本次排序的 name ) 不同，以及 sortCol 不為空 ( 沒點過排序 )
-        let idx = this.columns.map(function(e) { return e.name }).indexOf(this.sortCol); // 找上一次點選排序的欄位名稱
-        this.columns[idx].status = 'none'; // 將該物件的 status 設為 none { name: xxx , status: none }
-      }
-      switch (status) {
-        case 'asc':
-          this.entries = $array.sortBy(this.entries, name , 'desc');
-          this.columns[index].status = 'desc';
-          this.sortDesc = name;
-          this.sortAsc = '';
-          break;
-        case 'desc':
-          this.entries = $array.sortBy(this.entries, name , 'asc');
-          this.columns[index].status = 'asc';
-          this.sortAsc = name;
-          this.sortDesc = '';
-          break;
-        default:
-          this.entries = $array.sortBy(this.entries, name , 'asc');
-          this.columns[index].status = 'asc';
-          this.sortAsc = name;
-          this.sortDesc = '';
-          this.sortCol = name;
+    sortColumn(name,status,sort) { // 排序事件
+      if(sort){
+        let index = this.columns.map(function(e) { return e.name }).indexOf(name); // 當前欄位名稱 (name) 在 columns 的索引
+        if(this.sortCol != name && this.sortCol != '') { // 若 sortCol (上一次排序的 name) 跟 name ( 本次排序的 name ) 不同，以及 sortCol 不為空 ( 沒點過排序 )
+          let idx = this.columns.map(function(e) { return e.name }).indexOf(this.sortCol); // 找上一次點選排序的欄位名稱
+          this.columns[idx].status = 'none'; // 將該物件的 status 設為 none { name: xxx , status: none }
+        }
+        switch (status) {
+          case 'asc':
+            this.entries = $array.sortBy(this.entries, name , 'desc');
+            this.columns[index].status = 'desc';
+            this.sortDesc = name;
+            this.sortAsc = '';
+            break;
+          case 'desc':
+            this.entries = $array.sortBy(this.entries, name , 'asc');
+            this.columns[index].status = 'asc';
+            this.sortAsc = name;
+            this.sortDesc = '';
+            break;
+          default:
+            this.entries = $array.sortBy(this.entries, name , 'asc');
+            this.columns[index].status = 'asc';
+            this.sortAsc = name;
+            this.sortDesc = '';
+            this.sortCol = name;
+        }
       }
     }
   }
@@ -329,7 +331,6 @@ thead tr th {
   height: 48px;
   white-space: nowrap;
   vertical-align: middle;
-  background-color: #FFF !important;
   position: sticky;
   top: 0;
 }

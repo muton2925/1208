@@ -31,71 +31,7 @@
               <input type="text" class="form-control form-control" placeholder="Search" v-model="searchInput" @input="searchEvent">
             </div>
           </div>
-          <div class="overflow-auto">
-            <div class="table-header">
-              <table class="table table-bordered mb-0">
-                <thead>
-                  <tr>
-                    <th class="cursor-pointer" scope="col" v-for="item in columns" :key="item" @click="sortColumn(item.name,item.status)">
-                      <template v-if="item.sort == true">
-                        <div class="d-flex justify-content-between">
-                          <span>{{ item.text }}</span>
-                          <i class="bi bi-filter ms-2"></i>
-                        </div>
-                      </template>
-                      <template v-else>
-                        <div>{{ item.text }}</div>
-                      </template>
-                    </th>
-                  </tr>
-                </thead>
-              </table>
-            </div>
-            <div class="table-body">
-              <table class="table table-bordered table-striped table-hover align-middle mb-0">
-                <thead>
-                  <tr>
-                    <th class="cursor-pointer" scope="col" v-for="item in columns" :key="item" @click="sortColumn(item.name,item.status)">
-                      <template v-if="item.sort == true">
-                        <div class="d-flex justify-content-between">
-                          <span>{{ item.text }}</span>
-                          <i class="bi bi-filter ms-2"></i>
-                        </div>
-                      </template>
-                      <template v-else>
-                        <div>{{ item.text }}</div>
-                      </template>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <template v-if="loadingStatus">
-                    <tr class="text-center">
-                      <td :colspan="columnNumber">
-                        <div class="d-flex justify-content-center align-items-center">
-                          <span class="spinner-grow spinner-grow-sm" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                          </span>
-                          <strong class="ms-3">Loading ...</strong>
-                        </div>
-                      </td>  
-                    </tr>
-                  </template>
-                  <template v-else>
-                    <template v-if="filterEntries.length > 0">
-                      <slot name="table-td"></slot>
-                    </template>
-                    <template v-else>
-                      <tr class="text-center">
-                        <td :colspan="columnNumber">No matching data found</td>  
-                      </tr>
-                    </template>
-                  </template>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <!-- <div class="mb-2 mb-lg-3 table-custom" style="min-height: 115px">
+          <div class="mb-2 mb-lg-3 table-custom" style="min-height: 115px">
             <table class="table table-bordered table-striped table-hover align-middle mb-0">
               <thead>
                 <tr>
@@ -137,7 +73,7 @@
                 </template>
               </tbody>
             </table>
-          </div> -->
+          </div>
           <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center">
             <div class="col-12 text-center col-lg-auto mb-2 mb-lg-0">Show {{ showInfo.start }} to {{ showInfo.end }} of {{ showInfo.length }} entries</div>
             <ul class="pagination justify-content-center flex-wrap col-lg-auto" :class="{ 'pagination-sm' : windowWidth < 576 }">
@@ -389,21 +325,7 @@ export default {
   width: auto !important;
   padding-left: 0.75rem !important;
 }
-
-
-
-
-
-
 thead tr th {
-  height: 48px;
-  white-space: nowrap;
-  vertical-align: middle;
-}
-.table-body {
-  margin-top: -10px;
-}
-/* thead tr th {
   height: 48px;
   white-space: nowrap;
   vertical-align: middle;
@@ -416,7 +338,7 @@ tbody {
 }
 tbody tr td {
   height: 48px;
-} */
+}
 .table-custom {
   max-height: calc(100vh - 399px);
   overflow-x: scroll !important;

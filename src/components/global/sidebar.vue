@@ -3,28 +3,28 @@
     <ul id="sidebar-parent" class="text-white">
       <li class="position-relative" v-for="item in menuData" :key="item.name">
         <template v-if="item.childNodes.length > 0">
-          <a class="list-item" data-bs-toggle="collapse" :data-bs-target="'#' + item.url">{{ item.name }}</a>
-          <template v-if="windowWidth >= 768">
+          <a class="list-item" data-bs-toggle="collapse" :class="{ 'currentRoute' : routeStatus(item.url,currentRoute) }" :data-bs-target="'#' + item.url">{{ item.name }}</a>
+          <template v-if="currentWindowWidth >= 768">
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_md'" data-bs-parent="#sidebar-parent">
               <ul class="p-2">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="closeCollapse()"> {{ child.name }} </router-link>
+                  <router-link class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" :to="{ path :  '/' + child.url }" @click="closeCollapse()"> {{ child.name }} </router-link>
                 </li>
               </ul>
             </div>
           </template>
-          <template v-else-if="windowWidth >= 576 && windowWidth < 768">
+          <template v-else-if="currentWindowWidth >= 576 && currentWindowWidth < 768">
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_sm'" data-bs-parent="#sidebar-parent">
               <ul class="p-2">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="closeCollapse()"> {{ child.name }} </router-link>
+                  <router-link class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" :to="{ path :  '/' + child.url }" @click="closeCollapse()"> {{ child.name }} </router-link>
                 </li>
               </ul>
             </div>
           </template>
         </template>
         <template v-else>
-          <router-link class="list-item" :to="{ path : '/' + item.url }" @click="closeCollapse()">{{ item.name }}</router-link>
+          <router-link class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" :to="{ path : '/' + item.url }" @click="closeCollapse()">{{ item.name }}</router-link>
         </template>
       </li>
     </ul>
@@ -34,7 +34,6 @@
 import { ref } from 'vue';
 import { Collapse } from 'bootstrap/dist/js/bootstrap.bundle.js'
 export default {
-  props: ['menuData'],
   setup() {
     const generic_template_sm = ref(null)
     const generic_template_md = ref(null)
@@ -46,22 +45,41 @@ export default {
   },
   data() {
     return {
-      changeStatus: false,
-      windowWidth: window.innerWidth,
       generic_template_md_ref: '',
       generic_template_sm_ref: '',
       nssi_view_md_ref: '',
       nssi_view_sm_ref: '',
     };
   },
+  computed: {
+    currentWindowWidth() {
+      return this.$store.state.windowWidth;
+    },
+    currentRoute() {
+      if(this.$store.state.currentRoute == '')
+        return 'dashboard';
+      else
+        return this.$store.state.currentRoute;
+    },
+    menuData() {
+      return this.$store.state.menuData;
+    }
+  },
   mounted() {
     window.addEventListener("resize", () => {
-      this.windowWidth = window.innerWidth;
+      this.$store.commit('changeWindowWidth');
     });
   },
   methods: {
+    routeStatus(url,route) {
+      const index = this.$store.state.menuData.findIndex(e => e.url == url);
+      if(this.$store.state.menuData[index].childNodes.findIndex(e => e.url == route) != -1)
+        return true;
+      else
+        return false;
+    },
     closeCollapse() {
-      if(this.windowWidth >= 768) {
+      if(this.currentWindowWidth >= 768) {
         this.generic_template_md_ref = new Collapse(this.$refs.generic_template_md,{ toggle: false })
         this.nssi_view_md_ref = new Collapse(this.$refs.nssi_view_md,{ toggle: false })
         this.generic_template_md_ref.hide();
@@ -116,6 +134,19 @@ export default {
 }
 .collapse-item .list-item:active {
   background-color: #DCDCDC;
+}
+.currentRoute {
+  font-size: .75rem;
+  font-weight: 1000;
+}
+.currentRouteCollapseItem {
+  background-color: #E9EBEB;
+}
+.currentRouteCollapseItem:hover {
+  background-color: #DDDEDE !important;
+}
+.currentRouteCollapseItem:active {
+  background-color: #B8BBBC !important;
 }
 @media (min-width: 576px) {
   .sidebar-custom {

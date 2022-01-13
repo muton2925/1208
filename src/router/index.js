@@ -2,6 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 import dashboard from '../views/dashboard.vue'
 const routes = [
   {
+    path: '/',
+    component: dashboard
+  },
+  {
     path: '/dashboard',
     name: 'dashboard',
     component: dashboard

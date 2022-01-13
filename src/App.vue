@@ -7,7 +7,7 @@
     </div>
   </main>
   <Header></Header>
-  <Sidebar :menuData="menuData"></Sidebar>
+  <Sidebar></Sidebar>
 </template>
 <script>
 import Header from "./components/global/header.vue";
@@ -17,66 +17,11 @@ export default {
     Header,
     Sidebar,
   },
-  data() {
-    return {
-      menuData: [
-        {
-          name: "Dashboard",
-          icon: "bi bi-clipboard",
-          url: "dashboard",
-          childNodes: [],
-        },
-        {
-          name: "NFV MANO Plugin",
-          icon: "bi bi-award",
-          url: "nfv_mano_plugin",
-          childNodes: [],
-        },
-        {
-          name: "Generic Template",
-          icon: "bi bi-bell",
-          url: "generic_template",
-          isActive: false,
-          childNodes: [
-            {
-              name: "VNF Template",
-              url: "vnf_template"
-            },
-            {
-              name: "NSD Template",
-              url: "nsd_template"
-            },
-            {
-              name: "NRM Template",
-              url: "nrm_template"
-            },
-          ],
-        },
-        {
-          name: "NSS template",
-          icon: "bi bi-bootstrap",
-          url: "nss_template",
-          isActive: false,
-          childNodes: [],
-        },
-        {
-          name: "NSSI View",
-          icon: "bi bi-brightness-high",
-          url: "nssi_view",
-          childNodes: [
-            {
-              name: "Graph View",
-              url: "nssi_topology"
-            },
-            {
-              name: "List View",
-              url: "NSS_Instance"
-            },
-          ],
-        },
-      ],
-    };
-  },
+  watch: {
+    $route() {
+      this.$store.commit('changeRoute',this.$route.path.slice(1));
+    }
+  }
 };
 </script>
 <style>
@@ -89,9 +34,6 @@ ul {
   background-color: #4e73df;
   background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
   background-size: cover;
-}
-.aside_height {
-  min-height: calc(100vh - 70px);
 }
 .offcanvas-backdrop {
   top: 70px !important;

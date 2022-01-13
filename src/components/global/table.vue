@@ -35,7 +35,7 @@
             <table class="table table-bordered table-striped table-hover align-middle mb-0">
               <thead>
                 <tr>
-                  <th class="table-light cursor-pointer" scope="col" v-for="item in columns" :key="item" @click="sortColumn(item.name,item.status,item.sort)">
+                  <th class="table-light cursor-pointer col-1" :class="{ 'w-0' : !item.sort }" scope="col" v-for="item in columns" :key="item" @click="sortColumn(item.name,item.status,item.sort)">
                     <template v-if="item.sort == true">
                       <div class="d-flex justify-content-between">
                         <span>{{ item.text }}</span>
@@ -76,7 +76,7 @@
           </div>
           <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center">
             <div class="col-12 text-center col-lg-auto mb-2 mb-lg-0">Show {{ showInfo.start }} to {{ showInfo.end }} of {{ showInfo.length }} entries</div>
-            <ul class="pagination justify-content-center flex-wrap col-lg-auto" :class="{ 'pagination-sm' : windowWidth < 576 }">
+            <ul class="pagination justify-content-center flex-wrap col-lg-auto" :class="{ 'pagination-sm' : currentWindowWidth < 576 }">
               <li class="page-item" :class="{ disabled : currentPage == 1 }">
                 <a class="page-link" href="#" @click.prevent="paginateEvent(1)">First</a>
               </li>
@@ -171,7 +171,6 @@ export default {
       sortDesc: '',
       sortCol: '',
       loadingStatus: false,
-      windowWidth: window.innerWidth,
     }
   },
   props:{
@@ -199,7 +198,7 @@ export default {
   },
   mounted() {
     window.addEventListener("resize", () => {
-      this.windowWidth = window.innerWidth;
+      this.$store.commit('changeWindowWidth');
     });
   },
   watch: {
@@ -245,7 +244,10 @@ export default {
     },
     showPagination() {
       return $array.pagination(this.allPages, this.currentPage, 2)  // pagination ( 全部頁數 , 目前頁數 , 差多少頁會顯示 ... )
-    }
+    },
+    currentWindowWidth() {
+      return this.$store.state.windowWidth;
+    },
   },
   methods: {
     loadingEvent() { // 表格 loading 效果

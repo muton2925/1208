@@ -35,11 +35,11 @@
             <table class="table table-bordered table-striped table-hover align-middle mb-0">
               <thead>
                 <tr>
-                  <th class="table-light cursor-pointer col-1" :class="{ 'w-0' : !item.sort }" scope="col" v-for="item in columns" :key="item" @click="sortColumn(item.name,item.status,item.sort)">
-                    <template v-if="item.sort == true">
+                  <th scope="col" class="table-light cursor-pointer col-1" :class="{ 'w-0' : !sortableColumn(item.name) }" v-for="item in columns" :key="item.name" @click="sortColumn(item.name)">
+                    <template v-if="sortableColumn(item.name)">
                       <div class="d-flex justify-content-between">
                         <span>{{ item.text }}</span>
-                        <i class="ms-2" :class="[[item.status == 'none' || item.status == 'asc' ? 'bi bi-sort-alpha-down': 'bi bi-sort-alpha-up'],{ 'text-danger' : item.status != 'none' }]"></i>
+                        <i :class="[[ item.name == this.sortDesc ? 'bi bi-sort-alpha-up' : 'bi bi-sort-alpha-down' ],{ 'text-danger' : item.name == this.sortAsc || item.name == this.sortDesc },'ms-2']"></i>
                       </div>
                     </template>
                     <template v-else>
@@ -121,11 +121,7 @@
               </thead>
               <tbody>
                 <tr v-for="i in 6" :key="i" class="placeholder-glow">
-                  <td><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
-                  <td><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
-                  <td><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
-                  <td><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
-                  <td><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
+                  <td v-for="i in 5" :key="i"><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
                 </tr>
               </tbody>
             </table>
@@ -135,11 +131,7 @@
               <div class="placeholder rounded-pill col-5 col-lg-12"></div>
             </div>
             <div class="d-flex col-12 col-lg-3 col-xl-2 justify-content-center justify-content-lg-end">
-              <div class="placeholder rounded-pill col-1 col-lg mx-1"></div>
-              <div class="placeholder rounded-pill col-1 col-lg mx-1"></div>
-              <div class="placeholder rounded-pill col-1 col-lg mx-1"></div>
-              <div class="placeholder rounded-pill col-1 col-lg mx-1"></div>
-              <div class="placeholder rounded-pill col-1 col-lg mx-1"></div>
+              <div v-for="i in 5" :key="i" class="placeholder rounded-pill col-1 col-lg mx-1"></div>
             </div>
           </div>
         </div>
@@ -169,7 +161,6 @@ export default {
       entries: this.entrie,
       sortAsc: '',
       sortDesc: '',
-      sortCol: '',
       loadingStatus: false,
     }
   },
@@ -196,10 +187,29 @@ export default {
       default: false
     },
   },
-  mounted() {
-    window.addEventListener("resize", () => {
-      this.$store.commit('changeWindowWidth');
-    });
+  computed: {
+    currentWindowWidth() {
+      return this.$store.state.windowWidth;
+    },
+    pageStatus() {
+      return this.status;
+    },
+    allPages() {
+      if(this.entries.length != 0)
+        return $array.pages(this.entries, this.currentEntries);
+      else
+        return 1;
+    },
+    filterEntries() {
+      this.loadingEvent();
+      return $array.paginate(this.entries, this.currentPage, this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 );
+    },
+    showInfo() {
+      return $array.pageInfo(this.entries, this.currentPage, this.currentEntries); // pageInfo ( 所有資料 , 當前頁數 , 每頁幾筆 )
+    },
+    showPagination() {
+      return $array.pagination(this.allPages, this.currentPage, 2);  // pagination ( 全部頁數 , 目前頁數 , 差多少頁會顯示 ... )
+    },
   },
   watch: {
     entrie: {
@@ -225,30 +235,6 @@ export default {
       deep: true,
     }
   },
-  computed: {
-    pageStatus() {
-      return this.status;
-    },
-    allPages() {
-      if(this.entries.length != 0)
-        return $array.pages(this.entries, this.currentEntries);
-      else
-        return 1;
-    },
-    filterEntries() {
-      this.loadingEvent();
-      return $array.paginate(this.entries, this.currentPage, this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 );
-    },
-    showInfo() {
-      return $array.pageInfo(this.entries, this.currentPage, this.currentEntries) // pageInfo ( 所有資料 , 當前頁數 , 每頁幾筆 )
-    },
-    showPagination() {
-      return $array.pagination(this.allPages, this.currentPage, 2)  // pagination ( 全部頁數 , 目前頁數 , 差多少頁會顯示 ... )
-    },
-    currentWindowWidth() {
-      return this.$store.state.windowWidth;
-    },
-  },
   methods: {
     loadingEvent() { // 表格 loading 效果
       this.loadingStatus = true;
@@ -256,10 +242,10 @@ export default {
         this.loadingStatus = false;
       },500)
     },
-    paginateEntries() { 
-      this.currentPage = 1; // currentPage 固定為 1
+    paginateEntries() {  // 換筆數事件
+      this.currentPage = 1;
     },
-    searchEvent() {
+    searchEvent() { // 搜尋事件
       this.currentPage = 1;
       this.entries = $array.searchBy(this.entrie, [this.searchInput], this.columnSort);
       if(this.sortAsc != '') {
@@ -270,34 +256,22 @@ export default {
       }
     },
     paginateEvent(page) { // 換頁事件
-      this.currentPage = page; // currentPage 等於點擊的頁數
+      this.currentPage = page;
     },
-    sortColumn(name,status,sort) { // 排序事件
-      if(sort){
-        let index = this.columns.map(function(e) { return e.name }).indexOf(name); // 當前欄位名稱 (name) 在 columns 的索引
-        if(this.sortCol != name && this.sortCol != '') { // 若 sortCol (上一次排序的 name) 跟 name ( 本次排序的 name ) 不同，以及 sortCol 不為空 ( 沒點過排序 )
-          let idx = this.columns.map(function(e) { return e.name }).indexOf(this.sortCol); // 找上一次點選排序的欄位名稱
-          this.columns[idx].status = 'none'; // 將該物件的 status 設為 none { name: xxx , status: none }
+    sortableColumn(name) { // 判斷各個 TH 是否能做排序
+      return this.columnSort.includes(name);
+    },
+    sortColumn(name) { // 排序事件
+      if(this.sortableColumn(name)){
+        if(this.sortAsc == name){
+          this.entries = $array.sortBy(this.entries, name , 'desc');
+          this.sortAsc = '';
+          this.sortDesc = name;
         }
-        switch (status) {
-          case 'asc':
-            this.entries = $array.sortBy(this.entries, name , 'desc');
-            this.columns[index].status = 'desc';
-            this.sortDesc = name;
-            this.sortAsc = '';
-            break;
-          case 'desc':
-            this.entries = $array.sortBy(this.entries, name , 'asc');
-            this.columns[index].status = 'asc';
-            this.sortAsc = name;
-            this.sortDesc = '';
-            break;
-          default:
-            this.entries = $array.sortBy(this.entries, name , 'asc');
-            this.columns[index].status = 'asc';
-            this.sortAsc = name;
-            this.sortDesc = '';
-            this.sortCol = name;
+        else{
+          this.entries = $array.sortBy(this.entries, name , 'asc');
+          this.sortAsc = name;
+          this.sortDesc = '';
         }
       }
     }

@@ -19,9 +19,17 @@ export default {
   },
   watch: {
     $route() {
-      this.$store.commit('changeRoute',this.$route.path.slice(1));
+      if(this.$route.path == '/')
+        this.$store.commit('changeRoute','dashboard');
+      else
+        this.$store.commit('changeRoute',this.$route.path.slice(1));
     }
-  }
+  },
+  mounted() {
+    window.addEventListener("resize", () => {
+      this.$store.commit('changeWindowWidth');
+    });
+  },
 };
 </script>
 <style>

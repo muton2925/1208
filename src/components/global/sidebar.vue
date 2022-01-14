@@ -32,6 +32,7 @@
 </template>
 <script>
 import { ref } from 'vue';
+import { mapState } from "vuex";
 import { Collapse } from 'bootstrap/dist/js/bootstrap.bundle.js'
 export default {
   setup() {
@@ -51,25 +52,11 @@ export default {
       nssi_view_sm_ref: '',
     };
   },
-  computed: {
-    currentWindowWidth() {
-      return this.$store.state.windowWidth;
-    },
-    currentRoute() {
-      if(this.$store.state.currentRoute == '')
-        return 'dashboard';
-      else
-        return this.$store.state.currentRoute;
-    },
-    menuData() {
-      return this.$store.state.menuData;
-    }
-  },
-  mounted() {
-    window.addEventListener("resize", () => {
-      this.$store.commit('changeWindowWidth');
-    });
-  },
+  computed: mapState({
+    currentWindowWidth: 'windowWidth',
+    currentRoute: 'currentRoute',
+    menuData: 'menuData',
+  }),
   methods: {
     routeStatus(url,route) {
       const index = this.$store.state.menuData.findIndex(e => e.url == url);

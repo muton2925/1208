@@ -27,6 +27,7 @@
 </template>
 <script>
 import { ref } from 'vue';
+import { mapState } from "vuex";
 import { Collapse,Offcanvas } from 'bootstrap/dist/js/bootstrap.bundle.js';
 export default {
   setup() {
@@ -46,21 +47,14 @@ export default {
       nssi_view: '',
     }
   },
-  computed: {
-    currentWindowWidth() {
-      return this.$store.state.windowWidth;
-    },
-    menuData() {
-      return this.$store.state.menuData;
-    }
-  },
+  computed: mapState({
+    currentWindowWidth: 'windowWidth',
+    menuData: 'menuData',
+  }),
   mounted() {
     this.offcanvas = new Offcanvas(this.$refs.offcanvas_ref,{});
     this.generic_template = new Collapse(this.$refs.generic_template_xs,{ toggle : false });
     this.nssi_view = new Collapse(this.$refs.nssi_view_xs,{ toggle : false });
-    window.addEventListener("resize", () => {
-      this.$store.commit('changeWindowWidth');
-    });
   },
   watch: {
     currentWindowWidth: function (newVal) {

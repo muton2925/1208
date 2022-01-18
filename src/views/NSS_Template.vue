@@ -303,18 +303,17 @@ export default {
       .then(res => {
         this.td_list = [];
         for(let i of res.data) {
-          let nfvoType = '';
-          if(i.nfvoType.length != 0) {
-            nfvoType = i.nfvoType[0];
+          if(i.genericTemplates.length == 3) {
+            let nfvoType = i.nfvoType.length == 0 ? '' : i.nfvoType[0];
+            let obj = {
+              description: i.description,
+              genericTemplates: i.genericTemplates,
+              instanceId: i.instanceId,
+              templateId: i.templateId,
+              nfvoType: nfvoType,
+            }
+            this.td_list.push(obj);
           }
-          let obj = {
-            description: i.description,
-            genericTemplates: i.genericTemplates,
-            instanceId: i.instanceId,
-            templateId: i.templateId,
-            nfvoType: nfvoType,
-          }
-          this.td_list.push(obj);
         }
       })
       .catch(res => {

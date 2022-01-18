@@ -103,6 +103,8 @@ import { Share } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
 import { nfv_mano_plugin } from '../assets/js/api';
 import Table from '../components/global/table.vue';
+const { PluginList } = Share();
+const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
 const Modalupdate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalupdate" */ '../components/global/modal-update.vue'));
@@ -162,38 +164,37 @@ export default {
     }
   },
   watch: {
-    fileName: {
-      handler: function() {
-        this.text_invalidated = false;
-      }
+    fileName() {
+      this.text_invalidated = false;
     },
-    fileData: {
-      handler: function() {
-        this.file_invalidated = false;
-      }
+    fileData() {
+      this.file_invalidated = false;
     }
   },
   async created() {
     await this.getTableData();
-    setTimeout(() => {
-      this.status = true;
-    }, 700);
+    await this.delay(700);
+    this.status = true;
   },
   methods: {
     async getTableData() { // 顯示 Table 資料
-      const { PluginList } = Share();
-      await PluginList()
-      .then(res => {
+      try {
+        const res = await PluginList();
         this.td_list = [];
-        for(let i of res.data){     
+        for(let i of res.data) {     
           this.td_list.push(i);
         }
+      }
+      catch(error) {
+        console.log(error);
+      }
+    },
+    delay(interval) { // 計時器
+      return new Promise((resolve) => {
+        setTimeout(resolve,interval);
       })
-      .catch(res => {
-        console.log(res);
-        })
-      },
-    setAlertData(color,icon,title,content) { // alert 的樣式
+    },
+    async setAlertData(color,icon,title,content) { // alert 的樣式
       this.alertInfo.alertStatus = false; // 避免重複動作太快
       this.alertInfo.alertExist = false; // 避免重複動作太快
       this.alertInfo.alertColor = color;
@@ -202,16 +203,14 @@ export default {
       this.alertInfo.alertContent = content;
       this.alertInfo.alertStatus = true;
       this.alertInfo.alertExist = true;
-      setTimeout(() => {
-        this.alertInfo.alertStatus = false;
-        setTimeout(() => {
-          this.alertInfo.alertExist = false;
-          this.alertInfo.alertColor = '';
-          this.alertInfo.alertIcon = '';
-          this.alertInfo.alertTitle = '';
-          this.alertInfo.alertContent = '';
-        },100);
-      },1500);
+      await this.delay(1500);
+      this.alertInfo.alertStatus = false;
+      await this.delay(100);
+      this.alertInfo.alertExist = false;
+      this.alertInfo.alertColor = '';
+      this.alertInfo.alertIcon = '';
+      this.alertInfo.alertTitle = '';
+      this.alertInfo.alertContent = '';
     },
     updateTableData(val) {  // 每次執行 Table 操作，更新資料 
       this.filterEntries = val;
@@ -243,24 +242,23 @@ export default {
         this.file_invalidated = true;
       }
     },
-    create_plugin_modal() { // 點擊 Create Modal 內創建按鈕
+    async create_plugin_modal() { // 點擊 Create Modal 內創建按鈕
       this.create_plugin_validate(); 
       if(this.text_invalidated == false && this.file_invalidated == false) {
-        const { createPluginList } = nfv_mano_plugin();
         let form = new FormData();
         form.append("name", this.fileName);
         form.append("pluginFile", this.fileData[0]);
-        createPluginList(form)
-        .then(() => {
+        try {
+          await createPluginList(form);
+          await this.getTableData();
           this.$refs.modalCreate.closeModalEvent();
-          this.getTableData();
           this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NFV MANO Plugin has been created !');
-        })
-        .catch(res => {
+        }
+        catch(error) {
+          console.log(error);
           this.$refs.modalCreate.closeModalEvent();
           this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to create the NFV MANO Plugin !');
-          console.log(res);
-        })
+        }
       }
     },
     update_plugin_file(e) { // 更新 Update Modal 內檔案
@@ -274,24 +272,23 @@ export default {
     update_plugin_button(name) { // 點擊 Update Modal 按鈕
       this.fileName = name;
     },
-    update_plugin_modal() { // 點擊 Update Modal 內更新按鈕
+    async update_plugin_modal() { // 點擊 Update Modal 內更新按鈕
       this.update_plugin_validate();
       if(this.file_invalidated == false) {
-        const { updatePlugin } = nfv_mano_plugin();
         let form = new FormData();
         form.append("name", this.fileName);
         form.append("pluginFile", this.fileData[0]);
-        updatePlugin(this.fileName,form)
-        .then(() => {
+        try {
+          await updatePlugin(this.fileName,form);
+          await this.getTableData();
           this.$refs.modalUpdate.closeModalEvent();
-          this.getTableData();
           this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NFV MANO Plugin has been updated !');
-        })
-        .catch(res => {
+        }
+        catch(error) {
+          console.log(error);
           this.$refs.modalUpdate.closeModalEvent();
           this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to update the NFV MANO Plugin !');
-          console.log(res);
-        })
+        }
       }
     },
     download_template_button(file) { // 點擊 Download Modal 按鈕
@@ -303,17 +300,16 @@ export default {
     delete_plugin_button(file) { // 點擊 Delete Modal 按鈕
       this.fileData = file;
     },
-    delete_plugin_modal() { // 點擊 Delete Modal 內刪除按鈕
-      const { deletePlugin } = nfv_mano_plugin();
-      deletePlugin(this.fileData.name)
-      .then(() => {
-        this.getTableData();
+    async delete_plugin_modal() { // 點擊 Delete Modal 內刪除按鈕
+      try {
+        await deletePlugin(this.fileData.name)
+        await this.getTableData();
         this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NFV MANO Plugin has been deleted !');
-      })
-      .catch(res => {
+      }
+      catch(error) {
+        console.log(error);
         this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to delete the NFV MANO Plugin !');
-        console.log(res);
-      })
+      }
     },
   }
 }

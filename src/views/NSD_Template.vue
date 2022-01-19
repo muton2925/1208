@@ -143,6 +143,8 @@ import { Share } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
 import { GenericTemplate } from '../assets/js/api';
 import Table from '../components/global/table.vue';
+const { PluginList, TemplateList } = Share();
+const { createGenericTemplate, updateGenericTemplate, deleteGenericTemplate } = GenericTemplate();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalshow = defineAsyncComponent(() => import(/* webpackChunkName: "Modalshow" */ '../components/global/modal-show.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
@@ -232,37 +234,33 @@ export default {
     },
   },
   async created() {
-    await this.getTableData();
-    const { PluginList }  = Share();
-    PluginList()
-    .then(res => {
-      for(let i of res.data){
+    try {
+      let res = await this.axios.all([this.getTableData(), PluginList()]);
+      for(let i of res[1].data) {
         this.nfv_mano_list.push(i);
       }
-    })
-    .catch(res => {
-      console.log(res)
-    })
-    setTimeout(() => {
-      this.status = true;
-    }, 700);
+    }
+    catch(err) {
+      console.log(err);
+    }
+    await this.delay(700);
+    this.status = true;
   },
   methods: {
     async getTableData() {  // 顯示 Table 資料
-      const { TemplateList }  = Share();
-      TemplateList()
-      .then(res => {
-        this.td_list = [];
-        const array_nsd = res.data.filter(x => x.templateType == 'NSD');
-        for(let i of array_nsd){
-          this.td_list.push(i);
-        }
-      })
-      .catch(res => {
-        console.log(res)
+      let res = await TemplateList();
+      this.td_list = [];
+      const array_nsd = res.data.filter(x => x.templateType == 'NSD');
+      for(let i of array_nsd){
+        this.td_list.push(i);
+      }
+    },
+    delay(interval) { // 計時器
+      return new Promise((resolve) => {
+        setTimeout(resolve,interval);
       })
     },
-    setAlertData(color,icon,title,content) { // alert 的樣式
+    async setAlertData(color,icon,title,content) { // alert 的樣式
       this.alertInfo.alertStatus = false; // 避免重複動作太快
       this.alertInfo.alertExist = false; // 避免重複動作太快
       this.alertInfo.alertColor = color;
@@ -271,16 +269,14 @@ export default {
       this.alertInfo.alertContent = content;
       this.alertInfo.alertStatus = true;
       this.alertInfo.alertExist = true;
-      setTimeout(() => {
-        this.alertInfo.alertStatus = false;
-        setTimeout(() => {
-          this.alertInfo.alertExist = false;
-          this.alertInfo.alertColor = '';
-          this.alertInfo.alertIcon = '';
-          this.alertInfo.alertTitle = '';
-          this.alertInfo.alertContent = '';
-        },100);
-      },1500);
+      await this.delay(1500);
+      this.alertInfo.alertStatus = false;
+      await this.delay(100);
+      this.alertInfo.alertExist = false;
+      this.alertInfo.alertColor = '';
+      this.alertInfo.alertIcon = '';
+      this.alertInfo.alertTitle = '';
+      this.alertInfo.alertContent = '';
     },
     updateTableData(val) {  // 每次執行 Table 操作，更新資料 
       this.filterEntries = val;
@@ -314,26 +310,24 @@ export default {
         this.select_invalidated = true;
       }
     },
-    create_template_modal() { // 點擊 Create Modal 內創建按鈕
+    async create_template_modal() { // 點擊 Create Modal 內創建按鈕
       this.create_template_validate();
-      const { createGenericTemplate } = GenericTemplate();
       if(!this.text_invalidated && !this.select_invalidated) {
         let form = new FormData();
         form.append("name", this.templateName);
         form.append("description", this.templateDescription);
         form.append("nfvoType", this.currentNFVMANO);
         form.append("templateType", "NSD");
-        createGenericTemplate(form)
-        .then(res => {
-          this.$refs.modalCreate.closeModalEvent();
+        try {
+          let res = await createGenericTemplate(form);
           this.td_list.push(res.data);
-          this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NSD Template has been created !');
-        })
-        .catch(res => {
-          this.$refs.modalCreate.closeModalEvent();
-          this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to create the NSD Template !');
-          console.log(res);
-        })
+          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NSD Template has been created !');
+        }
+        catch(err) {
+          console.log(err);
+          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to create the NSD Template !');
+        }
+        this.$refs.modalCreate.closeModalEvent();
       }
     },
     show_template_button(item) { // 點擊 Show Modal 按鈕
@@ -359,47 +353,44 @@ export default {
       this.templateId = id;
       this.currentNFVMANO = type; 
     },
-    update_template_modal() { // 點擊 Update Modal 內更新按鈕
+    async update_template_modal() { // 點擊 Update Modal 內更新按鈕
       this.update_template_validate();
       if(!this.file_invalidated) {
-        const { updateGenericTemplate } = GenericTemplate();
         let form = new FormData();
         form.append("nfvoType", this.currentNFVMANO);
         form.append("templateType", "NSD");
         form.append("templateFile", this.templateData[0]);
-        updateGenericTemplate(this.templateId, form)
-        .then(() => {
-          this.$refs.modalUpdate.closeModalEvent();
-          this.getTableData();
-          this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NSD Template has been updated !');
-        })
-        .catch(res => {
-          this.$refs.modalUpdate.closeModalEvent();
-          this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to update the NSD Template !');
-          console.log(res);
-        })
+        try {
+          await updateGenericTemplate(this.templateId, form);
+          await this.getTableData();
+          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NSD Template has been updated !');
+        }
+        catch(err) {
+          console.log(err);
+          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to update the NSD Template !');
+        }
+        this.$refs.modalUpdate.closeModalEvent();
       }
     },
     download_template_button(file) { // 點擊 Download Modal 按鈕
       if(file == null)
-        this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to download the NSD Template !');
+        this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the NSD Template !');
       else
-        this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NSD Template has been downloaded !');
+        this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NSD Template has been downloaded !');
     },
     delete_template_button(file) { // 點擊 Delete Modal 按鈕
       this.templateData = file;
     },
-    delete_template_modal() { // 點擊 Delete Modal 內刪除按鈕
-      const { deleteGenericTemplate } = GenericTemplate();
-      deleteGenericTemplate(this.templateData.templateId)
-      .then(() => {
-        this.getTableData();
-        this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NSD Template has been deleted !');
-      })
-      .catch((res) => {
-        this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to delete the NSD Template !');
-        console.log(res);
-      })  
+    async delete_template_modal() { // 點擊 Delete Modal 內刪除按鈕
+      try {
+        await deleteGenericTemplate(this.templateData.templateId);
+        await this.getTableData();
+        this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NSD Template has been deleted !');
+      }
+      catch(err) {
+        console.log(err);
+        this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to delete the NSD Template !');
+      }
     },
   }
 }

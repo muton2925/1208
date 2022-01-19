@@ -172,21 +172,21 @@ export default {
     }
   },
   async created() {
-    await this.getTableData();
+    try {
+      await this.getTableData();
+    }
+    catch(err) {
+      console.log(err);
+    }
     await this.delay(700);
     this.status = true;
   },
   methods: {
     async getTableData() { // 顯示 Table 資料
-      try {
-        const res = await PluginList();
-        this.td_list = [];
-        for(let i of res.data) {     
-          this.td_list.push(i);
-        }
-      }
-      catch(error) {
-        console.log(error);
+      const res = await PluginList();
+      this.td_list = [];
+      for(let i of res.data) {     
+        this.td_list.push(i);
       }
     },
     delay(interval) { // 計時器
@@ -251,14 +251,13 @@ export default {
         try {
           await createPluginList(form);
           await this.getTableData();
-          this.$refs.modalCreate.closeModalEvent();
-          this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NFV MANO Plugin has been created !');
+          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NFV MANO Plugin has been created !');
         }
         catch(error) {
           console.log(error);
-          this.$refs.modalCreate.closeModalEvent();
-          this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to create the NFV MANO Plugin !');
+          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to create the NFV MANO Plugin !');
         }
+        this.$refs.modalCreate.closeModalEvent();
       }
     },
     update_plugin_file(e) { // 更新 Update Modal 內檔案
@@ -281,21 +280,20 @@ export default {
         try {
           await updatePlugin(this.fileName,form);
           await this.getTableData();
-          this.$refs.modalUpdate.closeModalEvent();
-          this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NFV MANO Plugin has been updated !');
+          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NFV MANO Plugin has been updated !');
         }
         catch(error) {
           console.log(error);
-          this.$refs.modalUpdate.closeModalEvent();
-          this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to update the NFV MANO Plugin !');
+          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to update the NFV MANO Plugin !');
         }
+        this.$refs.modalUpdate.closeModalEvent();
       }
     },
     download_template_button(file) { // 點擊 Download Modal 按鈕
       if(file == null)
-        this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to download the NFV MANO Plugin !');
+        this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the NFV MANO Plugin !');
       else
-        this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NFV MANO Plugin has been downloaded !');
+        this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NFV MANO Plugin has been downloaded !');
     },
     delete_plugin_button(file) { // 點擊 Delete Modal 按鈕
       this.fileData = file;
@@ -304,11 +302,11 @@ export default {
       try {
         await deletePlugin(this.fileData.name)
         await this.getTableData();
-        this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NFV MANO Plugin has been deleted !');
+        this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NFV MANO Plugin has been deleted !');
       }
       catch(error) {
         console.log(error);
-        this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to delete the NFV MANO Plugin !');
+        this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to delete the NFV MANO Plugin !');
       }
     },
   }

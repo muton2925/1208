@@ -220,30 +220,24 @@ export default {
   },
   async created() {
     try {
-      await this.getTemplate();
-      let res = await PluginList();
-      for(let i of res.data) {
+      let res = await this.axios.all([this.getTableData(),PluginList()]);
+      for(let i of res[1].data) {
         this.nfv_mano_list.push(i);
       }
     }
-    catch(error) {
-      console.log(error);
+    catch(err) {
+      console.log(err);
     }
     await this.delay(700);
     this.status = true;
   },
   methods: {
-    async getTemplate() { // 顯示 Table 資料
-      try {
-        let res = await TemplateList();
-        this.td_list = [];
-        const VNF = res.data.filter(x => x.templateType == 'VNF');
-        for (const iterator of VNF) {
-          this.td_list.push(iterator)
-        }
-      }
-      catch(error) {
-        console.log(error);
+    async getTableData() { // 顯示 Table 資料
+      let res = await TemplateList();
+      this.td_list = [];
+      const VNF = res.data.filter(x => x.templateType == 'VNF');
+      for (const iterator of VNF) {
+        this.td_list.push(iterator);
       }
     },
     delay(interval) { // 計時器
@@ -327,15 +321,14 @@ export default {
         form.append("templateType", "VNF");
         try {
           let res = await createGenericTemplate(form);
-          this.$refs.modalCreate.closeModalEvent();
           this.td_list.push(res.data);
-          this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','VNF Template has been created !');
+          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'VNF Template has been created !');
         }
-        catch(error) {
-          console.log(error)
-          this.$refs.modalCreate.closeModalEvent();
-          this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to create the VNF Template !');
+        catch(err) {
+          console.log(err);
+          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to create the VNF Template !');
         }
+        this.$refs.modalCreate.closeModalEvent();
       }
     },
     update_template_file(e) { // 更新 Update Modal 內檔案
@@ -359,22 +352,21 @@ export default {
         form.append("templateFile", this.templateData[0]);
         try {
           await updateGenericTemplate(this.templateId, form);
-          await this.getTemplate();
-          this.$refs.modalUpdate.closeModalEvent();
-          this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','VNF Template has been updated !');
+          await this.getTableData();
+          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'VNF Template has been updated !');
         }
-        catch(error) {
-          console.log(error);
-          this.$refs.modalUpdate.closeModalEvent();
-          this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to update the VNF Template !');
+        catch(err) {
+          console.log(err);
+          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to update the VNF Template !');
         }
+        this.$refs.modalUpdate.closeModalEvent();
       }
     },
     download_template_button(file) { // 點擊 Download Modal 按鈕
       if(file == null)
-        this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to download the VNF Template !');
+        this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the VNF Template !');
       else
-        this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','VNF Template has been downloaded !');
+        this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'VNF Template has been downloaded !');
     },
     delete_template_button(file) { // 點擊 Delete Modal 按鈕
       this.templateData = file;
@@ -382,12 +374,12 @@ export default {
     async delete_template_modal() { // 點擊 Delete Modal 內刪除按鈕
       try {
         await deleteGenericTemplate(this.templateData.templateId);
-        await this.getTemplate();
-        this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','VNF Template has been deleted !');
+        await this.getTableData();
+        this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'VNF Template has been deleted !');
       }
-      catch(error) {
-        console.log(error);
-        this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','Fail to delete the VNF Template !');
+      catch(err) {
+        console.log(err);
+        this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to delete the VNF Template !');
       }
     }
   }

@@ -3,20 +3,20 @@
     <ul id="accordion-basic">
       <li v-for="item in menuData" :key="item.name">
         <template v-if="item.childNodes.length > 0">
-          <div class="list-item" data-bs-toggle="collapse" :data-bs-target="'#' + item.url">
+          <div class="list-item" :class="{ 'currentRoute' : routeStatus(item.url,currentRoute) }" data-bs-toggle="collapse" :data-bs-target="'#' + item.url">
             <i class="me-2" :class="item.icon"></i>
             {{ item.name }}
             </div>
             <div :id="item.url" class="collapse" :ref="item.url + '_xs'" data-bs-parent="#accordion-basic">
               <ul class="list-ul">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :to="{ path :  '/' + child.url }" @click="closeCollapse"> {{ child.name }} </router-link>
+                  <router-link class="list-item" :class="{ 'currentRoute' : child.url == currentRoute }" :to="{ path :  '/' + child.url }" @click="closeCollapse"> {{ child.name }} </router-link>
                 </li>
               </ul>
             </div>
         </template> 
         <template v-else>
-          <router-link class="list-item" :to="{ path : '/' + item.url }" @click="closeCollapse">
+          <router-link class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" :to="{ path : '/' + item.url }" @click="closeCollapse">
             <i class="me-2" :class="item.icon"></i>
             {{ item.name }}
           </router-link>
@@ -49,6 +49,7 @@ export default {
   },
   computed: mapState({
     currentWindowWidth: 'windowWidth',
+    currentRoute: 'currentRoute',
     menuData: 'menuData',
   }),
   mounted() {
@@ -64,6 +65,13 @@ export default {
     },
   },
   methods: {
+    routeStatus(url,route) {
+      const index = this.$store.state.menuData.findIndex(e => e.url == url);
+      if(this.$store.state.menuData[index].childNodes.findIndex(e => e.url == route) != -1)
+        return true;
+      else
+        return false;
+    },
     closeCollapse() {
       this.offcanvas.hide();
       this.generic_template.hide();
@@ -81,16 +89,32 @@ export default {
   display: flex;
   color: #000;
   font-size: 12px;
-  align-items: center;
-  padding: 1rem 0 1rem 1rem;
-  text-decoration: none;
   cursor: pointer;
+  align-items: center;
+  text-decoration: none;
+  padding: 1rem 0 1rem 1rem;
   border-bottom: #e5e5e5 1px solid;
 }
+.list-item:hover {
+  background-color: #dedede !important;
+}
+.list-item:active {
+  background-color: #d1d1d1 !important;
+}
 .list-ul {
-  background-color:#e5e5e5;
+  background-color:#efefef;
 }
 .list-ul li:not(:last-child) {
   border-bottom: #FFF 1px solid;
+}
+.currentRoute {
+  font-weight: 800;
+  background-color: #e4e4e4;
+}
+.currentRoute:hover {
+  background-color: #d3d3d3 !important;
+}
+.currentRoute:active {
+  background-color: #c5c5c5 !important;
 }
 </style>

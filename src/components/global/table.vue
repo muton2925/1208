@@ -120,7 +120,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="i in 6" :key="i" class="placeholder-glow">
+                <tr v-for="i in 5" :key="i" class="placeholder-glow">
                   <td v-for="i in 5" :key="i"><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
                 </tr>
               </tbody>
@@ -159,8 +159,8 @@ export default {
   },
   data() {
     return {
-      currentEntries: 2, // 當前每頁筆數
-      showEntries: [2,50,100], // 每頁筆數列表
+      currentEntries: 10, // 當前每頁筆數
+      showEntries: [10,50,100], // 每頁筆數列表
       currentPage: 1, // 當前頁數
       searchInput: '',
       searchEntries: [],

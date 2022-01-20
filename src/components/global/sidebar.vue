@@ -19,14 +19,14 @@
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_sm'" data-bs-parent="#sidebar-parent">
               <ul class="p-2">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <a class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" :to="{ path :  '/' + child.url }" @click="closeCollapse()"> {{ child.name }} </a>
+                  <router-link class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" :to="{ path :  '/' + child.url }" @click="closeCollapse(),routerEvent()"> {{ child.name }} </router-link>
                 </li>
               </ul>
             </div>
           </template>
         </template>
         <template v-else>
-          <router-link class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" :to="{ path : '/' + item.url }" @click="closeCollapse()">{{ item.name }}</router-link>
+          <router-link class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" :to="{ path : '/' + item.url }" @click="closeCollapse(),routerEvent()">{{ item.name }}</router-link>
         </template>
       </li>
     </ul>

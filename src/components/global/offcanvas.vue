@@ -10,13 +10,13 @@
             <div :id="item.url" class="collapse" :ref="item.url + '_xs'" data-bs-parent="#accordion-basic">
               <ul class="list-ul">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :class="{ 'currentRoute' : child.url == currentRoute }" :to="{ path :  '/' + child.url }" @click="closeCollapse"> {{ child.name }} </router-link>
+                  <router-link class="list-item" :class="{ 'currentRoute' : child.url == currentRoute }" :to="{ path :  '/' + child.url }" @click="closeCollapse(),routerEvent()"> {{ child.name }} </router-link>
                 </li>
               </ul>
             </div>
         </template> 
         <template v-else>
-          <router-link class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" :to="{ path : '/' + item.url }" @click="closeCollapse">
+          <router-link class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" :to="{ path : '/' + item.url }" @click="closeCollapse(),routerEvent()">
             <i class="me-2" :class="item.icon"></i>
             {{ item.name }}
           </router-link>
@@ -30,6 +30,7 @@ import { ref } from 'vue';
 import { mapState } from "vuex";
 import { Collapse,Offcanvas } from 'bootstrap/dist/js/bootstrap.bundle.js';
 export default {
+  inject:['reload'],
   setup() {
     const offcanvas_ref = ref(null)
     const generic_template_xs = ref(null)
@@ -65,6 +66,9 @@ export default {
     },
   },
   methods: {
+    routerEvent() {
+      this.reload();
+    },
     routeStatus(url,route) {
       const index = this.$store.state.menuData.findIndex(e => e.url == url);
       if(this.$store.state.menuData[index].childNodes.findIndex(e => e.url == route) != -1)

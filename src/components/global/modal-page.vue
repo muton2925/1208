@@ -2,14 +2,16 @@
   <div class="modal fade" id="change_page_Modal" ref="modal_page" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-body">
-          <div class="col d-flex justify-content-center align-items-center py-1">
-            <span>Switch to page</span>
-            <input type="number" class="form-control input-custom text-center mx-2" :class="{ 'is-invalid' : true }" v-model="pageNumber" @keypress.enter="validate">
+        <div class="modal-body d-flex align-items-center flex-wrap p-2 p-sm-3">
+          <div class="col-12 col-sm d-flex justify-content-center align-items-center py-1">
+            <span>switch page</span>
+            <input type="text" inputmode="numeric" class="form-control input-custom text-center mx-2" :class="{ 'border-danger' : number_validate }" v-model="pageNumber" @keypress.enter="validate">
             <span>of {{ page }} pages</span>
-            <!-- <div class="invalid-feedback">
-              檔案不得為空
-            </div> -->
+          </div>
+          <button type="button" class="btn btn-primary text-white col col-sm-auto mt-2 mt-sm-0" @click="validate">Go</button>
+          <div class="col-12 d-flex justify-content-center align-items-center mt-2 mt-sm-2" :class="{ 'd-none' : !number_validate }">
+            <i class="bi bi-exclamation-circle-fill text-danger"></i>
+            <small class="text-danger ms-2">請輸入有效整數</small>
           </div>
         </div>
       </div>
@@ -29,8 +31,9 @@ export default {
   },
   data() {
     return {
-      pageNumber: null,
+      pageNumber: '',
       modal: '',
+      number_validate: false,
     }
   },
   computed: {
@@ -38,20 +41,27 @@ export default {
       return this.allPages;
     }
   },
+  watch: {
+    pageNumber() {
+      this.number_validate = false;
+    }
+  },
   mounted() {
     const th = this; 
     this.$refs.modal_page.addEventListener('hidden.bs.modal', function () {
       th.pageNumber = '';
+      th.number_validate = false;
     });
     this.modal = new Modal(this.$refs.modal_page, {});
   },
   methods: {
     validate() {
-        let re = /^[1-9]+$/ ;
-        // let y = re.test(this.pageNumber)
-        console.log(this.allPages)
-      if(re.test(this.pageNumber) && this.pageNumber <=this.allPages) {
-        this.$emit('switch', this.pageNumber);
+      let re = /^[0-9]+$/;
+      let number = parseInt(this.pageNumber);
+      if(!re.test(number) || (number > this.allPages || number <= 0))
+        this.number_validate = true;
+      if(!this.number_validate) {
+        this.$emit('switch', number);
         this.modal.hide();
       }
     }
@@ -61,13 +71,5 @@ export default {
 <style scoped>
 .input-custom {
   width: 65px;
-}
-input[type=number] {
-  -moz-appearance: textfield;
-}
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }
 </style>

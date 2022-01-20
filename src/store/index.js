@@ -37,7 +37,7 @@ export default createStore({
         ],
       },
       {
-        name: "NSS template",
+        name: "NSS Template",
         icon: "bi bi-bootstrap",
         url: "nss_template",
         childNodes: [],

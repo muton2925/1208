@@ -10,7 +10,7 @@
     <div class="row  ">
     <!-- Graph Chart -->
       <div class="col-lg-7 col-12">
-          <div class="card shadow mb-4" >
+          <div class="card shadow mb-4 mb-lg-0" >
           <div class="card-header py-3">
               <h6 class="m-0 font-weight-bold text-primary">Graph view</h6>
           </div>

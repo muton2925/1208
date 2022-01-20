@@ -154,17 +154,16 @@ export default {
       Deallocate_NSSI_ID:'',
     }
   },
-  created(){
-    this.nss_instance_list();
-        setTimeout(() => {
+  async created(){
+    await  this.nss_instance_list();
+    setTimeout(() => {
       this.status = true;
     }, 700);
   },
   methods:{
-    nss_instance_list(){
-      const { nssInstanceIist } = NSS_Instance()
-      nssInstanceIist().then(res=>{
-        console.log(res)
+  async  nss_instance_list(){
+    const { nssInstanceIist } = NSS_Instance()
+    let res =   await  nssInstanceIist()
         this.td_list = [];
         for (const i of res.data.attributeListOut) {
           const obj = {
@@ -190,7 +189,6 @@ export default {
           }
           this.td_list.push(obj)
         }
-      })
     },
     show_template_button(id, nsInfo){
       this.nssiId = id;

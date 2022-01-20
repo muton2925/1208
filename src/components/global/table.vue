@@ -81,13 +81,13 @@
                 <a class="page-link" href="#" @click.prevent="paginateEvent(1)">First</a>
               </li>
               <li class="page-item" :class="{ disabled : currentPage == 1 }">
-                <a class="page-link" href="#" @click="paginateEvent(currentPage-1)"><i class="bi bi-chevron-left"></i></a>
+                <a class="page-link" href="#" @click="paginateEvent(currentPage -1)"><i class="bi bi-chevron-left"></i></a>
               </li>
-              <li class="page-item" v-for="page in showPagination" :key="page" :class="[{ active: page == currentPage },{ disabled: page == '...'}]">
+              <li class="page-item" v-for="page in showPagination" :key="page" :class="[{ active: page == currentPage }]" :data-bs-toggle="[ page == '...' ? 'modal': '' ]" data-bs-target="#change_page_Modal">
                 <a class="page-link" href="#" @click="paginateEvent(page)">{{ page }}</a>
               </li>
               <li class="page-item" :class="{ disabled : currentPage == allPages }">
-                <a class="page-link" href="#" @click="paginateEvent(currentPage+1)"><i class="bi bi-chevron-right"></i></a>
+                <a class="page-link" href="#" @click="paginateEvent(currentPage +1)"><i class="bi bi-chevron-right"></i></a>
               </li>
               <li class="page-item" :class="{ disabled : currentPage == allPages }">
                 <a class="page-link" href="#" @click.prevent="paginateEvent(allPages)">Last</a>
@@ -120,7 +120,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="i in 6" :key="i" class="placeholder-glow">
+                <tr v-for="i in 5" :key="i" class="placeholder-glow">
                   <td v-for="i in 5" :key="i"><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
                 </tr>
               </tbody>
@@ -138,17 +138,24 @@
       </div>
       </div>
     </template>
+    <Modalpage :allPages="allPages" @switch="switchPage"></Modalpage>
   </div>
 </template>
 <script>
-import { $array } from 'alga-js';
+
 import { ref } from 'vue';
+import { $array } from 'alga-js';
+import { defineAsyncComponent } from 'vue';
+const Modalpage = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ './modal-page.vue'));
 export default {
   setup(props) {
     const btn = ref(props.showBtn)
     return {
       btn
     }
+  },
+  components: {
+    Modalpage
   },
   data() {
     return {
@@ -256,7 +263,8 @@ export default {
       }
     },
     paginateEvent(page) { // 換頁事件
-      this.currentPage = page;
+      if(page != '...')
+        this.currentPage = page;
     },
     sortableColumn(name) { // 判斷各個 TH 是否能做排序
       return this.columnSort.includes(name);
@@ -274,6 +282,9 @@ export default {
           this.sortDesc = '';
         }
       }
+    },
+    switchPage(val) {
+      this.currentPage = val;
     }
   }
 }

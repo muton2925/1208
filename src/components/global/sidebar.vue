@@ -3,7 +3,9 @@
     <ul id="sidebar-parent" class="text-white">
       <li class="position-relative" v-for="item in menuData" :key="item.name">
         <template v-if="item.childNodes.length > 0">
-          <a class="list-item" data-bs-toggle="collapse" :class="{ 'currentRoute' : routeStatus(item.url,currentRoute) }" :data-bs-target="'#' + item.url">{{ item.name }}</a>
+          <a class="list-item" :class="{ 'currentRoute' : routeStatus(item.url,currentRoute) }" data-bs-toggle="collapse" :data-bs-target="'#' + item.url" @click="url(item.url)">{{ item.name }}
+            <i v-if="currentWindowWidth >= 768" :class="[[ item.url == clickUrl ? 'bi bi-chevron-up' : 'bi bi-chevron-down' ],'ms-auto']"></i>
+          </a>
           <template v-if="currentWindowWidth >= 768">
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_md'" data-bs-parent="#sidebar-parent">
               <ul class="p-2">
@@ -46,6 +48,7 @@ export default {
   },
   data() {
     return {
+      clickUrl: '',
       generic_template_md_ref: '',
       generic_template_sm_ref: '',
       nssi_view_md_ref: '',
@@ -57,7 +60,20 @@ export default {
     currentRoute: 'currentRoute',
     menuData: 'menuData',
   }),
+  watch: {
+    currentWindowWidth(newVal) {
+      if(newVal < 768) {
+        this.clickUrl = '';
+      }
+    }
+  },
   methods: {
+    url(url) {
+      if(url == this.clickUrl)
+        this.clickUrl = '';
+      else
+        this.clickUrl = url;
+    },
     routeStatus(url,route) {
       const index = this.$store.state.menuData.findIndex(e => e.url == url);
       if(this.$store.state.menuData[index].childNodes.findIndex(e => e.url == route) != -1)
@@ -67,6 +83,7 @@ export default {
     },
     closeCollapse() {
       if(this.currentWindowWidth >= 768) {
+        this.clickUrl = '';
         this.generic_template_md_ref = new Collapse(this.$refs.generic_template_md,{ toggle: false })
         this.nssi_view_md_ref = new Collapse(this.$refs.nssi_view_md,{ toggle: false })
         this.generic_template_md_ref.hide();
@@ -124,9 +141,10 @@ export default {
 }
 .currentRoute {
   font-size: .75rem;
-  font-weight: 1000;
+  font-weight: 900;
 }
 .currentRouteCollapseItem {
+  font-weight: 800;
   background-color: #E9EBEB;
 }
 .currentRouteCollapseItem:hover {

@@ -2,7 +2,7 @@
   <main>
     <div class="grid-custom">
       <div class="grid-main-custom" style="overflow: hidden;">
-        <router-view></router-view>
+        <router-view v-if="isRouterAlive"></router-view>
       </div>
     </div>
   </main>
@@ -17,6 +17,16 @@ export default {
     Header,
     Sidebar,
   },
+  provide(){    
+    return {
+      reload: this.reload      
+    }
+  },
+  data() {
+    return {
+      isRouterAlive: true,
+    }
+  },
   watch: {
     $route() {
       if(this.$route.path == '/')
@@ -30,6 +40,12 @@ export default {
       this.$store.commit('changeWindowWidth');
     });
   },
+  methods: {
+    reload() {
+      this.isRouterAlive = false;
+      this.$nextTick( ()=> { this.isRouterAlive=true } ) 
+    }
+  }
 };
 </script>
 <style>

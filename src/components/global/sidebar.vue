@@ -10,7 +10,7 @@
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_md'" data-bs-parent="#sidebar-parent">
               <ul class="p-2">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" :to="{ path : '/' + child.url }" @click="closeCollapse(),routerEvent()"> {{ child.name }} </router-link>
+                  <a class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" @click="closeCollapse(),routerEvent(child.url)"> {{ child.name }} </a>
                 </li>
               </ul>
             </div>
@@ -75,7 +75,8 @@ export default {
       else
         this.clickUrl = url;
     },
-    routerEvent() {
+    routerEvent(url) {
+      this.$router.push({ path :  '/' + url });
       this.reload();
     },
     routeStatus(url,route) {

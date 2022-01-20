@@ -10,7 +10,7 @@
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_md'" data-bs-parent="#sidebar-parent">
               <ul class="p-2">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" :to="{ path :  '/' + child.url }" @click="closeCollapse()"> {{ child.name }} </router-link>
+                  <router-link class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" :to="{ path : '/' + child.url }" @click="closeCollapse(),routerEvent()"> {{ child.name }} </router-link>
                 </li>
               </ul>
             </div>
@@ -37,6 +37,7 @@ import { ref } from 'vue';
 import { mapState } from "vuex";
 import { Collapse } from 'bootstrap/dist/js/bootstrap.bundle.js'
 export default {
+  inject:['reload'],
   setup() {
     const generic_template_sm = ref(null)
     const generic_template_md = ref(null)
@@ -73,6 +74,9 @@ export default {
         this.clickUrl = '';
       else
         this.clickUrl = url;
+    },
+    routerEvent() {
+      this.reload();
     },
     routeStatus(url,route) {
       const index = this.$store.state.menuData.findIndex(e => e.url == url);

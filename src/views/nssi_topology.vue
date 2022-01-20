@@ -52,7 +52,7 @@
 
 </template>
 <script>
-import {  ref ,onMounted, onBeforeUnmount, watch,  } from '@vue/runtime-core';
+import {  ref ,onMounted, onBeforeUnmount, watch,  inject} from '@vue/runtime-core';
 import { useRoute } from "vue-router";
 // import Modal from '../components/global/modal.vue';
 // import Table from '../components/global/table.vue';
@@ -67,6 +67,7 @@ export default {
     const route = useRoute();
     // console.log(route.query == {})
     let mychart;
+    const reload = inject('reload')
     let NSSI_status = ref('NSSI');
     let title = ref('Network Slice Subnet Instance Graph')
     if(route.query.id){
@@ -75,16 +76,13 @@ export default {
     function topology(){
       if (route.query.status == "deallocate"){
         NSSI_status.value = "deallocate"; 
-        console.log("deallocate"+route.path)
         deallocate_nssi_topology(mychart, route.query.id)
       }
       else if (route.query.status == "allocate"){
         NSSI_status.value = "allocate"; 
         allocate_nssi(mychart, route.query.id)
-        console.log("allocate"+route.path)
       }
       else {
-        console.log("NSSI"+route.path)
         NSSI_status.value = "show";
         nssiContent(mychart, route.query.id)
         myChartDbclick(mychart)
@@ -94,6 +92,9 @@ export default {
     onMounted(()=>{
       mychart = show_nssi(dom.value, false)
       topology()
+    })
+    watch(route,()=>{
+      reload()
     })
     watch(NSViewChartContent ,()=>{
       return NSViewChartContent

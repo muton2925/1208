@@ -118,6 +118,7 @@ export default {
   },
   setup() {
     const store = useStore();
+    const columnSort = ref(['name','allocate_nssi','dellocate_nssi']);
     const th_list = ref([
       { name: "name", text: "Plugin Name" },
       { name: "allocate_nssi", text: "Allocate NSSI File" },
@@ -143,6 +144,13 @@ export default {
         setTimeout(resolve, interval);
       });
     };
+    const removeCreateData = () => {
+      fileName.value = '';
+      fileData.value = {};
+      text_invalidated.value = false;
+      file_invalidated.value = false;
+      uploadData_create.value.value = null;
+    };
     const change_plugin_file = e => {
       fileData.value = e.target.files;
     };
@@ -166,6 +174,7 @@ export default {
         catch(err) {
           console.log(err);
         }
+        modalCreate.value.closeModalEvent();
       }
     };
     watch(
@@ -195,6 +204,7 @@ export default {
     });
     return {
       delay,
+      columnSort,
       th_list,
       td_list,
       fileName,
@@ -204,6 +214,7 @@ export default {
       file_invalidated,
       change_plugin_file,
       create_plugin_modal,
+      removeCreateData,
       modalCreate,
       modalUpdate,
       uploadData_update,
@@ -223,7 +234,7 @@ export default {
       //   { name: "delete_plugin", text: "Delete" },
       // ],
       // td_list: [],
-      columnSort: ['name','allocate_nssi','dellocate_nssi'],
+      // columnSort: ['name','allocate_nssi','dellocate_nssi'],
       columnNumber: 6,
       // fileName: '',
       // fileData: {},
@@ -296,13 +307,13 @@ export default {
     updateTableData(val) {  // 每次執行 Table 操作，更新資料 
       this.filterEntries = val;
     },
-    removeCreateData() { // 關閉 Create Modal
-      this.fileName = '';
-      this.fileData = {};
-      this.text_invalidated = false;
-      this.file_invalidated = false;
-      this.$refs.uploadData_create.value = null;
-    },
+    // removeCreateData() { // 關閉 Create Modal
+    //   this.fileName = '';
+    //   this.fileData = {};
+    //   this.text_invalidated = false;
+    //   this.file_invalidated = false;
+    //   this.$refs.uploadData_create.value = null;
+    // },
     removeUpdateData() { // 關閉 Update Modal
       this.fileName = '';
       this.fileData = {};

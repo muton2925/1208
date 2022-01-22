@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
+    status: false,
     windowWidth: window.innerWidth,
     currentRoute: '',
     menuData: [
@@ -60,6 +61,12 @@ export default createStore({
     ],
   },
   mutations: {
+    statusOn(state) {
+      state.status = true;
+    },
+    statusOff(state) {
+      state.status = false;
+    },
     changeWindowWidth(state) {
       state.windowWidth = window.innerWidth;
     },

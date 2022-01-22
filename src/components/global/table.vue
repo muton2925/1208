@@ -142,14 +142,14 @@
   </div>
 </template>
 <script>
-
-import { ref } from 'vue';
 import { $array } from 'alga-js';
-import { defineAsyncComponent } from 'vue';
+// import { useStore } from 'vuex';
+import { ref, defineAsyncComponent } from 'vue';
 const Modalpage = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ './modal-page.vue'));
 export default {
   setup(props) {
-    const btn = ref(props.showBtn)
+    // const store = useStore();
+    const btn = ref(props.showBtn);
     return {
       btn
     }
@@ -199,7 +199,7 @@ export default {
       return this.$store.state.windowWidth;
     },
     pageStatus() {
-      return this.status;
+      return this.$store.state.status;
     },
     allPages() {
       if(this.entries.length != 0)

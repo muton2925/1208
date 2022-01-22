@@ -35,7 +35,7 @@
             <table class="table table-bordered table-striped table-hover align-middle mb-0">
               <thead>
                 <tr>
-                  <th scope="col" class="table-light cursor-pointer col-1" :class="{ 'w-0' : !sortableColumn(item.name) }" v-for="item in columns" :key="item.name" @click="sortColumn(item.name)">
+                  <th scope="col" class="table-light cursor-pointer col-1" :class="{ 'w-0' : !sortableColumn(item.name) }" v-for="item in column" :key="item.name" @click="sortColumn(item.name)">
                     <template v-if="sortableColumn(item.name)">
                       <div class="d-flex justify-content-between">
                         <span>{{ item.text }}</span>
@@ -142,14 +142,14 @@
   </div>
 </template>
 <script>
+
+import { ref } from 'vue';
 import { $array } from 'alga-js';
-// import { useStore } from 'vuex';
-import { ref, defineAsyncComponent } from 'vue';
+import { defineAsyncComponent } from 'vue';
 const Modalpage = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ './modal-page.vue'));
 export default {
   setup(props) {
-    // const store = useStore();
-    const btn = ref(props.showBtn);
+    const btn = ref(props.showBtn)
     return {
       btn
     }
@@ -164,7 +164,6 @@ export default {
       currentPage: 1, // 當前頁數
       searchInput: '',
       searchEntries: [],
-      columns: this.column,
       entries: this.entrie,
       sortAsc: '',
       sortDesc: '',
@@ -186,17 +185,17 @@ export default {
     columnSort: {
       typeof: Array,
     },
-    columnNumber: {
-      typeof: Number,
-    },
-    status: {
-      typeof: Boolean,
-      default: false
-    },
+    // status: {
+    //   typeof: Boolean,
+    //   default: false
+    // },
   },
   computed: {
     currentWindowWidth() {
       return this.$store.state.windowWidth;
+    },
+    columnNumber() {
+      return this.column.length;
     },
     pageStatus() {
       return this.$store.state.status;

@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData">
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" @update="updateTableData">
     <template v-slot:header>
       NFV MANO Plugin
     </template>
@@ -79,7 +79,7 @@
           <label for="UploadFile2" class="form-label">
             Plugin File :
           </label>
-          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="update_plugin_file">
+          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="change_plugin_file">
           <div class="invalid-feedback">
             檔案不得為空
           </div>
@@ -151,6 +151,12 @@ export default {
       file_invalidated.value = false;
       uploadData_create.value.value = null;
     };
+    const removeUpdateData = () => {
+      fileName.value = '';
+      fileData.value = {};
+      file_invalidated.value = false;
+      uploadData_update.value.value = null;
+    };
     const change_plugin_file = e => {
       fileData.value = e.target.files;
     };
@@ -163,8 +169,8 @@ export default {
     };
     const create_plugin_modal = async () => {
       create_plugin_validate();
-      if(!text_invalidated.value && !file_invalidated.value){
-        let form = new FormData();
+      if(!text_invalidated.value && !file_invalidated.value) {
+        const form = new FormData();
         form.append("name", fileName.value);
         form.append("pluginFile", fileData.value[0]);
         try {
@@ -177,6 +183,33 @@ export default {
         modalCreate.value.closeModalEvent();
       }
     };
+    const update_plugin_validate = () => {
+      if(fileData.value[0] == null) { // 驗證 Update Modal
+        file_invalidated.value = true;
+      } 
+    };
+    const update_plugin_button = name => {
+      fileName.value = name;
+    };
+    const update_plugin_modal = async() => {
+      update_plugin_validate();
+      if(!file_invalidated.value) {
+        const form = new FormData();
+        form.append("name", fileName.value);
+        form.append("pluginFile", fileData.value[0]);
+        try {
+          await updatePlugin(fileName.value,form);
+          await getTableData();
+        }
+        catch(err) {
+          console.log(err);
+        }
+        modalUpdate.value.closeModalEvent();
+      }
+    };
+    const download_template_button = () => {
+      console.log(123);
+    }
     watch(
       () => fileName.value,
       () => {
@@ -214,9 +247,11 @@ export default {
       file_invalidated,
       change_plugin_file,
       create_plugin_modal,
+      update_plugin_button,
+      update_plugin_modal,
+      download_template_button,
       removeCreateData,
-      modalCreate,
-      modalUpdate,
+      removeUpdateData,
       uploadData_update,
       uploadData_create,
     };
@@ -235,7 +270,7 @@ export default {
       // ],
       // td_list: [],
       // columnSort: ['name','allocate_nssi','dellocate_nssi'],
-      columnNumber: 6,
+      // columnNumber: 6,
       // fileName: '',
       // fileData: {},
       // text_invalidated: false, //文字是否未通過認證
@@ -314,12 +349,12 @@ export default {
     //   this.file_invalidated = false;
     //   this.$refs.uploadData_create.value = null;
     // },
-    removeUpdateData() { // 關閉 Update Modal
-      this.fileName = '';
-      this.fileData = {};
-      this.file_invalidated = false;
-      this.$refs.uploadData_update.value = null;
-    },
+    // removeUpdateData() { // 關閉 Update Modal
+    //   this.fileName = '';
+    //   this.fileData = {};
+    //   this.file_invalidated = false;
+    //   this.$refs.uploadData_update.value = null;
+    // },
     removeDeleteData() { // 關閉 Delete Modal
       this.fileData = {};
     },
@@ -352,41 +387,41 @@ export default {
     //     this.$refs.modalCreate.closeModalEvent();
     //   }
     // },
-    update_plugin_file(e) { // 更新 Update Modal 內檔案
-      this.fileData = e.target.files;
-    },
-    update_plugin_validate() { 
-      if(this.fileData[0] == null) { // 驗證 Update Modal
-        this.file_invalidated = true;
-      } 
-    },
-    update_plugin_button(name) { // 點擊 Update Modal 按鈕
-      this.fileName = name;
-    },
-    async update_plugin_modal() { // 點擊 Update Modal 內更新按鈕
-      this.update_plugin_validate();
-      if(this.file_invalidated == false) {
-        let form = new FormData();
-        form.append("name", this.fileName);
-        form.append("pluginFile", this.fileData[0]);
-        try {
-          await updatePlugin(this.fileName,form);
-          await this.getTableData();
-          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NFV MANO Plugin has been updated !');
-        }
-        catch(error) {
-          console.log(error);
-          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to update the NFV MANO Plugin !');
-        }
-        this.$refs.modalUpdate.closeModalEvent();
-      }
-    },
-    download_template_button(file) { // 點擊 Download Modal 按鈕
-      if(file == null)
-        this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the NFV MANO Plugin !');
-      else
-        this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NFV MANO Plugin has been downloaded !');
-    },
+    // update_plugin_file(e) { // 更新 Update Modal 內檔案
+    //   this.fileData = e.target.files;
+    // },
+    // update_plugin_validate() { 
+    //   if(this.fileData[0] == null) { // 驗證 Update Modal
+    //     this.file_invalidated = true;
+    //   } 
+    // },
+    // update_plugin_button(name) { // 點擊 Update Modal 按鈕
+    //   this.fileName = name;
+    // },
+    // async update_plugin_modal() { // 點擊 Update Modal 內更新按鈕
+    //   this.update_plugin_validate();
+    //   if(this.file_invalidated == false) {
+    //     let form = new FormData();
+    //     form.append("name", this.fileName);
+    //     form.append("pluginFile", this.fileData[0]);
+    //     try {
+    //       await updatePlugin(this.fileName,form);
+    //       await this.getTableData();
+    //       this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NFV MANO Plugin has been updated !');
+    //     }
+    //     catch(error) {
+    //       console.log(error);
+    //       this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to update the NFV MANO Plugin !');
+    //     }
+    //     this.$refs.modalUpdate.closeModalEvent();
+    //   }
+    // },
+    // download_template_button(file) { // 點擊 Download Modal 按鈕
+    //   if(file == null)
+    //     this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the NFV MANO Plugin !');
+    //   else
+    //     this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NFV MANO Plugin has been downloaded !');
+    // },
     delete_plugin_button(file) { // 點擊 Delete Modal 按鈕
       this.fileData = file;
     },

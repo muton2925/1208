@@ -185,10 +185,10 @@ export default {
     columnSort: {
       typeof: Array,
     },
-    // status: {
-    //   typeof: Boolean,
-    //   default: false
-    // },
+    status: {
+      typeof: Boolean,
+      default: false
+    },
   },
   computed: {
     currentWindowWidth() {

@@ -23,7 +23,7 @@
 import { ref, onMounted } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
 export default {
-  setup(props,{ emit }) {
+  setup(props, { emit }) {
     const modal = ref('');
     const modal_create = ref(null);
     const closeModalEvent = () => modal.value.hide();

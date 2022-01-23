@@ -10,16 +10,16 @@
             <div :id="item.url" class="collapse" :ref="item.url + '_xs'" data-bs-parent="#accordion-basic">
               <ul class="list-ul">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :class="{ 'currentRoute' : child.url == currentRoute }" :to="{ path :  '/' + child.url }" @click="closeCollapse(),routerEvent()"> {{ child.name }} </router-link>
+                  <a class="list-item" :class="{ 'currentRoute' : child.url == currentRoute }" @click="closeCollapse(),routerEvent(child.url)"> {{ child.name }} </a>
                 </li>
               </ul>
             </div>
         </template> 
         <template v-else>
-          <router-link class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" :to="{ path : '/' + item.url }" @click="closeCollapse(),routerEvent()">
+          <a class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" @click="closeCollapse(),routerEvent(item.url)">
             <i class="me-2" :class="item.icon"></i>
             {{ item.name }}
-          </router-link>
+          </a>
         </template>
       </li>
     </ul>
@@ -66,8 +66,11 @@ export default {
     },
   },
   methods: {
-    routerEvent() {
-      this.reload();
+    routerEvent(url) {
+      if(url == this.currentRoute)
+        this.reload();
+      else
+        this.$router.push({ path : '/' + url });
     },
     routeStatus(url,route) {
       const index = this.$store.state.menuData.findIndex(e => e.url == url);
@@ -113,7 +116,6 @@ export default {
 }
 .currentRoute {
   font-weight: 800;
-  background-color: #e4e4e4;
 }
 .currentRoute:hover {
   background-color: #d3d3d3 !important;

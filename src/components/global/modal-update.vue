@@ -20,34 +20,23 @@
   </div>
 </template>
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
 export default {
-  setup() {
-    const modal_update = ref(null)
-    return{
-      modal_update,
-    }
-  },
-  data() {
-    return {
-      modal: '',
-    }
-  },
-  mounted() {
-    const th = this; 
-    this.$refs.modal_update.addEventListener('hidden.bs.modal', function () {
-      th.cancelEvent();
+  setup(props, { emit }) {
+    const modal = ref('');
+    const modal_update = ref(null);
+    const closeModalEvent = () => modal.value.hide();
+    onMounted(() => {
+      modal.value = new Modal(modal_update.value, {});
+      modal_update.value.addEventListener('hidden.bs.modal', function () {
+        emit('remove');
+      });
     })
-    this.modal = new Modal(this.$refs.modal_update, {})
-  },
-  methods: {
-    cancelEvent() {
-      this.$emit('remove')
-    },
-    closeModalEvent() {
-      this.modal.hide();
+    return {
+      modal_update,
+      closeModalEvent,
     }
-  }
+  },
 }
 </script>

@@ -13,34 +13,32 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="delete_plugin">Delete</button>
+          <button type="button" class="btn btn-danger" @click="delete_plugin">Delete</button>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
 export default {
-  setup() {
-    const modal_delete = ref(null)
-    return{
-      modal_delete,
-    }
-  },
-  mounted() {
-    const th = this; 
-    this.$refs.modal_delete.addEventListener('hidden.bs.modal', function () {
-      th.cancelEvent();
+  setup(props, { emit }) {
+    const modal = ref('');
+    const modal_delete = ref(null);
+    const delete_plugin = () => emit('delete');
+    const closeModalEvent = () => modal.value.hide();
+    onMounted(() => {
+      modal.value = new Modal(modal_delete.value, {});
+      modal_delete.value.addEventListener('hidden.bs.modal', function () {
+        emit('remove');
+      });
     })
-  },
-  methods: {
-    cancelEvent() {
-      this.$emit('remove');
-    },
-    delete_plugin() {
-      this.$emit('delete')
+    return {
+      modal_delete,
+      closeModalEvent,
+      delete_plugin
     }
-  }
+  },
 }
 </script>

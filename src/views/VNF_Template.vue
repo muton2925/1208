@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status">
+  <Table :column="th_list" :entrie="template_list" :columnSort="columnSort" @update="updateTableData">
     <template v-slot:header>
       Virtualized Network Function Template
     </template>
@@ -130,12 +130,13 @@
   <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
 </template>
 <script>
-import { ref } from 'vue';
-import { $array } from 'alga-js';
-import { defineAsyncComponent } from 'vue';
+import axios from 'axios';
+import { useStore } from 'vuex';
+// import { $array } from 'alga-js';
+import { ref, onMounted, defineAsyncComponent, onUnmounted } from 'vue';
 import Table from '../components/global/table.vue';
-import { Share, GenericTemplate } from '../assets/js/api';
-const { PluginList, TemplateList } = Share();
+import { compositionAPI } from '../assets/js/composition-api';
+import { GenericTemplate } from '../assets/js/api';
 const { createGenericTemplate, updateGenericTemplate, deleteGenericTemplate } = GenericTemplate();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalshow = defineAsyncComponent(() => import(/* webpackChunkName: "Modalshow" */ '../components/global/modal-show.vue'));
@@ -152,20 +153,10 @@ export default {
     Modaldelete,
   },
   setup() {
-    const modalCreate = ref(null)
-    const modalUpdate = ref(null)
-    const uploadData_update = ref(null)
-    return{
-      modalCreate,
-      modalUpdate,
-      uploadData_update,
-    }
-  },
-  data() {
-    return {
-      status: false,
-      filterEntries: [],
-       th_list: [
+    const store = useStore();
+    const { delay, updateTableData, getTemplateData, getPluginData, filterEntries, template_list, nfv_mano_list } = compositionAPI();
+    const columnSort = ref(["templateId","name","description","templateType","nfvoType","operationStatus"]);
+    const th_list = ref([
         { name: "templateId", text: "ID List" },
         { name: "name", text: "Template Name" },
         { name: "description", text: "Description" },
@@ -175,11 +166,61 @@ export default {
         { name: "update_template", text: "Update" },
         { name: "Template_Download", text: "Download" },
         { name: "delete_template", text: "Delete" },
-      ],
-      td_list: [],
-      nfv_mano_list: [],
-      columnSort: ["templateId","name","description","templateType","nfvoType","operationStatus"],
-      columnNumber: 9,
+      ]);
+    onMounted(async () => {
+      try {
+        await axios.all([getTemplateData('VNF'), getPluginData()]);
+      }
+      catch(err) {
+        console.log(err);
+      }
+      await delay(700);
+      store.commit("statusOn");
+    });
+    onUnmounted(() => {
+      store.commit("statusOff");
+    });
+
+
+
+
+
+
+
+
+    const modalCreate = ref(null)
+    const modalUpdate = ref(null)
+    const uploadData_update = ref(null)
+    return{
+      th_list,
+      columnSort,
+      filterEntries,
+      updateTableData,
+      template_list,
+      nfv_mano_list,
+      modalCreate,
+      modalUpdate,
+      uploadData_update,
+    }
+  },
+  data() {
+    return {
+      // status: false,
+      // filterEntries: [],
+      //  th_list: [
+      //   { name: "templateId", text: "ID List" },
+      //   { name: "name", text: "Template Name" },
+      //   { name: "description", text: "Description" },
+      //   { name: "templateType", text: "Type" },
+      //   { name: "nfvoType", text: "NFVO" },
+      //   { name: "operationStatus", text: "VNF Status" },
+      //   { name: "update_template", text: "Update" },
+      //   { name: "Template_Download", text: "Download" },
+      //   { name: "delete_template", text: "Delete" },
+      // ],
+      // td_list: [],
+      // nfv_mano_list: [],
+      // columnSort: ["templateId","name","description","templateType","nfvoType","operationStatus"],
       currentNFVMANO: '請選擇 ...',
       templateId: '',
       templateName: '',
@@ -200,12 +241,12 @@ export default {
     }
   },
   computed: {
-    repeatName() {
-      return this.td_list.map(function(e) { return e.name }).includes(this.templateName);
-    },
-    sortNFVMANOList() {
-      return $array.sortBy(this.nfv_mano_list, 'name', 'asc');
-    },
+    // repeatName() {
+    //   return this.td_list.map(function(e) { return e.name }).includes(this.templateName);
+    // },
+    // sortNFVMANOList() {
+    //   return $array.sortBy(this.nfv_mano_list, 'name', 'asc');
+    // },
   },
   watch: {
     templateName() {
@@ -218,54 +259,54 @@ export default {
       this.select_invalidated = false;
     },
   },
-  async created() {
-    try {
-      let res = await this.axios.all([this.getTableData(),PluginList()]);
-      for(let i of res[1].data) {
-        this.nfv_mano_list.push(i);
-      }
-    }
-    catch(err) {
-      console.log(err);
-    }
-    await this.delay(700);
-    this.status = true;
-  },
+  // async created() {
+  //   try {
+  //     let res = await this.axios.all([this.getTableData('VNF'),PluginList()]);
+  //     for(let i of res[1].data) {
+  //       this.nfv_mano_list.push(i);
+  //     }
+  //   }
+  //   catch(err) {
+  //     console.log(err);
+  //   }
+  //   await this.delay(700);
+  //   this.status = true;
+  // },
   methods: {
-    async getTableData() { // 顯示 Table 資料
-      let res = await TemplateList();
-      this.td_list = [];
-      const VNF = res.data.filter(x => x.templateType == 'VNF');
-      for (const iterator of VNF) {
-        this.td_list.push(iterator);
-      }
-    },
-    delay(interval) { // 計時器
-      return new Promise((resolve) => {
-        setTimeout(resolve,interval);
-      })
-    },
-    async setAlertData(color,icon,title,content) { // alert 的樣式
-      this.alertInfo.alertStatus = false; // 避免重複動作太快
-      this.alertInfo.alertExist = false; // 避免重複動作太快
-      this.alertInfo.alertColor = color;
-      this.alertInfo.alertIcon = icon;
-      this.alertInfo.alertTitle = title;
-      this.alertInfo.alertContent = content;
-      this.alertInfo.alertStatus = true;
-      this.alertInfo.alertExist = true;
-      await this.delay(1500);
-      this.alertInfo.alertStatus = false;
-      await this.delay(100);
-      this.alertInfo.alertExist = false;
-      this.alertInfo.alertColor = '';
-      this.alertInfo.alertIcon = '';
-      this.alertInfo.alertTitle = '';
-      this.alertInfo.alertContent = '';
-    },
-    updateTableData(val) { // 每次執行 Table 操作，更新資料 
-      this.filterEntries = val;
-    },
+    // async getTableData() { // 顯示 Table 資料
+    //   let res = await TemplateList();
+    //   this.td_list = [];
+    //   const VNF = res.data.filter(x => x.templateType == 'VNF');
+    //   for (const iterator of VNF) {
+    //     this.td_list.push(iterator);
+    //   }
+    // },
+    // delay(interval) { // 計時器
+    //   return new Promise((resolve) => {
+    //     setTimeout(resolve,interval);
+    //   })
+    // },
+    // async setAlertData(color,icon,title,content) { // alert 的樣式
+    //   this.alertInfo.alertStatus = false; // 避免重複動作太快
+    //   this.alertInfo.alertExist = false; // 避免重複動作太快
+    //   this.alertInfo.alertColor = color;
+    //   this.alertInfo.alertIcon = icon;
+    //   this.alertInfo.alertTitle = title;
+    //   this.alertInfo.alertContent = content;
+    //   this.alertInfo.alertStatus = true;
+    //   this.alertInfo.alertExist = true;
+    //   await this.delay(1500);
+    //   this.alertInfo.alertStatus = false;
+    //   await this.delay(100);
+    //   this.alertInfo.alertExist = false;
+    //   this.alertInfo.alertColor = '';
+    //   this.alertInfo.alertIcon = '';
+    //   this.alertInfo.alertTitle = '';
+    //   this.alertInfo.alertContent = '';
+    // },
+    // updateTableData(val) { // 每次執行 Table 操作，更新資料 
+    //   this.filterEntries = val;
+    // },
     removeCreateData() { // 關閉 Create Modal
       this.templateName = '';
       this.templateDescription = '';

@@ -1,9 +1,9 @@
 <template>
   <div class="dashboard-container">
     <audio controls loops>
-      <source src="../assets/Rubia.mp3">
-        Your browser does not support the
-        <code>audio</code> element.
+      <source src="../assets/Rubia.mp3" />
+      Your browser does not support the
+      <code>audio</code> element.
     </audio>
   </div>
 </template>

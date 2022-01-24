@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status">
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" @update="updateTableData" :status="status">
     <template v-slot:header>
       Network Resource Model Template
     </template>
@@ -156,7 +156,6 @@ export default {
       td_list: [],
       nfv_mano_list: [],
       columnSort: ['templateId','name','description','templateType','nfvoType','operationStatus'],
-      columnNumber: 9,
       currentNFVMANO: '請選擇 ...',
       templateId: '',
       templateName: '',

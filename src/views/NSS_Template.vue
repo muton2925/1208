@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status">
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" @update="updateTableData" :status="status">
     <template v-slot:header>
       Network Slice Subnet Template
     </template>
@@ -170,7 +170,6 @@ export default {
       td_list: [],
       nfv_mano_list: [],
       columnSort: ['templateId','description','nfvoType'],
-      columnNumber: 6,
       currentNFVMANO: '請選擇 ...',
       currentVNF: '請選擇 ...',
       currentNSD: '請選擇 ...',

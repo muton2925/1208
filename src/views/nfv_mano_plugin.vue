@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" @update="updateTableData">
+  <Table :column="th_list" :entrie="nfv_mano_list" :columnSort="columnSort" @update="updateTableData">
     <template v-slot:header>
       NFV MANO Plugin
     </template>
@@ -20,7 +20,7 @@
           </div>
         </td>
         <td class="w-0">
-          <a :href="item.pluginFile" @click="download_template_button(item.pluginFile)" class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px">
+          <a :href="item.pluginFile" @click="download_plugin_button(item.pluginFile)" class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px">
             <i class="bi bi-arrow-down"></i>
           </a>
         </td>
@@ -100,10 +100,9 @@
 <script>
 import { useStore } from 'vuex';
 import Table from '../components/global/table.vue';
-import { Share, nfv_mano_plugin } from '../assets/js/api';
+import { nfv_mano_plugin } from '../assets/js/api';
+import { compositionAPI } from '../assets/js/composition-api';
 import { ref, watch, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
-const { PluginList } = Share();
-const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
 const Modalupdate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalupdate" */ '../components/global/modal-update.vue'));
@@ -118,8 +117,13 @@ export default {
   },
   setup() {
     const store = useStore();
+<<<<<<< HEAD
     const alertExist = ref(false);
     const filterEntries = ref([]);
+=======
+    const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
+    const { delay, updateTableData, getPluginData, filterEntries, nfv_mano_list, alert, alertExist, alertEvent } = compositionAPI();
+>>>>>>> df61358 (0123 v5)
     const columnSort = ref(['name','allocate_nssi','dellocate_nssi']);
     const th_list = ref([
       { name: "name", text: "Plugin Name" },
@@ -129,32 +133,15 @@ export default {
       { name: "plugin_file", text: "Download" },
       { name: "delete_plugin", text: "Delete" },
     ]);
-    const td_list = ref([]);
     const fileName = ref('');
     const fileData = ref({});
+    const modalCreate = ref(null);
+    const modalUpdate = ref(null);
+    const modalDelete = ref(null);
+    const uploadData_create = ref(null);
+    const uploadData_update = ref(null);                
     const text_invalidated = ref(false);
     const file_invalidated = ref(false);
-    const getTableData = async () => {
-      const res = await PluginList();
-      td_list.value = [];
-      for (let i of res.data) {
-        td_list.value.push(i);
-      }
-    };
-    const delay = (interval) => {
-      return new Promise((resolve) => {
-        setTimeout(resolve, interval);
-      });
-    };
-    const alertEvent = async (status, name, action) => {
-      alertExist.value = true;
-      await alert.value.alertInfo(status, name, action);
-      await delay(100);
-      alertExist.value = false;
-    };
-    const updateTableData = val => {
-      filterEntries.value = val;
-    }
     const removeCreateData = () => {
       fileName.value = '';
       fileData.value = {};
@@ -175,7 +162,7 @@ export default {
       fileData.value = e.target.files;
     };
     const create_plugin_validate = () => {
-      const repeatName = td_list.value.map(e => e.name).includes(fileName.value);
+      const repeatName = nfv_mano_list.value.map(e => e.name).includes(fileName.value);
       if(!fileName.value || repeatName)
         text_invalidated.value = true;
       if(fileData.value[0] == null)
@@ -189,7 +176,7 @@ export default {
         form.append("pluginFile", fileData.value[0]);
         try {
           await createPluginList(form);
-          await getTableData();
+          await getPluginData();
           alertEvent(1, 'NFV MANO Plugin', 'created');
         }
         catch(err) {
@@ -215,7 +202,7 @@ export default {
         form.append("pluginFile", fileData.value[0]);
         try {
           await updatePlugin(fileName.value,form);
-          await getTableData();
+          await getPluginData();
           alertEvent(1, 'NFV MANO Plugin', 'updated');
         }
         catch(err) {
@@ -225,7 +212,7 @@ export default {
         modalUpdate.value.closeModalEvent();
       }
     };
-    const download_template_button = file => {
+    const download_plugin_button = file => {
       if(file)
         alertEvent(1, 'NFV MANO Plugin', 'downloaded');
       else
@@ -237,7 +224,7 @@ export default {
     const delete_plugin_modal = async () => {
       try {
         await deletePlugin(fileData.value.name);
-        await getTableData();
+        await getPluginData();
         alertEvent(1, 'NFV MANO Plugin', 'deleted');
       }
       catch(err) {
@@ -258,15 +245,9 @@ export default {
         file_invalidated.value = false;
       }
     );
-    const alert = ref(null);
-    const modalCreate = ref(null);
-    const modalUpdate = ref(null);
-    const modalDelete = ref(null);
-    const uploadData_create = ref(null);
-    const uploadData_update = ref(null);
     onMounted(async () => {
       try {
-        await getTableData();
+        await getPluginData();
       } 
       catch (err) {
         console.log(err);
@@ -283,9 +264,9 @@ export default {
       filterEntries,
       columnSort,
       th_list,
-      td_list,
+      nfv_mano_list,
       fileName,
-      getTableData,
+      getPluginData,
       updateTableData,
       text_invalidated,
       file_invalidated,
@@ -293,7 +274,7 @@ export default {
       create_plugin_modal,
       update_plugin_button,
       update_plugin_modal,
-      download_template_button,
+      download_plugin_button,
       delete_plugin_button,
       delete_plugin_modal,
       removeCreateData,

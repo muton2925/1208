@@ -117,13 +117,8 @@ export default {
   },
   setup() {
     const store = useStore();
-<<<<<<< HEAD
-    const alertExist = ref(false);
-    const filterEntries = ref([]);
-=======
     const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
     const { delay, updateTableData, getPluginData, filterEntries, nfv_mano_list, alert, alertExist, alertEvent } = compositionAPI();
->>>>>>> df61358 (0123 v5)
     const columnSort = ref(['name','allocate_nssi','dellocate_nssi']);
     const th_list = ref([
       { name: "name", text: "Plugin Name" },

@@ -226,7 +226,6 @@ function allocate_nssi( myChart, nsstID) {
 }
 
 function show_allocate_nssi_topology(myChart,nssiID) {
-    // let label;
     showNssiTopology(nssiID)
     .then(response => {
         
@@ -236,7 +235,6 @@ function show_allocate_nssi_topology(myChart,nssiID) {
                 var node_tal = response.data[0].nodes;
                 var node = response.data[i].nodes;
                 response.data[0].nodes = node_tal.concat(node);
-                // $.merge(node_tal, node);
                 var link_tal = response.data[0].links;
                 var link = response.data[i].links;
                 response.data[0].links = link_tal.concat(link);
@@ -322,7 +320,6 @@ function show_allocate_nssi_topology(myChart,nssiID) {
 }
 
 function delete_vnf(myChart, nodes, nssiID) {
-  // const router = useRouter()
   deleteVnf(nssiID).then(() => {
     for (let i = nodes.length - 1; i >= 1; i--) {
       setTimeout(function (){
@@ -330,7 +327,6 @@ function delete_vnf(myChart, nodes, nssiID) {
         reload_nssi_topology(myChart,nodes);
         if (nodes.length == 1) {
           alert("NSSI Deallocate Success");
-          // window.location.href = '/NSS_Instance/';
           router.push({
             name: 'NSS_Instance',
           })
@@ -347,6 +343,7 @@ function delete_vnf(myChart, nodes, nssiID) {
 
   });
 }
+
 function myChartDbclick(myChart){
     myChart.on('dblclick', function () {
       NSViewChartContent.value=[`Total NSSI: ${nssi_num}`]

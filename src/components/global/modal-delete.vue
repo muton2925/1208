@@ -12,20 +12,22 @@
           是否刪除此檔案 ?
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="delete_plugin">Delete</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{t('Cancel')}}</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="delete_plugin">{{t('Delete')}}</button>
         </div>
-      </div>
+      </div> 
     </div>
   </div>
 </template>
 <script>
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 export default {
   setup() {
     const modal_delete = ref(null)
+    const { t } = useI18n()
     return{
-      modal_delete,
+      modal_delete,t
     }
   },
   mounted() {

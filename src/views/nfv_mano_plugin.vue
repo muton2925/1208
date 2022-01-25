@@ -1,13 +1,17 @@
 <template>
   <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status">
     <template v-slot:header>
-      NFV MANO Plugin
+      <!-- {{ t('Plugin_header') }}{{ t('Plugin') }} -->
+      {{ `NFV MANO ${t('Plugin')}`}}
+      <!-- NFV MANO Plugin -->
     </template>
     <template v-slot:button>
-      Create Plugin
+      {{ t('Create') }} {{ t('Plugin') }}
+      <!-- Create Plugin -->
     </template>
     <template v-slot:table-name>
-      NFV MANO Plugin List
+      {{ `NFV MANO ${t('Plugin')} ${t('list')}   `}}
+      <!-- NFV MANO Plugin List -->
     </template>
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.name">
@@ -34,24 +38,33 @@
   </Table>
   <Modalcreate ref="modalCreate" @remove="removeCreateData">
     <template v-slot:header>
-      Create new NFV MANO Plugin
+      {{  `${t('Create')}${t('new')} NFV MANO ${t('Plugin')}` }}  
+      <!-- Create new NFV MANO Plugin -->
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
-          <label for="InputFile" class="form-label">Plugin Name :</label>
-          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="fileName">
+          <label for="InputFile" class="form-label">
+            {{  `${t('Plugin')}${t('Name')} :` }}
+            <!-- Plugin Name : -->
+          </label>
+          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="placeholder" v-model="fileName">
           <div class="invalid-feedback">
             <template v-if="repeatName">
-              此 Plugin 名稱已存在
+              {{  `this ${t('Plugin')}${t('Name')}${t('already_exists')}` }}
+              <!-- 此 Plugin 名稱已存在 -->
             </template>
             <template v-else>
-              Plugin 名稱不得為空
+               {{  `${t('Plugin')}${t('Name')}${t('not_be_empty')}` }}
+              <!-- Plugin 名稱不得為空 -->
             </template>
           </div>
         </div>
         <div class="mb-2">
-          <label for="UploadFile" class="form-label">Plugin File :</label>
+          <label for="UploadFile" class="form-label">
+            {{  `${t('Plugin')}${t('File')} :` }}
+            <!-- Plugin File : -->
+          </label>
           <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile" ref="uploadData_create" accept=".zip" @change="create_plugin_file">
           <div class="invalid-feedback">
             檔案不得為空
@@ -60,24 +73,26 @@
       </form>
     </template>
     <template v-slot:footer>
-      <button type="button" class="btn btn-primary text-white" @click="create_plugin_modal">Create</button>
+      <button type="button" class="btn btn-primary text-white" @click="create_plugin_modal">{{t('Create')}}</button>
     </template>
   </Modalcreate>
   <Modalupdate ref="modalUpdate" @remove="removeUpdateData">
     <template v-slot:header>
-      Update Service Mapping Plugin
+      {{  `${t('Update')}${t('Service')}${t('Mapping')}${t('Plugin')}` }}  
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">
-            Plugin Name :
+            {{  `${t('Plugin')}${t('Name')} :` }}
+            <!-- Plugin Name : -->
           </label>
-          <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="fileName" readonly>
+          <input type="text" class="form-control" id="InputFile" :placeholder="placeholder" v-model="fileName" readonly>
         </div>
         <div class="mb-2">
           <label for="UploadFile2" class="form-label">
-            Plugin File :
+            {{  `${t('Plugin')}${t('File')} :` }}
+            <!-- Plugin File : -->
           </label>
           <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="update_plugin_file">
           <div class="invalid-feedback">
@@ -87,12 +102,13 @@
       </form>
     </template>
     <template v-slot:footer>
-      <button type="button" class="btn btn-warning text-white" @click="update_plugin_modal">Update</button>
+      <button type="button" class="btn btn-warning text-white" @click="update_plugin_modal">{{t('Update')}}</button>
     </template>
   </Modalupdate>
   <Modaldelete @delete="delete_plugin_modal" @remove="removeDeleteData">
     <template v-slot:header>
-      Delete Service Mapping Plugin
+      {{  `${t('Delete')}${t('Service')}${t('Mapping')}${t('Plugin')}` }} 
+      <!-- Delete Service Mapping Plugin -->
     </template>
   </Modaldelete>
   <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
@@ -103,6 +119,7 @@ import { Share } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
 import { nfv_mano_plugin } from '../assets/js/api';
 import Table from '../components/global/table.vue';
+import { useI18n } from 'vue-i18n'
 const { PluginList } = Share();
 const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
@@ -122,11 +139,22 @@ export default {
     const modalUpdate = ref(null)
     const uploadData_create = ref(null)
     const uploadData_update = ref(null)
+    const { t, locale } = useI18n()
+    console.log(locale)
+    let placeholder;
+    if(locale.value == 'en'){
+      placeholder = `${t('Please')}${t('enter',['a '])}${t('Plugin')}${t('Name')}`
+    }else{
+      placeholder = `${t('Please')}${t('enter')}${t('Plugin')}${t('Name')}`
+    }
+    
     return{
       modalCreate,
       modalUpdate,
       uploadData_update,
       uploadData_create,
+      t,
+      placeholder
     }
   },
   data() {

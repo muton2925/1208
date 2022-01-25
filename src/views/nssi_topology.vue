@@ -12,7 +12,7 @@
       <div class="col-lg-7 col-12">
           <div class="card shadow mb-4 mb-lg-0" >
           <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Graph view</h6>
+              <h6 class="m-0 font-weight-bold text-primary">{{ t('Graph') }} {{ t('view') }}</h6>
           </div>
           <div class="card-body">
               <div class="chart-area">
@@ -27,7 +27,7 @@
           <div class="card shadow ">
           <!-- Card Header - Dropdown -->
           <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Information</h6>
+              <h6 class="m-0 font-weight-bold text-primary">{{ t('Information') }}</h6>
           </div>
           <!-- Card Body -->
           <div class="card-body">
@@ -42,36 +42,26 @@
     </div>
 </div>
 
-<!-- Page Heading -->
-<!-- {% if id == 'NSSI' %} -->
-<!-- <h1 class="h3 mb-4 text-gray-800">Network Slice Subnet Instance Graph</h1> -->
-<!-- {% else %}<h1 class="h3 mb-4 text-gray-800">{{ id }} Graph</h1> -->
-<!-- {% endif %} -->
-
-
-
 </template>
 <script>
 import {  ref ,onMounted, onBeforeUnmount, watch,  inject} from '@vue/runtime-core';
 import { useRoute } from "vue-router";
-// import Modal from '../components/global/modal.vue';
-// import Table from '../components/global/table.vue';
-import {show_nssi,nssiContent,myChartDbclick,myChartClick,allocate_nssi,deallocate_nssi_topology,NSViewChartContent} from '../assets/js/01'
+import { useI18n } from 'vue-i18n'
+import {show_nssi,nssiContent,myChartDbclick,myChartClick,allocate_nssi,deallocate_nssi_topology,NSViewChartContent} from '../assets/js/topology'
 export default {
   components: {
-    // Modal,
-    // Table
+
   },
   setup(){
+    const {t} = useI18n()
     const dom = ref(null);
     const route = useRoute();
-    // console.log(route.query == {})
     let mychart;
     const reload = inject('reload')
     let NSSI_status = ref('NSSI');
-    let title = ref('Network Slice Subnet Instance Graph')
+    let title = ref(`${t('NSSI')} ${t('Graph')}`)
     if(route.query.id){
-      title.value = `${route.query.id} Graph`
+      title.value = `${route.query.id} ${t('Graph')}`
     }
     function topology(){
       if (route.query.status == "deallocate"){
@@ -104,7 +94,7 @@ export default {
       show_nssi(dom.value,true)
     })
     return{
-      dom,NSViewChartContent,title
+      dom,NSViewChartContent,title,t
     }
   }
 }

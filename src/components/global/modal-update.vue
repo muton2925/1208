@@ -12,7 +12,7 @@
           <slot name="body"></slot>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{t('Cancel')}}</button>
           <slot name="footer"></slot>
         </div>
       </div>
@@ -22,11 +22,13 @@
 <script>
 import { ref } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
+import { useI18n } from 'vue-i18n';
 export default {
   setup() {
     const modal_update = ref(null)
+    const { t } = useI18n()
     return{
-      modal_update,
+      modal_update,t
     }
   },
   data() {

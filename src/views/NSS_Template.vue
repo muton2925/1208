@@ -1,13 +1,16 @@
 <template>
   <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status">
     <template v-slot:header>
-      Network Slice Subnet Template
+      {{`${t('NSSI_Template')} ${t('Template')}`}}
+      <!-- Network Slice Subnet Template -->
     </template>
     <template v-slot:button>
-      Create NSS Template
+      {{`${t('Create')} NSS ${t('Template')}`}}
+      <!-- Create NSS Template -->
     </template>
     <template v-slot:table-name>
-      NSS Template List
+      {{`NSS ${t('Template')} ${t('list')}`}}
+      <!-- NSS Template List -->
     </template>
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.templateId">
@@ -135,6 +138,7 @@ import { Share } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
 import { nss_template } from '../assets/js/api';
 import Table from '../components/global/table.vue';
+import {useI18n} from 'vue-i18n'
 const { PluginList, TemplateList } = Share();
 const { nssTemplateList,createNssTemplate,deleteNssTemplate }  = nss_template();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
@@ -150,9 +154,10 @@ export default {
     Modaldelete,
   },
   setup() {
+    const {t} = useI18n()
     const modalCreate = ref(null)
     return{
-      modalCreate,
+      modalCreate,t
     }
   },
   data() {

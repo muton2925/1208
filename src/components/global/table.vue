@@ -21,14 +21,14 @@
         <div class="d-flex flex-column card-body">
           <div class="d-flex mb-3 align-items-center">
             <div class="d-flex align-items-baseline me-2">
-              Show
+              {{ t(`show`) }}
               <select v-model="currentEntries" class="form-select form-select-sm form-select-custom mx-2" @change="paginateEntries">
                 <option v-for="option in showEntries" :key="option" :value="option">{{ option }}</option>
               </select>
-              entries
+              {{ t(`entries`) }}
             </div>
             <div class="d-flex ms-auto">
-              <input type="text" class="form-control form-control" placeholder="Search" v-model="searchInput" @input="searchEvent">
+              <input type="text" class="form-control form-control" :placeholder="Search" v-model="searchInput" @input="searchEvent">
             </div>
           </div>
           <div class="mb-2 mb-lg-3 table-custom" style="min-height: 115px">
@@ -38,12 +38,12 @@
                   <th scope="col" class="table-light cursor-pointer col-1" :class="{ 'w-0' : !sortableColumn(item.name) }" v-for="item in columns" :key="item.name" @click="sortColumn(item.name)">
                     <template v-if="sortableColumn(item.name)">
                       <div class="d-flex justify-content-between">
-                        <span>{{ item.text }}</span>
+                        <span>{{ t(`__thList.${item.text}`) }}</span>
                         <i :class="[[ item.name == this.sortDesc ? 'bi bi-sort-alpha-up' : 'bi bi-sort-alpha-down' ],{ 'text-danger' : item.name == this.sortAsc || item.name == this.sortDesc },'ms-2']"></i>
                       </div>
                     </template>
                     <template v-else>
-                      <div>{{ item.text }}</div>
+                      <div>{{ t(`__thList.${item.text}`) }}</div>
                     </template>
                   </th>
                 </tr>
@@ -54,9 +54,9 @@
                     <td :colspan="columnNumber">
                       <div class="d-flex justify-content-center align-items-center">
                         <span class="spinner-grow spinner-grow-sm" role="status">
-                          <span class="visually-hidden">Loading...</span>
+                          <span class="visually-hidden">{{ t('Loading') }}</span>
                         </span>
-                        <strong class="ms-3">Loading ...</strong>
+                        <strong class="ms-3">{{ t('Loading') }}</strong>
                       </div>
                     </td>  
                   </tr>
@@ -67,7 +67,7 @@
                   </template>
                   <template v-else>
                     <tr class="text-center">
-                      <td :colspan="columnNumber">No matching data found</td>  
+                      <td :colspan="columnNumber">{{ t('matchingnotFound') }}</td>  
                     </tr>
                   </template>
                 </template>
@@ -75,10 +75,10 @@
             </table>
           </div>
           <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center">
-            <div class="col-12 text-center col-lg-auto mb-2 mb-lg-0">Show {{ showInfo.start }} to {{ showInfo.end }} of {{ showInfo.length }} entries</div>
+            <div class="col-12 text-center col-lg-auto mb-2 mb-lg-0">{{ t('show') }} {{ showInfo.start }} {{ t('to') }} {{ showInfo.end }} {{ t('of') }} {{ showInfo.length }} {{ t('entries') }}</div>
             <ul class="pagination justify-content-center flex-wrap col-lg-auto" :class="{ 'pagination-sm' : currentWindowWidth < 576 }">
               <li class="page-item" :class="{ disabled : currentPage == 1 }">
-                <a class="page-link" href="#" @click.prevent="paginateEvent(1)">First</a>
+                <a class="page-link" href="#" @click.prevent="paginateEvent(1)">{{ t('first') }}</a>
               </li>
               <li class="page-item" :class="{ disabled : currentPage == 1 }">
                 <a class="page-link" href="#" @click="paginateEvent(currentPage -1)"><i class="bi bi-chevron-left"></i></a>
@@ -90,7 +90,7 @@
                 <a class="page-link" href="#" @click="paginateEvent(currentPage +1)"><i class="bi bi-chevron-right"></i></a>
               </li>
               <li class="page-item" :class="{ disabled : currentPage == allPages }">
-                <a class="page-link" href="#" @click.prevent="paginateEvent(allPages)">Last</a>
+                <a class="page-link" href="#" @click.prevent="paginateEvent(allPages)">{{ t('last') }}</a>
               </li>
             </ul>
           </div>
@@ -142,7 +142,7 @@
   </div>
 </template>
 <script>
-
+import { useI18n } from 'vue-i18n'
 import { ref } from 'vue';
 import { $array } from 'alga-js';
 import { defineAsyncComponent } from 'vue';
@@ -150,8 +150,10 @@ const Modalpage = defineAsyncComponent(() => import(/* webpackChunkName: "Modalc
 export default {
   setup(props) {
     const btn = ref(props.showBtn)
+    const { t } = useI18n()
+    let Search = t('Search')
     return {
-      btn
+      btn,t,Search
     }
   },
   components: {

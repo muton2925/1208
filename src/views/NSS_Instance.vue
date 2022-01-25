@@ -1,10 +1,12 @@
 <template>
   <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status" :showBtn="false">
     <template v-slot:header>
-      Network Slice Subnet Instance
+      {{t('NSSI_herder',2)}}
+      <!-- Network Slice Subnet Instance -->
     </template>
     <template v-slot:table-name>
-      NSSI List
+      {{ `NSSI ${t('list')}` }}
+      <!-- NSSI List -->
     </template>
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.templateId">
@@ -111,6 +113,7 @@
 import Table from '../components/global/table.vue';
 import { NSS_Instance } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
+import {useI18n} from 'vue-i18n';
 const Modalshow = defineAsyncComponent(() => import(/* webpackChunkName: "Modalshow" */ '../components/global/modal-show.vue'));
 const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Modaldelete" */ '../components/global/modal-delete.vue'));
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
@@ -121,10 +124,16 @@ export default {
     Modalshow,
     Modaldelete
   },
+  setup(){
+      const { t } = useI18n()
+      return {
+        t
+      }
+  },
   data() {
     return {
       th_list: [
-        { name: "nssiId", text: "Network Slice Subnet Instance(NSSI)" },
+        { name: "nssiId", text: `Network Slice Subnet Instance(NSSI)` },
         { name: "nsInstanceName", text: "Network Service(NS)" },
         { name: "administrativeState", text: "Administrative State" },
         { name: "operationalState", text: "Operational State" },
@@ -152,9 +161,13 @@ export default {
         alertContent: '',
       },
       Deallocate_NSSI_ID:'',
+      i18n:null
     }
   },
   async created(){
+    const { t } = useI18n();
+    this.i18n = t;
+    console.log(this.i18n('list'))
     await  this.nss_instance_list();
     setTimeout(() => {
       this.status = true;
@@ -179,12 +192,10 @@ export default {
             obj.nsInstanceName = i.nsInfo.nsInstanceName
             obj.nssi_status = 'running'
             // obj.nsInfo=i.nsInfo
-            // console.log(i.nsInfo.nsInstanceName)
           }
           else{
             obj.nsInstanceName = 'null'
             obj.nssi_status = 'deallocated'
-            // console.log(i.nsInfo)deallocated
             // obj.nsInfo=null
           }
           this.td_list.push(obj)
@@ -192,13 +203,9 @@ export default {
     },
     show_template_button(id, nsInfo){
       this.nssiId = id;
-      // console.log(id)
-      // console.log(nsInfo)
-      
       if(nsInfo){
         let tojson = nsInfo.vnfInstance.replace(/'/g, '"').replace(/:[ ]*False/g, ":false").replace(/:[ ]*True/g, ":true").replace(/:[ ]*None/g, ":null");
         let vnfInstanceJson = JSON.parse(tojson);
-        console.log(vnfInstanceJson)
         // if(vnfInstanceJson.length){
           let vnfIp ;
           for (const iterator of vnfInstanceJson) {
@@ -209,12 +216,10 @@ export default {
               Addresses:"",
             }
             for (const i of iterator.instantiatedVnfInfo.extCpInfo) {
-              console.log(vnfIp)
               if (i.cpdId == "CP2") {
                 vnfIp = i.cpProtocolInfo[0].ipOverEthernet.ipAddresses[0].addresses;
                 // obj.Addresses = i.cpProtocolInfo[0].ipOverEthernet.ipAddresses[0].addresses;
               }
-              console.log(vnfIp)
             }
             obj.Addresses = vnfIp; 
             this.vnfInstance.push(obj)
@@ -229,7 +234,6 @@ export default {
         this.vnfInstance = null
       }
 
-      // console.log(this.vnfInstance)
     },
     removeShowData() { // 關閉 Show Modal
       this.nssiId = '';
@@ -243,13 +247,6 @@ export default {
         this.$router.push({ path:'/nssi_topology/', query: { id: id, status: 'show'}});
       }
     },
-    // DeallocateNSSI(id){
-    //   console.log(id)
-    //   // var yes = confirm("Sure to deallocate NSSI ?");
-    //   // if (yes) {
-    //   //    this.$router.push({ path:'/nssi_topology/', query: { id: id, status: 'deallocate'}});
-    //   // }
-    // },
     Deallocate_NSSI_button(id){
       this.Deallocate_NSSI_ID = id;
     },
@@ -257,15 +254,10 @@ export default {
       this.$router.push({ path:'/nssi_topology/', query: { id: this.Deallocate_NSSI_ID, status: 'deallocate'}});
     },
     delete_NSSI_button(id, status) { // 點擊 Delete Modal 按鈕
-      console.log(id)
-      console.log(status)
-      console.log(this.deleteData)
       this.deleteData.id = id;
       this.deleteData.status = status;
-      console.log(this.deleteData)
     },
     delete_NSSI_modal(){
-      console.log("id")
       const { deleteNssi } = NSS_Instance()
       if(this.deleteData.status == 'deallocated'){
         deleteNssi(this.deleteData.id).then(()=>{
@@ -274,7 +266,6 @@ export default {
         })
       }else{
         this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','NSSI is not deallocated !!');
-        // alert("NSSI is not deallocated !!");
       }
       
     },

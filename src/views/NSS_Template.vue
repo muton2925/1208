@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" @update="updateTableData" :status="status">
+  <Table :column="th_list" :entrie="template_list" :columnSort="columnSort" @update="updateTableData">
     <template v-slot:header>
       Network Slice Subnet Template
     </template>
@@ -40,13 +40,13 @@
       <form>
         <div class="mb-3">
           <label for="select1" class="form-label">VNF Template :</label>
-          <select v-model="currentVNF" class="form-select form-select" :class="{ 'is-invalid' : select_vnf_invalidated }" id="select1" aria-label=".form-select example">
+          <select v-model="selected_vnf" class="form-select form-select" :class="{ 'is-invalid' : selected_vnf_invalidated }" id="select1" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
-            <option v-for="item in sortTemplateVNFList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
+            <option v-for="item in sorted_template_vnf_list" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
-          <div class="mt-2" v-if="currentVNF != '請選擇 ...'">
-            <div>VNF ID : {{ currentVNF }}</div>
-            <div>VNF Description : {{ currentVNFDescription }}</div>
+          <div class="mt-2" v-if="selected_vnf != '請選擇 ...'">
+            <div>VNF ID : {{ selected_vnf }}</div>
+            <div>VNF Description : {{ current_vnf_description }}</div>
           </div>
           <div class="invalid-feedback">
             請選擇一個 VNF Template
@@ -54,13 +54,13 @@
         </div>
         <div class="mb-3">
           <label for="select2" class="form-label">NSD Template :</label>
-          <select v-model="currentNSD" class="form-select form-select" :class="{ 'is-invalid' : select_nsd_invalidated }" id="select2" aria-label=".form-select example">
+          <select v-model="selected_nsd" class="form-select form-select" :class="{ 'is-invalid' : selected_nsd_invalidated }" id="select2" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
-            <option v-for="item in sortTemplateNSDList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
+            <option v-for="item in sorted_template_nsd_list" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
-          <div class="mt-2" v-if="currentNSD != '請選擇 ...'">
-            <div>NSD ID : {{ currentNSD }}</div>
-            <div>NSD Description : {{ currentNSDDescription }}</div>
+          <div class="mt-2" v-if="selected_nsd != '請選擇 ...'">
+            <div>NSD ID : {{ selected_nsd }}</div>
+            <div>NSD Description : {{ current_nsd_description }}</div>
           </div>
           <div class="invalid-feedback">
             請選擇一個 NSD Template
@@ -68,13 +68,13 @@
         </div>
         <div class="mb-3">
           <label for="select3" class="form-label">NRM Template :</label>
-          <select v-model="currentNRM" class="form-select form-select" :class="{ 'is-invalid' : select_nrm_invalidated }" id="select3" aria-label=".form-select example">
+          <select v-model="selected_nrm" class="form-select form-select" :class="{ 'is-invalid' : selected_nrm_invalidated }" id="select3" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
-            <option v-for="item in sortTemplateNRMList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
+            <option v-for="item in sorted_template_nrm_list" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
-          <div class="mt-2" v-if="currentNRM != '請選擇 ...'">
-            <div>NRM ID : {{ currentNRM }}</div>
-            <div>NRM Description : {{ currentNRMDescription }}</div>
+          <div class="mt-2" v-if="selected_nrm != '請選擇 ...'">
+            <div>NRM ID : {{ selected_nrm }}</div>
+            <div>NRM Description : {{ current_nrm_description }}</div>
           </div>
           <div class="invalid-feedback">
             請選擇一個 NRM Template
@@ -86,9 +86,9 @@
         </div>
         <div class="mb-2">
           <label for="select4" class="form-label">NFVO Name :</label>
-          <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_nfvmano_invalidated }" id="select4" aria-label=".form-select example">
+          <select v-model="selected_nfv_mano" class="form-select form-select" :class="{ 'is-invalid' : selected_nfv_mano_invalidated }" id="select4" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
-            <option v-for="item in sortNFVMANOList" :key="item.name" :value="item.name">{{ item.name }}</option>
+            <option v-for="item in sorted_nfv_mano_list" :key="item.name" :value="item.name">{{ item.name }}</option>
           </select>
           <div class="invalid-feedback">
             請選擇一個 NFVO
@@ -113,9 +113,9 @@
         <div>
           <label for="VnfList" class="form-label">Template ID List :</label>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item">VNF : {{ templateVNFId }}</li>
-              <li class="list-group-item">NSD : {{ templateNSDId }}</li>
-              <li class="list-group-item">NRM : {{ templateNRMId }}</li>
+              <li class="list-group-item">VNF : {{ template_vnf_id }}</li>
+              <li class="list-group-item">NSD : {{ template_nsd_id }}</li>
+              <li class="list-group-item">NRM : {{ template_nrm_id }}</li>
             </ul>
         </div>
       </form>
@@ -126,17 +126,20 @@
       Delete NSS Template
     </template>
   </Modaldelete>
-  <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
+  <Alert ref="alert" v-show="alertExist"></Alert>
 </template>
 <script>
-import { ref } from 'vue';
+import router from '@/router';
+import axios from 'axios';
 import { $array } from 'alga-js';
-import { Share } from '../assets/js/api';
-import { defineAsyncComponent } from 'vue';
-import { nss_template } from '../assets/js/api';
+import { useStore } from 'vuex';
+import { nss_template, Share } from '../assets/js/api.js';
 import Table from '../components/global/table.vue';
-const { PluginList, TemplateList } = Share();
-const { nssTemplateList,createNssTemplate,deleteNssTemplate }  = nss_template();
+import { compositionAPI } from '../assets/js/composition-api';
+import { ref, reactive, computed, onMounted, onUnmounted, defineAsyncComponent } from 'vue';
+const { nssTemplateList, createNssTemplate, deleteNssTemplate } = nss_template();
+const { TemplateList } = Share();
+const { delay, alertEvent, updateTableData, getPluginData, removeDeleteData, delete_template_button, filterEntries, sorted_nfv_mano_list, templateId, templateName, templateData, templateDescription, selected_nfv_mano, alert, alertExist, modalShow, modalCreate, modalDelete } = compositionAPI();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalshow = defineAsyncComponent(() => import(/* webpackChunkName: "Modalshow" */ '../components/global/modal-show.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
@@ -150,144 +153,73 @@ export default {
     Modaldelete,
   },
   setup() {
-    const modalCreate = ref(null)
-    return{
-      modalCreate,
-    }
-  },
-  data() {
-    return {
-      status: false,
-      filterEntries: [],
-      th_list: [
-        { name: "templateId", text: "ID" },
-        { name: "description", text: "Description" },
-        { name: "nfvoType", text: "NFVO" },
-        { name: "template_list", text: "Template" },
-        { name: "allocate_nssi", text: "Allocate" },
-        { name: "delete_template", text: "Delete" },
-      ],
-      td_list: [],
-      nfv_mano_list: [],
-      columnSort: ['templateId','description','nfvoType'],
-      currentNFVMANO: '請選擇 ...',
-      currentVNF: '請選擇 ...',
-      currentNSD: '請選擇 ...',
-      currentNRM: '請選擇 ...',
-      templateId: '',
-      templateDescription: '',
-      templateData: {},
-      select_vnf_invalidated: false,
-      select_nsd_invalidated: false,
-      select_nrm_invalidated: false,
-      select_nfvmano_invalidated: false,
-      templateVNFList: [],
-      templateNSDList: [],
-      templateNRMList: [],
-      templateVNFId: '',
-      templateNSDId: '',
-      templateNRMId: '',
-      alertInfo: {
-        alertExist: false,
-        alertStatus: false,
-        alertColor: '',
-        alertIcon: '',
-        alertTitle: '',
-        alertContent: '',
-      }
-    }
-  },
-  computed: {
-    is_invalidated() { // Create Modal 驗證 
-      return this.select_vnf_invalidated || this.select_nsd_invalidated || this.select_nrm_invalidated || this.select_nfvmano_invalidated;
-    },
-    sortTemplateVNFList() {
-      return $array.sortBy(this.templateVNFList, 'name', 'asc');
-    },
-    sortTemplateNSDList() {
-      return $array.sortBy(this.templateNSDList, 'name', 'asc');
-    },
-    sortTemplateNRMList() {
-      return $array.sortBy(this.templateNRMList, 'name', 'asc');
-    },
-    sortNFVMANOList() {
-      return $array.sortBy(this.nfv_mano_list, 'name', 'asc');
-    },
-    currentVNFDescription() { // Create Modal 內 VNF Description
-      const index = this.templateVNFList.findIndex(x => x.templateId == this.currentVNF);
-      return this.templateVNFList[index].description;
-    },
-    currentNSDDescription() { // Create Modal 內 NSD Description
-      const index = this.templateNSDList.findIndex(x => x.templateId == this.currentNSD);
-      return this.templateNSDList[index].description;
-    },
-    currentNRMDescription() { // Create Modal 內 NRM Description
-      const index = this.templateNRMList.findIndex(x => x.templateId == this.currentNRM);
-      return this.templateNRMList[index].description;
-    },
-  },
-  watch: {
-    currentVNF: {
-      handler: function() {
-        this.select_vnf_invalidated = false;
-      }
-    },
-    currentNSD: {
-      handler: function() {
-        this.select_nsd_invalidated = false;
-      }
-    },
-    currentNRM: {
-      handler: function() {
-        this.select_nrm_invalidated = false;
-      }
-    },
-    currentNFVMANO: {
-      handler: function() {
-        this.select_nfvmano_invalidated = false;
-      }
-    },
-  },
-  async created() {
-    try {
-      await this.axios.all([this.getTableData(), this.getNfvManoData(), this.getNssData()]);
-    }
-    catch(err) {
-      console.log(err);
-    }
-    await this.delay(700);
-    this.status = true;
-  },
-  methods: {
-    async getTableData() {  // 獲取 VNF NSD NRM 資料
+    const store = useStore();
+    const columnSort = ref(['templateId','description','nfvoType']);
+    const th_list = ref([
+      { name: "templateId", text: "ID" },
+      { name: "description", text: "Description" },
+      { name: "nfvoType", text: "NFVO" },
+      { name: "template_list", text: "Template" },
+      { name: "allocate_nssi", text: "Allocate" },
+      { name: "delete_template", text: "Delete" },
+    ]);
+    const template_vnf_id = ref('');
+    const template_nsd_id = ref('');
+    const template_nrm_id = ref('');
+    const templateId = reactive({
+      vnfId: '',
+      nsdId: '',
+      nrmId: '',
+    });
+    const template_list = ref([]);
+    const template_vnf_list = ref([]);
+    const template_nsd_list = ref([]);
+    const template_nrm_list = ref([]);
+    const selected_vnf = ref('請選擇 ...');
+    const selected_nsd = ref('請選擇 ...');
+    const selected_nrm = ref('請選擇 ...');
+    const selected_vnf_invalidated = ref(false);
+    const selected_nsd_invalidated = ref(false);
+    const selected_nrm_invalidated = ref(false);
+    const selected_nfv_mano_invalidated = ref(false);
+    const sorted_template_vnf_list = computed(() => $array.sortBy(template_vnf_list.value, 'name', 'asc'));
+    const sorted_template_nsd_list = computed(() => $array.sortBy(template_nsd_list.value, 'name', 'asc'));
+    const sorted_template_nrm_list = computed(() => $array.sortBy(template_nrm_list.value, 'name', 'asc'));
+    const current_vnf_description = computed(() => {
+      const index = template_vnf_list.value.findIndex(x => x.templateId == selected_vnf.value);
+      return template_vnf_list.value[index].description;
+    });
+    const current_nsd_description = computed(() => {
+      const index = template_nsd_list.value.findIndex(x => x.templateId == selected_nsd.value);
+      return template_nsd_list.value[index].description;
+    });
+    const current_nrm_description = computed(() => {
+      const index = template_nrm_list.value.findIndex(x => x.templateId == selected_nrm.value);
+      return template_nrm_list.value[index].description;
+    });
+    const getGenericTemplateData = async () => {  // 獲取 VNF NSD NRM 資料
       let res = await TemplateList();
       for(let i of res.data) {
-        if(i.operationStatus == 'UPLOAD'){
+        if(i.operationStatus == 'UPLOAD') {
           switch(i.templateType) {
             case 'VNF':
-              this.templateVNFList.push(i);
+              template_vnf_list.value.push(i);
               break;
             case 'NSD':
-              this.templateNSDList.push(i);
+              template_nsd_list.value.push(i);
               break;
             case 'NRM':
-              this.templateNRMList.push(i);
+              template_nrm_list.value.push(i);
               break;
             default: 
               console.log('templateType error');
           }
         }
       }
-    },
-    async getNfvManoData() { // 獲取 NFVMANO 資料
-      let res = await PluginList();
-      for(let i of res.data) {
-        this.nfv_mano_list.push(i);
-      }
-    },
-    async getNssData() { // 獲取 NSS Template 資料
+    };
+    const getTemplateData = async () => { // 獲取 NSS Template 資料
       let res = await nssTemplateList();
-      this.td_list = [];
+      template_list.value = [];
       for(let i of res.data) {
         if(i.genericTemplates.length == 3) {
           let nfvoType = i.nfvoType.length == 0 ? '' : i.nfvoType[0];
@@ -298,113 +230,138 @@ export default {
             templateId: i.templateId,
             nfvoType: nfvoType,
           }
-          this.td_list.push(obj);
+          template_list.value.push(obj);
         }
       }
-    },
-    delay(interval) { // 計時器
-      return new Promise((resolve) => {
-        setTimeout(resolve,interval);
-      })
-    },
-    async setAlertData(color,icon,title,content) { // alert 的樣式
-      this.alertInfo.alertStatus = false; // 避免重複動作太快
-      this.alertInfo.alertExist = false; // 避免重複動作太快
-      this.alertInfo.alertColor = color;
-      this.alertInfo.alertIcon = icon;
-      this.alertInfo.alertTitle = title;
-      this.alertInfo.alertContent = content;
-      this.alertInfo.alertStatus = true;
-      this.alertInfo.alertExist = true;
-      await this.delay(1500);
-      this.alertInfo.alertStatus = false;
-      await this.delay(100);
-      this.alertInfo.alertExist = false;
-      this.alertInfo.alertColor = '';
-      this.alertInfo.alertIcon = '';
-      this.alertInfo.alertTitle = '';
-      this.alertInfo.alertContent = '';
-    },
-    updateTableData(val) {  // 每次執行 Table 操作，更新資料 
-      this.filterEntries = val;
-    },
-    removeCreateData() { // 關閉 Create Modal
-      this.templateDescription = '';
-      this.currentVNF = '請選擇 ...';
-      this.currentNSD = '請選擇 ...';
-      this.currentNRM = '請選擇 ...';
-      this.currentNFVMANO = '請選擇 ...';
-      this.select_vnf_invalidated = false;
-      this.select_nsd_invalidated = false;
-      this.select_nrm_invalidated = false;
-      this.select_nfvmano_invalidated = false;
-    },
-    removeShowData() { // 關閉 Show Modal
-      this.templateId = '';
-      this.templateVNFId = '';
-      this.templateNSDId = '';
-      this.templateNRMId = '';
-    },
-    removeDeleteData() { // 關閉 Delete Modal
-      this.templateData = {};
-    },
-    create_template_validate() { // 驗證 Create Modal
-      if(this.currentVNF == '請選擇 ...')
-        this.select_vnf_invalidated = true;
-      if(this.currentNSD == '請選擇 ...')
-        this.select_nsd_invalidated = true;
-      if(this.currentNRM == '請選擇 ...')
-        this.select_nrm_invalidated = true;
-      if(this.currentNFVMANO == '請選擇 ...') 
-        this.select_nfvmano_invalidated = true;
-    },
-    async create_template_modal() { // 點擊 Create Modal 內創建按鈕
-      this.create_template_validate();
-      if(!this.is_invalidated) {
+    };
+    const removeCreateData = () => { // 關閉 Create Modal
+      templateDescription.value = '';
+      selected_vnf.value = '請選擇 ...';
+      selected_nsd.value = '請選擇 ...';
+      selected_nrm.value = '請選擇 ...';
+      selected_nfv_mano.value = '請選擇 ...';
+      selected_vnf_invalidated.value = false;
+      selected_nsd_invalidated.value = false;
+      selected_nrm_invalidated.value = false;
+      selected_nfv_mano_invalidated.value = false;
+    };
+    const removeShowData = () => { // 關閉 Show Modal
+      templateId.value = '';
+      template_vnf_id.value = '';
+      template_nsd_id.value = '';
+      template_nrm_id.value = '';
+    };
+    const create_template_validate = () => { // 驗證 Create Modal
+      if(selected_vnf.value == '請選擇 ...')
+        selected_vnf_invalidated.value = true;
+      if(selected_nsd.value == '請選擇 ...')
+        selected_nsd_invalidated.value = true;
+      if(selected_nrm.value == '請選擇 ...')
+        selected_nrm_invalidated.value = true;
+      if(selected_nfv_mano.value == '請選擇 ...') 
+        selected_nfv_mano_invalidated.value = true;
+    };
+    const create_template_modal = async () => { // 點擊 Create Modal 內創建按鈕
+      create_template_validate();
+      if(!selected_vnf_invalidated.value && !selected_nsd_invalidated.value && !selected_nrm_invalidated.value && !selected_nfv_mano_invalidated.value) {
         let form = new FormData();
-        form.append("nfvoType", this.currentNFVMANO);
-        form.append("genericTemplates", this.currentVNF);
-        form.append("genericTemplates", this.currentNSD);
-        form.append("genericTemplates", this.currentNRM);
-        form.append("description", this.templateDescription);
+        form.append("nfvoType", selected_nfv_mano.value);
+        form.append("genericTemplates", selected_vnf.value);
+        form.append("genericTemplates", selected_nsd.value);
+        form.append("genericTemplates", selected_nrm.value);
+        form.append("description", templateDescription.value);
         try {
           await createNssTemplate(form);
-          await this.getNssData();
-          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NSS Template has been created !');
+          await getTemplateData();
+          alertEvent(1, 'NSS Template', 'created');
         }
         catch(err) {
           console.log(err);
-          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to create the NSS Template !');
+          alertEvent(0, 'NSS Template', 'create');
         }
-        this.$refs.modalCreate.closeModalEvent();
+        modalCreate.value.closeModalEvent();
       }
-    },
-    show_template_button(item) { // 點擊 Show Modal 按鈕
-      this.templateId = item.templateId;
+    };
+    const show_template_button = item => { // 點擊 Show Modal 按鈕
+      templateId.value = item.templateId;
       const indexVNF = item.genericTemplates.findIndex(x => x.templateType == "VNF");
       const indexNSD = item.genericTemplates.findIndex(x => x.templateType == "NSD");
       const indexNRM = item.genericTemplates.findIndex(x => x.templateType == "NRM");
-      this.templateVNFId = item.genericTemplates[indexVNF].templateId;
-      this.templateNSDId = item.genericTemplates[indexNSD].templateId;
-      this.templateNRMId = item.genericTemplates[indexNRM].templateId;
-    },
-    allocate_template_button(item) { // 點擊 Allocate Modal 按鈕
-      this.$router.push({ path: '/nssi_topology/', query: { id: item.templateId, status: 'allocate'}});
-    },
-    delete_template_button(file) { // 點擊 Delete Modal 按鈕
-      this.templateData = file;
-    },
-    async delete_template_modal() { // 點擊 Delete Modal 內刪除按鈕
+      template_vnf_id.value = item.genericTemplates[indexVNF].templateId;
+      template_nsd_id.value = item.genericTemplates[indexNSD].templateId;
+      template_nrm_id.value = item.genericTemplates[indexNRM].templateId;
+    };
+    const allocate_template_button = item => { // 點擊 Allocate Modal 按鈕
+      router.push({ path: '/nssi_topology/', query: { id: item.templateId, status: 'allocate'}});
+    };
+    const delete_template_modal = async () => { // 點擊 Delete Modal 內刪除按鈕
       try {
-        await deleteNssTemplate(this.templateData.templateId);
-        await this.getNssData();
-        this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NSS Template has been deleted !');
+        await deleteNssTemplate(templateData.value.templateId);
+        await getTemplateData();
+        alertEvent(1, 'NSS Template', 'deleted');
       }
       catch(err) {
         console.log(err);
-        this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to delete the NSS Template !');
+        alertEvent(0, 'NSS Template', 'delete');
       }
-    },
-  }
+      modalDelete.value.closeModalEvent();
+    };
+    onMounted(async () => {
+      try {
+        await axios.all([getTemplateData(), getGenericTemplateData(), getPluginData()]);
+      }
+      catch(err) {
+        console.log(err);
+      }
+      await delay(700);
+      store.commit("statusOn");
+    });
+    onUnmounted(() => {
+      store.commit("statusOff");
+    });
+    return{
+      alert,
+      alertEvent,
+      alertExist,
+      modalShow,
+      modalCreate,
+      modalDelete,
+      th_list,
+      columnSort,
+      filterEntries,
+      template_list,
+      selected_nfv_mano,
+      sorted_nfv_mano_list,
+      templateId,
+      templateName,
+      template_vnf_list,
+      templateDescription,
+      removeShowData,
+      removeCreateData,
+      removeDeleteData,
+      updateTableData,
+      show_template_button,
+      create_template_modal,
+      delete_template_button,
+      delete_template_modal,
+      sorted_template_vnf_list,
+      sorted_template_nsd_list,
+      sorted_template_nrm_list,
+      current_vnf_description,
+      current_nsd_description,
+      current_nrm_description,
+      allocate_template_button,
+      selected_vnf_invalidated,
+      selected_nsd_invalidated,
+      selected_nrm_invalidated,
+      selected_vnf,
+      selected_nsd,
+      selected_nrm,
+      selected_nfv_mano_invalidated,
+      template_vnf_id,
+      template_nsd_id,
+      template_nrm_id
+    }
+  },
 }
 </script>

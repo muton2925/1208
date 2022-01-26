@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" @update="updateTableData" :status="status">
+  <Table :column="th_list" :entrie="template_list" :columnSort="columnSort" @update="updateTableData">
     <template v-slot:header>
       Network Service Descriptor Template
     </template>
@@ -28,7 +28,7 @@
           </div>
         </td>
         <td class="w-0">
-          <a :href="item.templateFile" @click="download_template_button(item.templateFile)" class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px">
+          <a :href="item.templateFile" @click="download_template_button(item.templateFile, 'NSD Template')" class="d-flex justify-content-center align-items-center text-white bg-primary rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px">
             <i class="bi bi-arrow-down"></i>
           </a>
         </td>
@@ -50,11 +50,11 @@
           <label for="InputFile" class="form-label">Template Name :</label>
           <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" placeholder="Template Name" v-model="templateName">
           <div class="invalid-feedback">
-            <template v-if="repeatName">
-              此 Template 名稱已存在
+            <template v-if="!templateName">
+              Template 名稱不得為空
             </template>
             <template v-else>
-              Template 名稱不得為空
+              此 Template 名稱已存在
             </template>
           </div>
         </div>
@@ -64,9 +64,9 @@
         </div>
         <div class="mb-2">
           <label for="InputFile3" class="form-label">NFVO Name :</label>
-          <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_invalidated }" id="InputFile3" aria-label=".form-select example">
+          <select v-model="selected_nfv_mano" class="form-select form-select" :class="{ 'is-invalid' : select_invalidated }" id="InputFile3" aria-label=".form-select example">
             <option selected>請選擇 ...</option>
-            <option v-for="item in sortNFVMANOList" :key="item.name" :value="item.name">{{ item.name }}</option>
+            <option v-for="item in sorted_nfv_mano_list" :key="item.name" :value="item.name">{{ item.name }}</option>
           </select>
           <div class="invalid-feedback">
             請選擇一個 NFVO
@@ -75,7 +75,7 @@
       </form>
     </template>
     <template v-slot:footer>
-      <button type="button" class="btn btn-primary text-white" @click="create_template_modal">Create</button>
+      <button type="button" class="btn btn-primary text-white" @click="create_template_modal('NSD', 'NSD Template')">Create</button>
     </template>
   </Modalcreate>
   <Modalshow ref="modalShow" @remove="removeShowData">
@@ -91,8 +91,8 @@
         <div>
           <label for="VnfList" class="form-label">VNF ID List :</label>
             <ul class="list-group list-group-flush">
-              <template v-if="templateVNFList.length">
-                <li class="list-group-item" v-for="item in templateVNFList" :key="item">{{ item.vnfd_id }}</li>
+              <template v-if="template_vnf_list.length">
+                <li class="list-group-item" v-for="item in template_vnf_list" :key="item">{{ item.vnfd_id }}</li>
               </template>
               <template v-else>
                 <li class="list-group-item">No Upload Network Service Description Template !!</li>
@@ -126,25 +126,23 @@
       </form>
     </template>
     <template v-slot:footer>
-      <button type="button" class="btn btn-warning text-white" @click="update_template_modal">Update</button>
+      <button type="button" class="btn btn-warning text-white" @click="update_template_modal('NSD', 'NSD Template')">Update</button>
     </template>
   </Modalupdate>
-  <Modaldelete ref="modalDelete" @delete="delete_template_modal" @remove="removeDeleteData">
+  <Modaldelete ref="modalDelete" @remove="removeDeleteData" @delete="delete_template_modal('NSD', 'NSD Template')">
     <template v-slot:header>
       Delete NSD Template
     </template>
   </Modaldelete>
-  <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
+  <Alert ref="alert" v-show="alertExist"></Alert>
 </template>
 <script>
-import { ref } from 'vue';
-import { $array } from 'alga-js';
-import { Share } from '../assets/js/api';
-import { defineAsyncComponent } from 'vue';
-import { GenericTemplate } from '../assets/js/api';
+import axios from 'axios';
+import { useStore } from 'vuex';
 import Table from '../components/global/table.vue';
-const { PluginList, TemplateList } = Share();
-const { createGenericTemplate, updateGenericTemplate, deleteGenericTemplate } = GenericTemplate();
+import { compositionAPI } from '../assets/js/composition-api';
+import { ref, watch, onMounted, onUnmounted, defineAsyncComponent } from 'vue';
+const { delay, updateTableData, getTemplateData, getPluginData, removeShowData, removeCreateData, removeUpdateData, removeDeleteData, create_template_modal, update_template_file, update_template_button, update_template_modal, download_template_button, delete_template_button, delete_template_modal, filterEntries, template_list, template_vnf_list, sorted_nfv_mano_list, templateId, templateName, templateData, templateDescription, text_invalidated, file_invalidated, select_invalidated, selected_nfv_mano, alert, alertExist, modalShow, modalCreate, modalUpdate, modalDelete, uploadData_update } = compositionAPI();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalshow = defineAsyncComponent(() => import(/* webpackChunkName: "Modalshow" */ '../components/global/modal-show.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
@@ -160,20 +158,9 @@ export default {
     Modaldelete,
   },
   setup() {
-    const modalCreate = ref(null)
-    const modalUpdate = ref(null)
-    const uploadData_update = ref(null)
-    return{
-      modalCreate,
-      modalUpdate,
-      uploadData_update,
-    }
-  },
-  data() {
-    return {
-      status: false,
-      filterEntries: [],
-      th_list: [
+    const store = useStore();
+    const columnSort = ref(['templateId','name','description','templateType','nfvoType','operationStatus']);
+    const th_list = ref([
         { name: "templateId", text: "ID" },
         { name: "name", text: "Template Name" },
         { name: "description", text: "Description" },
@@ -184,213 +171,75 @@ export default {
         { name: "update_template", text: "Update" },
         { name: "template_Download", text: "Download" },
         { name: "delete_template", text: "Delete" },
-      ],
-      td_list: [],
-      nfv_mano_list: [],
-      columnSort: ['templateId','name','description','templateType','nfvoType','operationStatus'],
-      currentNFVMANO: '請選擇 ...',
-      templateId: '',
-      templateName: '',
-      templateDescription: '',
-      templateData: {},
-      templateVNFList: [],
-      text_invalidated: false,
-      file_invalidated: false,
-      select_invalidated: false,
-      alertInfo: {
-        alertExist: false,
-        alertStatus: false,
-        alertColor: '',
-        alertIcon: '',
-        alertTitle: '',
-        alertContent: '',
-      }
-    }
-  },
-  computed: {
-    repeatName() {
-      return this.td_list.map(function(e) { return e.name }).includes(this.templateName);
-    },
-    sortNFVMANOList() {
-      return $array.sortBy(this.nfv_mano_list, 'name', 'asc');
-    },
-  },
-  watch: {
-    templateName: {
-      handler: function() {
-        this.text_invalidated = false;
-      }
-    },
-    templateData: {
-      handler: function() {
-        this.file_invalidated = false;
-      }
-    },
-    currentNFVMANO : {
-      handler: function() {
-        this.select_invalidated = false;
-      }
-    },
-  },
-  async created() {
-    try {
-      let res = await this.axios.all([this.getTableData(), PluginList()]);
-      for(let i of res[1].data) {
-        this.nfv_mano_list.push(i);
-      }
-    }
-    catch(err) {
-      console.log(err);
-    }
-    await this.delay(700);
-    this.status = true;
-  },
-  methods: {
-    async getTableData() {  // 顯示 Table 資料
-      let res = await TemplateList();
-      this.td_list = [];
-      const array_nsd = res.data.filter(x => x.templateType == 'NSD');
-      for(let i of array_nsd){
-        this.td_list.push(i);
-      }
-    },
-    delay(interval) { // 計時器
-      return new Promise((resolve) => {
-        setTimeout(resolve,interval);
-      })
-    },
-    async setAlertData(color,icon,title,content) { // alert 的樣式
-      this.alertInfo.alertStatus = false; // 避免重複動作太快
-      this.alertInfo.alertExist = false; // 避免重複動作太快
-      this.alertInfo.alertColor = color;
-      this.alertInfo.alertIcon = icon;
-      this.alertInfo.alertTitle = title;
-      this.alertInfo.alertContent = content;
-      this.alertInfo.alertStatus = true;
-      this.alertInfo.alertExist = true;
-      await this.delay(1500);
-      this.alertInfo.alertStatus = false;
-      await this.delay(100);
-      this.alertInfo.alertExist = false;
-      this.alertInfo.alertColor = '';
-      this.alertInfo.alertIcon = '';
-      this.alertInfo.alertTitle = '';
-      this.alertInfo.alertContent = '';
-    },
-    updateTableData(val) {  // 每次執行 Table 操作，更新資料 
-      this.filterEntries = val;
-    },
-    removeCreateData() { // 關閉 Create Modal
-      this.templateName = '';
-      this.templateDescription = '';
-      this.currentNFVMANO = '請選擇 ...';
-      this.text_invalidated = false;
-      this.select_invalidated = false;
-    },
-    removeShowData() { // 關閉 Show Modal
-      this.templateId = '';
-      this.templateVNFList = [];
-    },
-    removeUpdateData() { // 關閉 Update Modal
-      this.templateId = '';
-      this.templateData = {};
-      this.currentNFVMANO = '請選擇 ...';
-      this.file_invalidated = false;
-      this.$refs.uploadData_update.value = null;
-    },
-    removeDeleteData() { // 關閉 Delete Modal
-      this.templateData = {};
-    },
-    create_template_validate() { // 驗證 Create Modal
-      if(this.repeatName || this.templateName == '') {
-        this.text_invalidated = true;
-      }
-      if(this.currentNFVMANO == '請選擇 ...') {
-        this.select_invalidated = true;
-      }
-    },
-    async create_template_modal() { // 點擊 Create Modal 內創建按鈕
-      this.create_template_validate();
-      if(!this.text_invalidated && !this.select_invalidated) {
-        let form = new FormData();
-        form.append("name", this.templateName);
-        form.append("description", this.templateDescription);
-        form.append("nfvoType", this.currentNFVMANO);
-        form.append("templateType", "NSD");
-        try {
-          let res = await createGenericTemplate(form);
-          this.td_list.push(res.data);
-          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NSD Template has been created !');
-        }
-        catch(err) {
-          console.log(err);
-          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to create the NSD Template !');
-        }
-        this.$refs.modalCreate.closeModalEvent();
-      }
-    },
-    show_template_button(item) { // 點擊 Show Modal 按鈕
-      this.templateId = item.templateId;
+      ]);
+    const show_template_button = item => { // 點擊 Show Modal 按鈕
+      templateId.value = item.templateId;
       if(item.operationStatus == 'UPLOAD') {
         let topology_template_string = item.content[0].topology_template;
         let topology_template_JSON = JSON.parse(topology_template_string.replace(/'/g, '"'));
         let topology_template_array = topology_template_JSON.node_templates.NS1.properties.constituent_vnfd;
-        for(let i of topology_template_array){
-          this.templateVNFList.push(i);
+        for(let i of topology_template_array) {
+          template_vnf_list.value.push(i);
         }
       }
-    },
-    update_template_file(e) {  // 更新 Update Modal 內檔案
-      this.templateData = e.target.files;
-    },
-    update_template_validate() { // 驗證 Update Modal
-      if(this.templateData[0] == null) {
-        this.file_invalidated = true;
-      } 
-    },
-    update_template_button(id,type) { // 點擊 Update Modal 按鈕
-      this.templateId = id;
-      this.currentNFVMANO = type; 
-    },
-    async update_template_modal() { // 點擊 Update Modal 內更新按鈕
-      this.update_template_validate();
-      if(!this.file_invalidated) {
-        let form = new FormData();
-        form.append("nfvoType", this.currentNFVMANO);
-        form.append("templateType", "NSD");
-        form.append("templateFile", this.templateData[0]);
-        try {
-          await updateGenericTemplate(this.templateId, form);
-          await this.getTableData();
-          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NSD Template has been updated !');
-        }
-        catch(err) {
-          console.log(err);
-          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to update the NSD Template !');
-        }
-        this.$refs.modalUpdate.closeModalEvent();
-      }
-    },
-    download_template_button(file) { // 點擊 Download Modal 按鈕
-      if(file == null)
-        this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the NSD Template !');
-      else
-        this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NSD Template has been downloaded !');
-    },
-    delete_template_button(file) { // 點擊 Delete Modal 按鈕
-      this.templateData = file;
-    },
-    async delete_template_modal() { // 點擊 Delete Modal 內刪除按鈕
+    };
+    watch(templateName, () => {
+      text_invalidated.value = false;
+    });
+    watch(templateData, () => {
+      file_invalidated.value = false;
+    });
+    watch(selected_nfv_mano, () => {
+      select_invalidated.value = false;
+    });
+    onMounted(async () => {
       try {
-        await deleteGenericTemplate(this.templateData.templateId);
-        await this.getTableData();
-        this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NSD Template has been deleted !');
+        await axios.all([getTemplateData('NSD'), getPluginData()]);
       }
       catch(err) {
         console.log(err);
-        this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to delete the NSD Template !');
       }
-    },
-  }
+      await delay(700);
+      store.commit("statusOn");
+    });
+    onUnmounted(() => {
+      store.commit("statusOff");
+    });
+    return {
+      alert,
+      alertExist,
+      modalShow,
+      modalCreate,
+      modalUpdate,
+      modalDelete,
+      uploadData_update,
+      th_list,
+      columnSort,
+      filterEntries,
+      template_list,
+      selected_nfv_mano,
+      template_vnf_list,
+      sorted_nfv_mano_list,
+      templateId,
+      templateName,
+      templateDescription,
+      text_invalidated,
+      file_invalidated,
+      select_invalidated,
+      removeShowData,
+      removeCreateData,
+      removeUpdateData,
+      removeDeleteData,
+      updateTableData,
+      show_template_button,
+      create_template_modal,
+      update_template_file,
+      update_template_button,
+      update_template_modal,
+      download_template_button,
+      delete_template_button,
+      delete_template_modal,
+    }
+  },
 }
 </script>

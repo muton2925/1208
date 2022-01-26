@@ -46,4 +46,4 @@ const nssi_topology = function(){
     const showAllocateNssiTopology = (nssiID)=> instance.get(`ObjectManagement/NSS/topology/${nssiID}`)
     return{showNssi, nssiSwitched, showDeallocateNssiTopology, deleteVnf, allocateNssi, showAllocateNssiTopology}
 }
-export {Share, nss_template, GenericTemplate, nfv_mano_plugin, NSS_Instance, nssi_topology}
+export { Share, nss_template, GenericTemplate, nfv_mano_plugin, NSS_Instance, nssi_topology }

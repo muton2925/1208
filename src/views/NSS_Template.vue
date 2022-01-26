@@ -1,7 +1,7 @@
 <template>
   <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status">
     <template v-slot:header>
-      {{`${t('NSSI_Template')} ${t('Template')}`}}
+      {{`${t('NSSI_Template')}${t('Template')}`}}
       <!-- Network Slice Subnet Template -->
     </template>
     <template v-slot:button>
@@ -37,84 +37,144 @@
   </Table>
   <Modalcreate ref="modalCreate" @remove="removeCreateData">
     <template v-slot:header>
-      Create new NSS Template
+      {{`${t('Create')}${t('new')}NSS${t('Template')}`}}
+      <!-- Create new NSS Template -->
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
-          <label for="select1" class="form-label">VNF Template :</label>
+          <label for="select1" class="form-label">
+            VNF {{t('Template')}} :
+            <!-- VNF Template : -->
+          </label>
           <select v-model="currentVNF" class="form-select form-select" :class="{ 'is-invalid' : select_vnf_invalidated }" id="select1" aria-label=".form-select example">
-            <option selected>請選擇 ...</option>
+            <option selected>
+              {{`${t('Please')}${t('select')} ...`}}
+              <!-- 請選擇 ... -->
+            </option>
             <option v-for="item in sortTemplateVNFList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
           <div class="mt-2" v-if="currentVNF != '請選擇 ...'">
-            <div>VNF ID : {{ currentVNF }}</div>
-            <div>VNF Description : {{ currentVNFDescription }}</div>
+            <div>
+              VNF {{t('ID')}} : {{ currentVNF }}
+              <!-- VNF ID : {{ currentVNF }} -->
+            </div>
+            <div>
+              VNF {{t('Description')}} : {{ currentVNFDescription }}
+              <!-- VNF Description : {{ currentVNFDescription }} -->
+            </div>
           </div>
           <div class="invalid-feedback">
-            請選擇一個 VNF Template
+            {{`${t('Please')}${t('select')}${t('one')}VNF${t('Template')}`}}
+            <!-- 請選擇一個 VNF Template -->
           </div>
         </div>
         <div class="mb-3">
-          <label for="select2" class="form-label">NSD Template :</label>
+          <label for="select2" class="form-label">
+            NSD {{t('Template')}} :
+            <!-- NSD Template : -->
+          </label>
           <select v-model="currentNSD" class="form-select form-select" :class="{ 'is-invalid' : select_nsd_invalidated }" id="select2" aria-label=".form-select example">
-            <option selected>請選擇 ...</option>
+            <option selected>
+              {{`${t('Please')}${t('select')} ...`}}
+              <!-- 請選擇 ... -->
+            </option>
             <option v-for="item in sortTemplateNSDList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
           <div class="mt-2" v-if="currentNSD != '請選擇 ...'">
-            <div>NSD ID : {{ currentNSD }}</div>
-            <div>NSD Description : {{ currentNSDDescription }}</div>
+            <div>
+              NSD {{t('ID')}} : {{ currentNSD }}
+              <!-- NSD ID : {{ currentNSD }} -->
+            </div>
+            <div>
+              NSD {{t('Description')}} : {{ currentNSDDescription }}
+              <!-- NSD Description : {{ currentNSDDescription }} -->
+            </div>
           </div>
           <div class="invalid-feedback">
-            請選擇一個 NSD Template
+            {{`${t('Please')}${t('select')}${t('one')}NSD${t('Template')}`}}
+            <!-- 請選擇一個 NSD Template -->
           </div>
         </div>
         <div class="mb-3">
-          <label for="select3" class="form-label">NRM Template :</label>
+          <label for="select3" class="form-label">
+            NRM {{t('Template')}} :
+            <!-- NRM Template : -->
+          </label>
           <select v-model="currentNRM" class="form-select form-select" :class="{ 'is-invalid' : select_nrm_invalidated }" id="select3" aria-label=".form-select example">
-            <option selected>請選擇 ...</option>
+            <option selected>
+              {{`${t('Please')}${t('select')} ...`}}
+              <!-- 請選擇 ... -->
+            </option>
             <option v-for="item in sortTemplateNRMList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
           <div class="mt-2" v-if="currentNRM != '請選擇 ...'">
-            <div>NRM ID : {{ currentNRM }}</div>
-            <div>NRM Description : {{ currentNRMDescription }}</div>
+            <div>
+              NRM {{t('ID')}} : {{ currentNRM }}
+              <!-- NRM ID : {{ currentNRM }} -->
+            </div>
+            <div>
+              NRM {{t('Description')}} : {{ currentNRMDescription }}
+              <!-- NRM Description : {{ currentNRMDescription }} -->
+            </div>
           </div>
           <div class="invalid-feedback">
-            請選擇一個 NRM Template
+            {{`${t('Please')}${t('select')}${t('one')}NRM${t('Template')}`}}
+            <!-- 請選擇一個 NRM Template -->
           </div>
         </div>
         <div class="mb-3">
-          <label for="InputFile" class="form-label">NSS Description :</label>
-          <input type="text" class="form-control" id="InputFile" placeholder="Description" v-model="templateDescription">
+          <label for="InputFile" class="form-label">
+            {{`NSS${t('Description')} :`}}
+            <!-- NSS Description : -->
+          </label>
+          <input type="text" class="form-control" id="InputFile" :placeholder="Description" v-model="templateDescription">
         </div>
         <div class="mb-2">
-          <label for="select4" class="form-label">NFVO Name :</label>
+          <label for="select4" class="form-label">
+            {{`NFVO${t('Name')} :`}}
+            <!-- NFVO Name : -->
+          </label>
           <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_nfvmano_invalidated }" id="select4" aria-label=".form-select example">
-            <option selected>請選擇 ...</option>
+            <option selected>
+              {{`${t('Please')}${t('select')} ...`}}
+              <!-- 請選擇 ... -->
+            </option>
             <option v-for="item in sortNFVMANOList" :key="item.name" :value="item.name">{{ item.name }}</option>
           </select>
           <div class="invalid-feedback">
-            請選擇一個 NFVO
+            {{`${t('Please')}${t('select')}${t('one')}NFVO`}}
+            <!-- 請選擇一個 NFVO -->
           </div>
         </div>
       </form>
     </template>
     <template v-slot:footer>
-      <button type="button" class="btn btn-primary text-white" @click="create_template_modal">Create</button>
+      <button type="button" class="btn btn-primary text-white" @click="create_template_modal">
+        {{t('Create')}}
+        <!-- Create -->
+      </button>
     </template>
   </Modalcreate>
   <Modalshow ref="modalShow" @remove="removeShowData">
     <template v-slot:header>
-      Generic Template List
+      {{t('Generic')}}{{t('Template')}}{{t('list')}}
+      <!-- Generic Template List -->
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
-          <label for="InputFile" class="form-label">NSS Template ID :</label>
+          <label for="InputFile" class="form-label">
+            NSS{{t('Template')}}{{t('ID')}} :
+            <!-- NSS Template ID : -->
+          </label>
           <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="templateId" readonly>
         </div>
         <div>
-          <label for="VnfList" class="form-label">Template ID List :</label>
+          <label for="VnfList" class="form-label">
+            {{t('Template')}}{{t('ID')}}{{t('list')}} :
+            <!-- Template ID List : -->
+          </label>
             <ul class="list-group list-group-flush">
               <li class="list-group-item">VNF : {{ templateVNFId }}</li>
               <li class="list-group-item">NSD : {{ templateNSDId }}</li>
@@ -126,7 +186,8 @@
   </Modalshow>
   <Modaldelete ref="modalDelete" @delete="delete_template_modal" @remove="removeDeleteData">
     <template v-slot:header>
-      Delete NSS Template
+      {{`${t('Delete')}NSS${t('Template')}`}}
+      <!-- Delete NSS Template -->
     </template>
   </Modaldelete>
   <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
@@ -156,22 +217,31 @@ export default {
   setup() {
     const {t} = useI18n()
     const modalCreate = ref(null)
+    const th_list = [
+        { name: "templateId", text: t("ID") },
+        { name: "description", text: t("Description") },
+        { name: "nfvoType", text: t("NFVO") },
+        { name: "template_list", text: t("Template") },
+        { name: "allocate_nssi", text: t("Allocate") },
+        { name: "delete_template", text: t("Delete") },
+    ]
+    const Description = t('Description')
     return{
-      modalCreate,t
+      modalCreate,t,th_list,Description
     }
   },
   data() {
     return {
       status: false,
       filterEntries: [],
-      th_list: [
-        { name: "templateId", text: "ID" },
-        { name: "description", text: "Description" },
-        { name: "nfvoType", text: "NFVO" },
-        { name: "template_list", text: "Template" },
-        { name: "allocate_nssi", text: "Allocate" },
-        { name: "delete_template", text: "Delete" },
-      ],
+      // th_list: [
+      //   { name: "templateId", text: "ID" },
+      //   { name: "description", text: "Description" },
+      //   { name: "nfvoType", text: "NFVO" },
+      //   { name: "template_list", text: "Template" },
+      //   { name: "allocate_nssi", text: "Allocate" },
+      //   { name: "delete_template", text: "Delete" },
+      // ],
       td_list: [],
       nfv_mano_list: [],
       columnSort: ['templateId','description','nfvoType'],

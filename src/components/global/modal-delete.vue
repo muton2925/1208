@@ -9,7 +9,8 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body mx-1">
-          是否刪除此檔案 ?
+          {{t('Sure to')}}{{t('Delete')}}{{t('this')}}{{t('File')}} ?
+          <!-- 是否刪除此檔案 ? -->
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{t('Cancel')}}</button>

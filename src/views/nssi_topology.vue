@@ -59,7 +59,7 @@ export default {
     let mychart;
     const reload = inject('reload')
     let NSSI_status = ref('NSSI');
-    let title = ref(`${t('NSSI')} ${t('Graph')}`)
+    let title = ref(`${t('NSSI')}${t('Graph')}`)
     if(route.query.id){
       title.value = `${route.query.id} ${t('Graph')}`
     }

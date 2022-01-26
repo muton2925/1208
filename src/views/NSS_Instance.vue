@@ -1,11 +1,11 @@
 <template>
   <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status" :showBtn="false">
     <template v-slot:header>
-      {{t('NSSI_herder',2)}}
+      {{i18n('NSSI_herder',2)}}
       <!-- Network Slice Subnet Instance -->
     </template>
     <template v-slot:table-name>
-      {{ `NSSI ${t('list')}` }}
+      {{ `NSSI ${i18n('list')}` }}
       <!-- NSSI List -->
     </template>
     <template v-slot:table-td>
@@ -37,12 +37,16 @@
   </Table>
   <Modalshow ref="modalShow" @remove="removeShowData">
     <template v-slot:header>
-      VNF Instance
+      {{`VNF ${i18n('Instance')}`}}
+      <!-- VNF Instance -->
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
-          <label for="InputFile" class="form-label">Network Slice Subnet Instance ID:</label>
+          <label for="InputFile" class="form-label">
+            {{`${i18n('NSSI')}${i18n('ID')} :`}}
+            <!-- Network Slice Subnet Instance ID: -->
+          </label>
           <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="nssiId" readonly>
         </div>
         <div class="table-responsive">
@@ -50,16 +54,20 @@
             <thead>
               <tr>
                 <th scope="col" class="table-light cursor-pointer col-1">
-                  VNF Name
+                  {{`VNF ${i18n('Name')}`}}
+                  <!-- VNF Name -->
                 </th>
                 <th scope="col" class="table-light cursor-pointer col-1">
-                  VNF Provider
+                  {{`VNF ${i18n('Provider')}`}}
+                  <!-- VNF Provider -->
                 </th>
                 <th scope="col" class="table-light cursor-pointer col-1">
-                  VNF State
+                  {{`VNF ${i18n('State')}`}}
+                  <!-- VNF State -->
                 </th>
                 <th scope="col" class="table-light cursor-pointer col-1">
-                  VNF IP Addresses
+                  {{`VNF IP ${i18n('Addresses')}`}}
+                  <!-- VNF IP Addresses -->
                 </th>
               </tr>
             </thead>
@@ -74,7 +82,10 @@
               </template>
               <template v-else>
                 <tr class="text-center">
-                  <td :colspan="4">No VNF Information !!</td>  
+                  <td :colspan="4">
+                    {{i18n('no')}}VNF{{i18n('Information')}} !!
+                    <!-- No VNF Information !! -->
+                  </td>  
                 </tr>
               </template>
             </tbody>
@@ -85,7 +96,8 @@
   </Modalshow>
   <Modaldelete @delete="delete_NSSI_modal" @remove="removeDeleteData">
     <template v-slot:header>
-      Delete NSSI
+      {{`${i18n('Delete')}NSSI`}}
+      <!-- Delete NSSI -->
     </template>
   </Modaldelete>
   <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
@@ -94,16 +106,23 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
-            Deallocate NSSI
+            {{`${i18n('Deallocate')}NSSI`}}
+            <!-- Deallocate NSSI -->
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body mx-1">
-          Sure to deallocate NSSI ?
+          {{`${i18n('Sure to')}${i18n('Deallocate')}NSSI ?`}}
+          <!-- Sure to deallocate NSSI ? -->
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="Deallocate_plugin">Deallocate</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            {{i18n('Cancel')}}
+          </button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="Deallocate_plugin">
+            {{i18n('Deallocate')}}
+            <!-- Deallocate -->
+          </button>
         </div>
       </div>
     </div>
@@ -124,22 +143,22 @@ export default {
     Modalshow,
     Modaldelete
   },
-  setup(){
-      const { t } = useI18n()
-      return {
-        t
-      }
-  },
+  // setup(){
+  //     const { t } = useI18n()
+  //     return {
+  //       t
+  //     }
+  // },
   data() {
     return {
       th_list: [
-        { name: "nssiId", text: `Network Slice Subnet Instance(NSSI)` },
-        { name: "nsInstanceName", text: "Network Service(NS)" },
-        { name: "administrativeState", text: "Administrative State" },
-        { name: "operationalState", text: "Operational State" },
-        { name: "Graph", text: "Graph" },
-        { name: "Deallocate", text: "Deallocate" },
-        { name: "Delete_NSSI", text: "Delete NSSI" },
+        // { name: "nssiId", text: `Network Slice Subnet Instance(NSSI)` },
+        // { name: "nsInstanceName", text: "Network Service(NS)" },
+        // { name: "administrativeState", text: "Administrative State" },
+        // { name: "operationalState", text: "Operational State" },
+        // { name: "Graph", text: "Graph" },
+        // { name: "Deallocate", text: "Deallocate" },
+        // { name: "Delete_NSSI", text: "Delete NSSI" },
       ],
       columnSort: ["nssiId","nsInstanceName","administrativeState","operationalState"],
       columnNumber: 7,
@@ -167,7 +186,15 @@ export default {
   async created(){
     const { t } = useI18n();
     this.i18n = t;
-    console.log(this.i18n('list'))
+    this.th_list = [
+      { name: "nssiId", text: `${this.i18n("NSSI")}(NSSI)` },
+      { name: "nsInstanceName", text: `${this.i18n("Network")}${this.i18n("Service")}(NS)` },
+      { name: "administrativeState", text: `${this.i18n("Administrative")}${this.i18n("State")}`},
+      { name: "operationalState", text: `${this.i18n("Operational")}${this.i18n("State")}` },
+      { name: "Graph", text: this.i18n("Graph") },
+      { name: "Deallocate", text: this.i18n("Deallocate") },
+      { name: "Delete_NSSI", text: `${this.i18n("Delete")}NSSI` },
+    ]
     await  this.nss_instance_list();
     setTimeout(() => {
       this.status = true;
@@ -262,11 +289,16 @@ export default {
       if(this.deleteData.status == 'deallocated'){
         deleteNssi(this.deleteData.id).then(()=>{
           this.nss_instance_list()
-          this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NSSI Delete Success !');
+          // this.setAlertData('alert-success','bi bi-check-circle-fill','Operates Successfully','NSSI Delete Success !');
+           this.setAlertData('alert-success','bi bi-check-circle-fill',`${this.i18n('Operates')}${this.i18n('Success')}`,`NSSI ${this.i18n('Delete')}${this.i18n('Success')} !`);
         })
       }else{
-        this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','NSSI is not deallocated !!');
+        // this.setAlertData('alert-danger','bi bi-x-circle-fill','Operates Unsuccessfully','NSSI is not deallocated !!');
+        this.setAlertData('alert-danger','bi bi-x-circle-fill',`${this.i18n('Operates')}${this.i18n('Unsuccess')}`,`NSSI ${this.i18n('yet')}${this.i18n('deallocated')} !!`);
       }
+      
+       
+
       
     },
     removeDeleteData(){

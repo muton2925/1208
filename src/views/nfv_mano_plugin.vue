@@ -51,7 +51,7 @@
           <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="placeholder" v-model="fileName">
           <div class="invalid-feedback">
             <template v-if="repeatName">
-              {{  `this ${t('Plugin')}${t('Name')}${t('already_exists')}` }}
+              {{  `${t('this')}${t('Plugin')}${t('Name')}${t('already_exists')}` }}
               <!-- 此 Plugin 名稱已存在 -->
             </template>
             <template v-else>
@@ -140,35 +140,42 @@ export default {
     const uploadData_create = ref(null)
     const uploadData_update = ref(null)
     const { t, locale } = useI18n()
-    console.log(locale)
     let placeholder;
     if(locale.value == 'en'){
       placeholder = `${t('Please')}${t('enter',['a '])}${t('Plugin')}${t('Name')}`
     }else{
       placeholder = `${t('Please')}${t('enter')}${t('Plugin')}${t('Name')}`
     }
-    
+    const th_list = [
+        { name: "name", text: `${t("Plugin")}${t("Name")}` },
+        { name: "allocate_nssi", text: `${t("Allocate")}NSSI${t("File")}` },
+        { name: "dellocate_nssi", text: `${t("Deallocate")}NSSI${t("File")}` },
+        { name: "update_plugin", text: t("Update") },
+        { name: "plugin_file", text: t("Download") },
+        { name: "delete_plugin", text: t("Delete") },
+      ]
     return{
       modalCreate,
       modalUpdate,
       uploadData_update,
       uploadData_create,
       t,
-      placeholder
+      placeholder,
+      th_list
     }
   },
   data() {
     return {
       status: false,
       filterEntries: [],
-      th_list: [
-        { name: "name", text: "Plugin Name" },
-        { name: "allocate_nssi", text: "Allocate NSSI File" },
-        { name: "dellocate_nssi", text: "Deallocate NSSI File" },
-        { name: "update_plugin", text: "Update" },
-        { name: "plugin_file", text: "Download" },
-        { name: "delete_plugin", text: "Delete" },
-      ],
+      // th_list: [
+      //   { name: "name", text: "Plugin Name" },
+      //   { name: "allocate_nssi", text: "Allocate NSSI File" },
+      //   { name: "dellocate_nssi", text: "Deallocate NSSI File" },
+      //   { name: "update_plugin", text: "Update" },
+      //   { name: "plugin_file", text: "Download" },
+      //   { name: "delete_plugin", text: "Delete" },
+      // ],
       td_list: [],
       columnSort: ['name','allocate_nssi','dellocate_nssi'],
       columnNumber: 6,

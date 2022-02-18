@@ -195,12 +195,21 @@ export default {
       { name: "Deallocate", text: this.i18n("Deallocate") },
       { name: "Delete_NSSI", text: `${this.i18n("Delete")}NSSI` },
     ]
-    await  this.nss_instance_list();
-    setTimeout(() => {
-      this.status = true;
-    }, 700);
+    try {
+      await  this.nss_instance_list();
+    }
+    catch(err) {
+      console.log(err);
+    }
+    await this.delay(700);
+    this.status = true;
   },
   methods:{
+  delay(interval) { // 計時器
+      return new Promise((resolve) => {
+        setTimeout(resolve,interval);
+      })
+    },
   async  nss_instance_list(){
     const { nssInstanceIist } = NSS_Instance()
     let res =   await  nssInstanceIist()

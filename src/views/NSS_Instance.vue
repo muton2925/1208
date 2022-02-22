@@ -143,12 +143,6 @@ export default {
     Modalshow,
     Modaldelete
   },
-  // setup(){
-  //     const { t } = useI18n()
-  //     return {
-  //       t
-  //     }
-  // },
   data() {
     return {
       th_list: [

@@ -114,7 +114,7 @@
   <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
 </template>
 <script>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { Share } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
 import { nfv_mano_plugin } from '../assets/js/api';
@@ -154,6 +154,15 @@ export default {
         { name: "plugin_file", text: t("Download") },
         { name: "delete_plugin", text: t("Delete") },
       ]
+    const  text_invalidated = ref(false) //文字是否未通過認證
+    const  file_invalidated = ref(false)
+    watch(text_invalidated,()=>{
+      text_invalidated.value = false;
+    })
+    watch(file_invalidated,()=>{
+      file_invalidated.value = false;
+    })
+    
     return{
       modalCreate,
       modalUpdate,

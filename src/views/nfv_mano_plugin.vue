@@ -47,6 +47,7 @@
           <label for="InputFile" class="form-label">
             {{  `${t('Plugin')}${t('Name')} :` }}
             <!-- Plugin Name : -->
+            {{text_invalidated}}
           </label>
           <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="placeholder" v-model="fileName">
           <div class="invalid-feedback">
@@ -114,12 +115,14 @@
   <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
 </template>
 <script>
-import { ref, watch } from 'vue';
+import { computed, onBeforeMount, ref, watch } from 'vue';
 import { Share } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
 import { nfv_mano_plugin } from '../assets/js/api';
 import Table from '../components/global/table.vue';
 import { useI18n } from 'vue-i18n'
+import { delay } from '../assets/js/delay'
+import { text_invalidated, file_invalidated, _fileValidate, _textValidate } from '../assets/js/validate'
 const { PluginList } = Share();
 const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
@@ -154,13 +157,59 @@ export default {
         { name: "plugin_file", text: t("Download") },
         { name: "delete_plugin", text: t("Delete") },
       ]
-    const  text_invalidated = ref(false) //文字是否未通過認證
-    const  file_invalidated = ref(false)
-    watch(text_invalidated,()=>{
-      text_invalidated.value = false;
+    let td_list =  ref([])
+    let status = ref(false)
+    let fileName = ref('')
+    const fileData = ref({})
+    async function getTableData() { // 顯示 Table 資料
+      const res = await PluginList();
+      td_list.value = [];
+      for(let i of res.data) {     
+        td_list.value.push(i);
+      }
+    }
+    const repeatName =  computed(()=>{
+      return td_list.value.map(function(e) { return e.name }).includes(fileName.value)
     })
-    watch(file_invalidated,()=>{
+    watch(fileName,()=>{
+    text_invalidated.value = false;
+    })
+    watch(fileData,()=>{
       file_invalidated.value = false;
+    })
+    function create_plugin_file(e) { // 新增 Update Modal 內檔案
+      fileData.value = e.target.files;
+      console.log(fileData.value[0])
+    }
+    async function create_plugin_modal() { // 點擊 Create Modal 內創建按鈕
+      // this.create_plugin_validate(); 
+      _textValidate([repeatName.value, fileName.value])
+      _fileValidate(fileData.value[0])
+      if(text_invalidated.value == false && file_invalidated.value == false) {
+        let form = new FormData();
+        form.append("name", fileName.value);
+        form.append("pluginFile", fileData.value[0]);
+        try {
+          await createPluginList(form);
+          await getTableData();
+          // this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NFV MANO Plugin has been created !');
+        }
+        catch(error) {
+          console.log(error);
+          // this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to create the NFV MANO Plugin !');
+        }
+        modalCreate.value.closeModalEvent();
+      }
+    }
+    onBeforeMount(async ()=> {
+      try {
+        await getTableData();
+      }
+      catch(err) {
+        console.log(err);
+      }
+      await delay(700);
+      status.value = true;
     })
     
     return{
@@ -170,28 +219,21 @@ export default {
       uploadData_create,
       t,
       placeholder,
-      th_list
+      th_list,status,td_list,repeatName,fileName,create_plugin_file,create_plugin_modal,
+      file_invalidated,text_invalidated
     }
   },
   data() {
     return {
-      status: false,
+      // status: false,
       filterEntries: [],
-      // th_list: [
-      //   { name: "name", text: "Plugin Name" },
-      //   { name: "allocate_nssi", text: "Allocate NSSI File" },
-      //   { name: "dellocate_nssi", text: "Deallocate NSSI File" },
-      //   { name: "update_plugin", text: "Update" },
-      //   { name: "plugin_file", text: "Download" },
-      //   { name: "delete_plugin", text: "Delete" },
-      // ],
-      td_list: [],
+      // td_list: [],
       columnSort: ['name','allocate_nssi','dellocate_nssi'],
       columnNumber: 6,
-      fileName: '',
-      fileData: {},
-      text_invalidated: false, //文字是否未通過認證
-      file_invalidated: false,
+      // fileName: '',
+      // fileData: {},
+      // text_invalidated: false, //文字是否未通過認證
+      // file_invalidated: false,
       alertInfo: {
         alertExist: false,
         alertStatus: false,
@@ -201,29 +243,6 @@ export default {
         alertContent: '',
       }
     };
-  },
-  computed: {
-    repeatName() {
-      return this.td_list.map(function(e) { return e.name }).includes(this.fileName);
-    }
-  },
-  watch: {
-    fileName() {
-      this.text_invalidated = false;
-    },
-    fileData() {
-      this.file_invalidated = false;
-    }
-  },
-  async created() {
-    try {
-      await this.getTableData();
-    }
-    catch(err) {
-      console.log(err);
-    }
-    await this.delay(700);
-    this.status = true;
   },
   methods: {
     async getTableData() { // 顯示 Table 資料
@@ -275,35 +294,35 @@ export default {
     removeDeleteData() { // 關閉 Delete Modal
       this.fileData = {};
     },
-    create_plugin_file(e) { // 新增 Update Modal 內檔案
-      this.fileData = e.target.files;
-    },
-    create_plugin_validate() { // 驗證 Create Modal
-      if(this.repeatName || this.fileName == '') {
-        this.text_invalidated = true;
-      }
-      if(this.fileData[0] == null) {
-        this.file_invalidated = true;
-      }
-    },
-    async create_plugin_modal() { // 點擊 Create Modal 內創建按鈕
-      this.create_plugin_validate(); 
-      if(this.text_invalidated == false && this.file_invalidated == false) {
-        let form = new FormData();
-        form.append("name", this.fileName);
-        form.append("pluginFile", this.fileData[0]);
-        try {
-          await createPluginList(form);
-          await this.getTableData();
-          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NFV MANO Plugin has been created !');
-        }
-        catch(error) {
-          console.log(error);
-          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to create the NFV MANO Plugin !');
-        }
-        this.$refs.modalCreate.closeModalEvent();
-      }
-    },
+    // create_plugin_file(e) { // 新增 Update Modal 內檔案
+    //   this.fileData = e.target.files;
+    // },
+    // create_plugin_validate() { // 驗證 Create Modal
+    //   if(this.repeatName || this.fileName == '') {
+    //     this.text_invalidated = true;
+    //   }
+    //   if(this.fileData[0] == null) {
+    //     this.file_invalidated = true;
+    //   }
+    // },
+    // async create_plugin_modal() { // 點擊 Create Modal 內創建按鈕
+    //   this.create_plugin_validate(); 
+    //   if(this.text_invalidated == false && this.file_invalidated == false) {
+    //     let form = new FormData();
+    //     form.append("name", this.fileName);
+    //     form.append("pluginFile", this.fileData[0]);
+    //     try {
+    //       await createPluginList(form);
+    //       await this.getTableData();
+    //       this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NFV MANO Plugin has been created !');
+    //     }
+    //     catch(error) {
+    //       console.log(error);
+    //       this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to create the NFV MANO Plugin !');
+    //     }
+    //     this.$refs.modalCreate.closeModalEvent();
+    //   }
+    // },
     update_plugin_file(e) { // 更新 Update Modal 內檔案
       this.fileData = e.target.files;
     },

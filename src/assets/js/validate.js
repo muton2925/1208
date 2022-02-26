@@ -1,24 +1,58 @@
 import {ref} from 'vue'
 export let text_invalidated = ref(false);
 export let file_invalidated = ref(false);
-// let select_invalidated = ref(false);
-function _textValidate(text){
+export let select_invalidated = ref(false);
+
+/**
+ * 
+ * @param {Array} text - index 0 repeatName index 1 fileName
+ * @returns 
+ */
+function text_Validate(text){
   const [repeatName, fileName] = text
   if(repeatName || fileName == '') {
     text_invalidated.value = true;
   }
-}
-// function _selectValidate(options){
-    
-// }
-function _fileValidate(file){
-  if( file == null) {
-      file_invalidated.value = true;
+  else {
+    return true
   }
 }
 
-export { _textValidate }
-export { _fileValidate }
+function select_Validate(option, set ){
+  if ( option == set){
+    select_invalidated.value = true;
+  }else{
+    return true
+  }
+
+}
+
+// function selects_Validate(options, set = `${t('Please')}${t('select')} ...` ){
+//   for (const iterator of options) {
+//     if( iterator == set ){
+
+//     }
+//   }
+// }
+
+/**
+ * 
+ * @param {string} file - fileData 
+ * @returns 
+ */
+function file_Validate(file){
+  if( file == null) {
+    file_invalidated.value = true;
+  }
+  else {
+    return true
+  }
+}
+
+export { text_Validate }
+export { file_Validate }
+export { select_Validate } 
+// export { selects_Validate } 
 // [text, select, file]
 // function text_validate() { // 驗證 Create Modal
 //     if(this.repeatName || this.templateName == '') {

@@ -1,5 +1,4 @@
 import { reactive } from "vue";
-
 const alertInfo = reactive({
     alertExist: false,
     alertStatus: false,

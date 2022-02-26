@@ -31,8 +31,22 @@ export default {
      console.log(invalidated)
      console.log(options.value)
    })
+  // function select_Validate(options, set = '請選擇 ...' ){
+  //   if(Array.isArray(options) && Array.isArray(set)){
+
+  //   }else {
+  //     if(Array.isArray(options)){
+  //       console.log(Array.isArray(set))
+  //     }else{
+  //       for (const iterator of options) {
+  //         iterator 
+  //       }
+  //     } 
+  //   }
+
+  // }
     return {
-      plus,a,b,plusb,c,aa,bb,options,as
+      plus,a,b,plusb,c,aa,bb,options,as,
     }
   }
 }

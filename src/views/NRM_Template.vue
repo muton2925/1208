@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status">
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort"  @update="updateTableData" :status="status">
     <template v-slot:header>
       {{`${t('template_header',2)}${t('Template')}`}}
       <!-- Network Resource Model Template -->
@@ -31,7 +31,7 @@
           </a>
         </td>
         <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="delete_template_button(item)">
+          <div class="d-flex justify-content-center align-items-center text-white bg-danger rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#delete_plugin_Modal" @click="get_templateId(item.templateId)">
             <i class="bi bi-trash"></i>
           </div>
         </td>
@@ -114,7 +114,7 @@
             {{`NRM${t('Template')}${t('File')} :`}}
             <!-- NRM Template File : -->
           </label>
-          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="update_template_file">
+          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="getFileData">
           <div class="invalid-feedback">
             {{`${t('File')}${t('not_be_empty')}`}}
             <!-- 檔案不得為空 -->
@@ -137,263 +137,184 @@
   </Modaldelete>
   <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
 </template>
-<script>
-import { ref } from 'vue';
+<script setup>
+import { computed, onBeforeMount, ref, watch } from 'vue';
 import { $array } from 'alga-js';
 import { Share } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
 import { GenericTemplate } from '../assets/js/api';
 import Table from '../components/global/table.vue';
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'vue-i18n';
+import { delay } from '../assets/js/delay';
+import { form } from '../assets/js/newFormData';
+import { callCreate } from '../assets/js/create';
+import { callUpdate } from '../assets/js/upload';
+import { callDelete } from '../assets/js/delete';
+import { text_invalidated, file_invalidated, select_invalidated, file_Validate, text_Validate, select_Validate } from '../assets/js/validate'
 const { PluginList, TemplateList } = Share();
 const { createGenericTemplate, updateGenericTemplate, deleteGenericTemplate } = GenericTemplate();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
 const Modalupdate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalupdate" */ '../components/global/modal-update.vue'));
 const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Modaldelete" */ '../components/global/modal-delete.vue'));
-export default {
-  components: {
-    Table,
-    Alert,
-    Modalcreate,
-    Modalupdate,
-    Modaldelete,
-  },
-  setup() {
-    const modalCreate = ref(null)
-    const modalUpdate = ref(null)
-    const uploadData_update = ref(null)
-    const {t} = useI18n();
-    const th_list = [
-        { name: "templateId", text: t("ID") },
-        { name: "name", text: `${t("Template")}${t("Name")}` },
-        { name: "description", text: t("Description") },
-        { name: "templateType", text: t('Type') },
-        { name: "nfvoType", text: t("NFVO") },
-        { name: "operationStatus", text: `NRM${t('Status')}` },
-        { name: "update_template", text: t("Update") },
-        { name: "template_Download", text: t("Download") },
-        { name: "delete_template", text: t("Delete") },
-      ]
-    const Description = t('Description');
-    const TemplateName = `${t("Template")}${t("Name")}`
-    return{
-      modalCreate,
-      modalUpdate,
-      uploadData_update,
-      t,th_list,Description,TemplateName
-    }
-  },
-  data() {
-    return {
-      status: false,
-      filterEntries: [],
-      // th_list: [
-      //   { name: "templateId", text: "ID" },
-      //   { name: "name", text: "Template Name" },
-      //   { name: "description", text: "Description" },
-      //   { name: "templateType", text: "Type" },
-      //   { name: "nfvoType", text: "NFVO" },
-      //   { name: "operationStatus", text: "NRM Status" },
-      //   { name: "update_template", text: "Update" },
-      //   { name: "template_Download", text: "Download" },
-      //   { name: "delete_template", text: "Delete" },
-      // ],
-      td_list: [],
-      nfv_mano_list: [],
-      columnSort: ['templateId','name','description','templateType','nfvoType','operationStatus'],
-      columnNumber: 9,
-      currentNFVMANO: '請選擇 ...',
-      templateId: '',
-      templateName: '',
-      templateDescription: '',
-      templateData: {},
-      text_invalidated: false,
-      file_invalidated: false,
-      select_invalidated: false,
-      alertInfo: {
-        alertExist: false,
-        alertStatus: false,
-        alertColor: '',
-        alertIcon: '',
-        alertTitle: '',
-        alertContent: '',
-      },
-      i18n:null
-    }
-  },
-  computed: {
-    repeatName() {
-      return this.td_list.map(function(e) { return e.name }).includes(this.templateName);
-    },
-    sortNFVMANOList() {
-      return $array.sortBy(this.nfv_mano_list, 'name', 'asc');
-    },
-  },
-  watch: {
-    templateName: {
-      handler: function() {
-        this.text_invalidated = false;
-      }
-    },
-    templateData: {
-      handler: function() {
-        this.file_invalidated = false;
-      }
-    },
-    currentNFVMANO : {
-      handler: function() {
-        this.select_invalidated = false;
-      }
-    },
-  },
-  async created() {
-    const { t } = useI18n();
-    this.i18n = t
+
+  const modalCreate = ref(null);
+  const modalUpdate = ref(null);
+  const uploadData_update = ref(null);
+  const { t } = useI18n();
+  const th_list = [
+      { name: "templateId", text: t("ID") },
+      { name: "name", text: `${t("Template")}${t("Name")}` },
+      { name: "description", text: t("Description") },
+      { name: "templateType", text: t('Type') },
+      { name: "nfvoType", text: t("NFVO") },
+      { name: "operationStatus", text: `NRM${t('Status')}` },
+      { name: "update_template", text: t("Update") },
+      { name: "template_Download", text: t("Download") },
+      { name: "delete_template", text: t("Delete") },
+    ];
+  const Description = t('Description');
+  const TemplateName = `${t("Template")}${t("Name")}`;
+  const currentNFVMANO = ref(`${t('Please')}${t('select')} ...`);
+  const filterEntries = ref([]);
+  const columnSort = ref(['templateId','name','description','templateType','nfvoType','operationStatus']);
+  const alertInfo = ref( {
+      alertExist: false,
+      alertStatus: false,
+      alertColor: '',
+      alertIcon: '',
+      alertTitle: '',
+      alertContent: '',
+  });
+  let templateId = ref('');
+  let templateName = ref('');
+  let templateDescription = ref('');
+  let fileData = ref({});
+  let td_list =  ref([]);
+  let nfv_mano_list =  ref([]);
+  let status = ref(false);
+
+  onBeforeMount(async ()=> {
     try {
-      let res = await this.axios.all([this.getTableData(), PluginList()]);
-      for(let i of res[1].data) {
-        this.nfv_mano_list.push(i);
-      }
+      await getTableData();
+      await getPluginList();
     }
     catch(err) {
       console.log(err);
     }
-    await this.delay(700);
-    this.status = true;
-  },
-  methods: {
-    async getTableData() {  // 顯示 Table 資料
+    await delay(700);
+    status.value = true;
+  })
+
+  const repeatName = computed(()=>{
+    return td_list.value.map(function(e) { return e.name }).includes(templateName.value);
+  })  
+  const sortNFVMANOList = computed(()=>{
+    return  $array.sortBy(nfv_mano_list.value, 'name', 'asc');
+  })  
+
+  watch(templateName, () => { text_invalidated.value = false; });
+  watch(fileData, () => { file_invalidated.value = false; });
+  watch(currentNFVMANO, () => { select_invalidated.value = false; });
+
+  const getPluginList = async () => {  // 顯示 Table 資料
+      let res = await PluginList();
+      for(let i of res.data) {
+        nfv_mano_list.value.push(i);
+      }
+  };
+  const getTableData = async () => {  // 顯示 Table 資料
       let res = await TemplateList();
-      this.td_list = [];
+      td_list.value = [];
       const array_nrm = res.data.filter(x => x.templateType == 'NRM');
       for(let i of array_nrm){
-        this.td_list.push(i);
+        td_list.value.push(i);
       }
-    },
-    delay(interval) { // 計時器
-      return new Promise((resolve) => {
-        setTimeout(resolve,interval);
-      })
-    },
-    async setAlertData(color,icon,title,content) { // alert 的樣式
-      this.alertInfo.alertStatus = false; // 避免重複動作太快
-      this.alertInfo.alertExist = false; // 避免重複動作太快
-      this.alertInfo.alertColor = color;
-      this.alertInfo.alertIcon = icon;
-      this.alertInfo.alertTitle = title;
-      this.alertInfo.alertContent = content;
-      this.alertInfo.alertStatus = true;
-      this.alertInfo.alertExist = true;
-      await this.delay(1500);
-      this.alertInfo.alertStatus = false;
-      await this.delay(100);
-      this.alertInfo.alertExist = false;
-      this.alertInfo.alertColor = '';
-      this.alertInfo.alertIcon = '';
-      this.alertInfo.alertTitle = '';
-      this.alertInfo.alertContent = '';
-    },
-    updateTableData(val) {  // 每次執行 Table 操作，更新資料 
-      this.filterEntries = val;
-    },
-    removeCreateData() { // 關閉 Create Modal
-      this.templateName = '';
-      this.templateDescription = '';
-      this.currentNFVMANO = '請選擇 ...';
-      this.text_invalidated = false;
-      this.select_invalidated = false;
-    },
-    removeUpdateData() { // 關閉 Update Modal
-      this.templateId = '';
-      this.templateData = {};
-      this.currentNFVMANO = '請選擇 ...';
-      this.file_invalidated = false;
-      this.$refs.uploadData_update.value = null;
-    },
-    removeDeleteData() { // 關閉 Delete Modal
-      this.templateData = {};
-    },
-    create_template_validate() { // 驗證 Create Modal
-      if(this.repeatName || this.templateName == '') {
-        this.text_invalidated = true;
-      }
-      if(this.currentNFVMANO == '請選擇 ...') {
-        this.select_invalidated = true;
-      }
-    },
-    async create_template_modal() { // 點擊 Create Modal 內創建按鈕
-      this.create_template_validate();
-      if(!this.text_invalidated && !this.select_invalidated) {
-        let form = new FormData();
-        form.append("name", this.templateName);
-        form.append("description", this.templateDescription);
-        form.append("nfvoType", this.currentNFVMANO);
-        form.append("templateType", "NRM");
-        try {
-          let res = await createGenericTemplate(form);
-          this.td_list.push(res.data);
-          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NRM Template has been created !');
-        }
-        catch(err) {
-          console.log(err);
-          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to create the NRM Template !');
-        }
-        this.$refs.modalCreate.closeModalEvent();
-      }
-    },
-    update_template_file(e) {  // 更新 Update Modal 內檔案
-      this.templateData = e.target.files;
-    },
-    update_template_validate() { // 驗證 Update Modal
-      if(this.templateData[0] == null) {
-        this.file_invalidated = true;
-      } 
-    },
-    update_template_button(id,type) { // 點擊 Update Modal 按鈕
-      this.templateId = id;
-      this.currentNFVMANO = type; 
-    },
-    async update_template_modal() { // 點擊 Update Modal 內更新按鈕
-      this.update_template_validate();
-      if(!this.file_invalidated) {
-        let form = new FormData();
-        form.append("nfvoType", this.currentNFVMANO);
-        form.append("templateType", "NRM");
-        form.append("templateFile", this.templateData[0]);
-        try {
-          await updateGenericTemplate(this.templateId, form);
-          await this.getTableData();
-          this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NRM Template has been updated !');
-        }
-        catch(err) {
-          console.log(err);
-          this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to update the NRM Template !');
-        }
-        this.$refs.modalUpdate.closeModalEvent();
-      }
-    },
-    download_template_button(file) { // 點擊 Download Modal 按鈕
-      if(file == null)
-        this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the NRM Template !');
-        // this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the NRM Template !');
-      else
-        this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NRM Template has been downloaded !');
-    },
-    delete_template_button(file) { // 點擊 Delete Modal 按鈕
-      this.templateData = file;
-    },
-    async delete_template_modal() { // 點擊 Delete Modal 內刪除按鈕
-      try {
-        await deleteGenericTemplate(this.templateData.templateId);
-        await this.getTableData();
-        this.setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NRM Template has been deleted !');
-      }
-      catch(err) {
-        console.log(err);
-        this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to delete the NRM Template !');
-      }
-    },
+  };
+  const create_Validate = () => { 
+    const set = `${t('Please')}${t('select')} ...`;
+    const textValidate = text_Validate( [repeatName.value, templateName.value] );
+    const selectValidate = select_Validate( currentNFVMANO.value, set);
+    const validate = textValidate && selectValidate; 
+    return validate
+  } 
+  const  create_template_modal = () => { // 點擊 Create Modal 內創建按鈕
+    const createValidate = create_Validate()
+    if(createValidate) {
+      const formName = ['name', 'description', 'nfvoType', 'templateType'];
+      const formValue = [templateName.value, templateDescription.value, currentNFVMANO.value, 'NRM'];
+      const formData = form(formName, formValue );
+      callCreate( formData, modalCreate.value, [createGenericTemplate, getTableData] );
+    }
   }
-}
+  const getFileData = e => { fileData.value = e.target.files; }
+  const update_template_validate = () => { 
+    const fileValidate = file_Validate( fileData.value[0] );
+    return fileValidate
+  }
+  const update_template_button = (id,type) => { // 點擊 Update Modal 按鈕
+      get_templateId(id);
+      currentNFVMANO.value = type; 
+  }
+  const get_templateId = id =>  { templateId.value = id; }
+  const  update_template_modal = async () => { // 點擊 Update Modal 內更新按鈕
+    const updateValidate = update_template_validate();
+    if(updateValidate) {
+     const formName = ['name', 'templateType', 'templateFile'];
+     const formValue = [currentNFVMANO.value, 'NRM', fileData.value[0], ];
+     const formData = form(formName, formValue );
+     callUpdate([templateId.value, formData], modalUpdate.value, [updateGenericTemplate, getTableData])
+    }
+  };
+  const delete_template_modal = () => { // 點擊 Delete Modal 內刪除按鈕
+    callDelete(templateId.value, [deleteGenericTemplate, getTableData])
+  }
+  async function setAlertData(color,icon,title,content) { // alert 的樣式
+    alertInfo.value.alertStatus = false; // 避免重複動作太快
+    alertInfo.value.alertExist = false; // 避免重複動作太快
+    alertInfo.value.alertColor = color;
+    alertInfo.value.alertIcon = icon;
+    alertInfo.value.alertTitle = title;
+    alertInfo.value.alertContent = content;
+    alertInfo.value.alertStatus = true;
+    alertInfo.value.alertExist = true;
+    await delay(1500);
+    alertInfo.value.alertStatus = false;
+    await delay(100);
+    alertInfo.value.alertExist = false;
+    alertInfo.value.alertColor = '';
+    alertInfo.value.alertIcon = '';
+    alertInfo.value.alertTitle = '';
+    alertInfo.value.alertContent = '';
+  }
+  const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
+    filterEntries.value = val;
+  }
+  const removeCreateData = () =>  { // 關閉 Create Modal
+    templateName.value = '';
+    templateDescription.value = '';
+    currentNFVMANO.value = `${t('Please')}${t('select')} ...`;
+    text_invalidated.value = false;
+    select_invalidated.value = false;
+  }
+  const removeUpdateData = () => { // 關閉 Update Modal
+    templateId.value = '';
+    fileData.value = {};
+    currentNFVMANO.value = `${t('Please')}${t('select')} ...`;
+    file_invalidated.value = false;
+    uploadData_update.value.value = null;
+  }
+  const removeDeleteData = () =>  { // 關閉 Delete Modal
+    templateId.value = '';
+  }
+  const download_template_button = file => { // 點擊 Download Modal 按鈕
+    if(file == null)
+      setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the NRM Template !');
+      // this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the NRM Template !');
+    else
+      setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NRM Template has been downloaded !');
+  }
+
+  
+
 </script>

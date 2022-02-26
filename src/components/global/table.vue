@@ -191,15 +191,15 @@ export default {
     columnSort: {
       typeof: Array,
     },
-    columnNumber: {
-      typeof: Number,
-    },
     status: {
       typeof: Boolean,
       default: false
     },
   },
   computed: {
+    columnNumber() {
+      return this.column.length;
+    },
     currentWindowWidth() {
       return this.$store.state.windowWidth;
     },

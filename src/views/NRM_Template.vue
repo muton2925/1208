@@ -1,16 +1,13 @@
 <template>
   <Table :column="th_list" :entrie="td_list" :columnSort="columnSort"  @update="updateTableData" :status="status">
     <template v-slot:header>
-      {{`${t('template_header',2)}${t('Template')}`}}
-      <!-- Network Resource Model Template -->
+      {{`${t('template_header',2)} ${t('Template')}`}}
     </template>
     <template v-slot:button>
-      {{`${t('Create')}NRM${t('Template')}`}}
-      <!-- Create NRM Template -->
+      {{`${t('Create')}NRM ${t('Template')}`}}
     </template>
     <template v-slot:table-name>
-      {{`NRM${t('Template')}${t('list')}`}}
-      <!-- NRM Template List -->
+      {{`NRM ${t('Template')}${t('list')}`}}
     </template>
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.templateId">
@@ -40,50 +37,42 @@
   </Table>
   <Modalcreate ref="modalCreate" @remove="removeCreateData">
     <template v-slot:header>
-      {{`${t('Create')}${t('new')}NRM${t('Template')}`}}
-      <!-- Create new NRM Template -->
+      {{`${t('Create')}${t('new')}NRM ${t('Template')}`}}
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">
             {{`${t('Template')}${t('Name')} :`}}
-            <!-- Template Name : -->
           </label>
           <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="TemplateName" v-model="templateName">
           <div class="invalid-feedback">
             <template v-if="repeatName">
               {{`${t('this')}${t('Template')}${t('Name')}${t('already_exists')}`}}
-              <!-- 此 Template 名稱已存在 -->
             </template>
             <template v-else>
               {{`${t('Template')}${t('Name')}${t('not_be_empty')}`}}
-              <!-- Template 名稱不得為空 -->
             </template>
           </div>
         </div>
         <div class="mb-3">
           <label for="InputFile2" class="form-label">
-            {{`NRM${t('Description')} :`}}
-            <!-- NRM Description : -->
+            {{`NRM ${t('Description')} :`}}
           </label>
           <input type="text" class="form-control" id="InputFile2" :placeholder="Description" v-model="templateDescription">
         </div>
         <div class="mb-2">
           <label for="InputFile3" class="form-label">
             {{`NFVO${t('Name')} :`}}
-            <!-- NFVO Name : -->
           </label>
           <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_invalidated }" id="InputFile3" aria-label=".form-select example">
             <option selected>
               {{`${t('Please')}${t('select')} ...`}}
-              <!-- 請選擇 ... -->
             </option>
             <option v-for="item in sortNFVMANOList" :key="item.name" :value="item.name">{{ item.name }}</option>
           </select>
           <div class="invalid-feedback">
             {{`${t('Please')}${t('select')}${t('one')}NFVO`}}
-            <!-- 請選擇一個 NFVO -->
           </div>
         </div>
       </form>
@@ -91,33 +80,28 @@
     <template v-slot:footer>
       <button type="button" class="btn btn-primary text-white" @click="create_template_modal">
         {{t('Create')}}
-        <!-- Create -->
       </button>
     </template>
   </Modalcreate>
   <Modalupdate ref="modalUpdate" @remove="removeUpdateData">
     <template v-slot:header>
-      {{`${t('Update')}NRM${t('Template')}`}}
-      <!-- Update NRM Template -->
+      {{`${t('Update')}NRM ${t('Template')}`}}
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">
-            {{`NRM${t('Template')}${t('ID')} :`}}
-            <!-- NRM Template ID : -->
+            {{`NRM ${t('Template')}${t('ID')} :`}}
           </label>
           <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="templateId" readonly>
         </div>
         <div class="mb-2">
           <label for="UploadFile2" class="form-label">
-            {{`NRM${t('Template')}${t('File')} :`}}
-            <!-- NRM Template File : -->
+            {{`NRM ${t('Template')}${t('File')} :`}}
           </label>
           <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="getFileData">
           <div class="invalid-feedback">
             {{`${t('File')}${t('not_be_empty')}`}}
-            <!-- 檔案不得為空 -->
           </div>
         </div>
       </form>
@@ -125,20 +109,18 @@
     <template v-slot:footer>
       <button type="button" class="btn btn-warning text-white" @click="update_template_modal">
         {{`${t('Update')}`}}
-        <!-- Update -->
       </button>
     </template>
   </Modalupdate>
   <Modaldelete ref="modalDelete" @delete="delete_template_modal" @remove="removeDeleteData">
     <template v-slot:header>
-      {{`${t('Delete')}NRM${t('Template')}`}}
-      <!-- Delete NRM Template -->
+      {{`${t('Delete')}NRM ${t('Template')}`}}
     </template>
   </Modaldelete>
-  <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
+  <Alert ref="alertRef" v-show="alertExist"></Alert>
 </template>
 <script setup>
-import { computed, onBeforeMount, ref, watch } from 'vue';
+import { computed, onBeforeMount, ref, watch, toRefs } from 'vue';
 import { $array } from 'alga-js';
 import { Share } from '../assets/js/api';
 import { defineAsyncComponent } from 'vue';
@@ -147,10 +129,10 @@ import Table from '../components/global/table.vue';
 import { useI18n } from 'vue-i18n';
 import { delay } from '../assets/js/delay';
 import { form } from '../assets/js/newFormData';
-import { callCreate } from '../assets/js/create';
-import { callUpdate } from '../assets/js/upload';
-import { callDelete } from '../assets/js/delete';
-import { text_invalidated, file_invalidated, select_invalidated, file_Validate, text_Validate, select_Validate } from '../assets/js/validate'
+import { callCreate, callUpdate, callDelete, calldownload } from '../assets/js/templateOperate';
+import { text_invalidated, file_invalidated, select_invalidated, file_Validate, text_Validate, select_Validate } from '../assets/js/validate';
+import { closeModal } from '../assets/js/closeModel';
+import { alertConfig } from '../assets/js/alertData';
 const { PluginList, TemplateList } = Share();
 const { createGenericTemplate, updateGenericTemplate, deleteGenericTemplate } = GenericTemplate();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
@@ -168,7 +150,7 @@ const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Moda
       { name: "description", text: t("Description") },
       { name: "templateType", text: t('Type') },
       { name: "nfvoType", text: t("NFVO") },
-      { name: "operationStatus", text: `NRM${t('Status')}` },
+      { name: "operationStatus", text: `NRM ${t('Status')}` },
       { name: "update_template", text: t("Update") },
       { name: "template_Download", text: t("Download") },
       { name: "delete_template", text: t("Delete") },
@@ -178,14 +160,7 @@ const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Moda
   const currentNFVMANO = ref(`${t('Please')}${t('select')} ...`);
   const filterEntries = ref([]);
   const columnSort = ref(['templateId','name','description','templateType','nfvoType','operationStatus']);
-  const alertInfo = ref( {
-      alertExist: false,
-      alertStatus: false,
-      alertColor: '',
-      alertIcon: '',
-      alertTitle: '',
-      alertContent: '',
-  });
+  const { alertRef, alertExist } = toRefs(alertConfig);
   let templateId = ref('');
   let templateName = ref('');
   let templateDescription = ref('');
@@ -241,10 +216,16 @@ const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Moda
   const  create_template_modal = () => { // 點擊 Create Modal 內創建按鈕
     const createValidate = create_Validate()
     if(createValidate) {
+      const alertData = {
+        Template: `${t('template_header',2)} ${t('Template')}`,
+        configSuccess:  t('created'),
+        configUnsuccess:  t('create'),
+      }
       const formName = ['name', 'description', 'nfvoType', 'templateType'];
       const formValue = [templateName.value, templateDescription.value, currentNFVMANO.value, 'NRM'];
       const formData = form(formName, formValue );
-      callCreate( formData, modalCreate.value, [createGenericTemplate, getTableData] );
+      callCreate( formData, [createGenericTemplate, getTableData], alertData);
+      closeModal(modalCreate.value)
     }
   }
   const getFileData = e => { fileData.value = e.target.files; }
@@ -260,32 +241,25 @@ const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Moda
   const  update_template_modal = async () => { // 點擊 Update Modal 內更新按鈕
     const updateValidate = update_template_validate();
     if(updateValidate) {
+      const alertData = {
+        Template: `${t('template_header',2)} ${t('Template')}`,
+        configSuccess:  t('updated'),
+        configUnsuccess:  t('update'),
+      }
      const formName = ['name', 'templateType', 'templateFile'];
      const formValue = [currentNFVMANO.value, 'NRM', fileData.value[0], ];
      const formData = form(formName, formValue );
-     callUpdate([templateId.value, formData], modalUpdate.value, [updateGenericTemplate, getTableData])
+     callUpdate([templateId.value, formData], [updateGenericTemplate, getTableData], alertData)
+     closeModal(modalUpdate.value)
     }
   };
   const delete_template_modal = () => { // 點擊 Delete Modal 內刪除按鈕
-    callDelete(templateId.value, [deleteGenericTemplate, getTableData])
-  }
-  async function setAlertData(color,icon,title,content) { // alert 的樣式
-    alertInfo.value.alertStatus = false; // 避免重複動作太快
-    alertInfo.value.alertExist = false; // 避免重複動作太快
-    alertInfo.value.alertColor = color;
-    alertInfo.value.alertIcon = icon;
-    alertInfo.value.alertTitle = title;
-    alertInfo.value.alertContent = content;
-    alertInfo.value.alertStatus = true;
-    alertInfo.value.alertExist = true;
-    await delay(1500);
-    alertInfo.value.alertStatus = false;
-    await delay(100);
-    alertInfo.value.alertExist = false;
-    alertInfo.value.alertColor = '';
-    alertInfo.value.alertIcon = '';
-    alertInfo.value.alertTitle = '';
-    alertInfo.value.alertContent = '';
+      const alertData = {
+        Template: `${t('template_header',2)} ${t('Template')}`,
+        configSuccess:  t('deleted'),
+        configUnsuccess:  t('delete'),
+      }
+    callDelete(templateId.value, [deleteGenericTemplate, getTableData], alertData)
   }
   const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
     filterEntries.value = val;
@@ -308,11 +282,12 @@ const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Moda
     templateId.value = '';
   }
   const download_template_button = file => { // 點擊 Download Modal 按鈕
-    if(file == null)
-      setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the NRM Template !');
-      // this.setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the NRM Template !');
-    else
-      setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NRM Template has been downloaded !');
+    const alertData = {
+      Template: `${t('template_header',2)} ${t('Template')}`,
+      configSuccess:  t('downloaded '),
+      configUnsuccess:  t('download'),
+    }
+    calldownload(file, alertData)
   }
 
   

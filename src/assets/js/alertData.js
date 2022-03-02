@@ -1,19 +1,13 @@
-import { reactive } from "vue";
-const alertInfo = reactive({
-    alertExist: false,
-    alertStatus: false,
-    alertColor: '',
-    alertIcon: '',
-    alertTitle: '',
-    alertContent: '',
-})
-async function setAlertData(config) { // alert 的樣式
-    const resetConfig = JSON.parse(JSON.stringify(alertInfo))
-    alertInfo.alertStatus = false; // 避免重複動作太快
-    alertInfo.alertExist = false; // 避免重複動作太快
-    alertInfo = config
-    await this.delay(1500);
-    alertInfo.alertStatus = false;
-    await this.delay(100);
-    alertInfo = resetConfig
-  }
+import { reactive, toRefs } from "vue";
+import { delay } from './delay';
+export const alertConfig = reactive({
+    alertRef: null, // alert1 對應的 ref
+    alertExist: false, // alert1 是否存在
+  });
+const { alertRef, alertExist } = toRefs(alertConfig);
+export const alertEvent = async (status, name, action) => { // 通知事件
+    alertExist.value = true;
+    await alertRef.value.alertInfo(status, name, action);
+    await delay(100);
+    alertExist.value = false;
+};

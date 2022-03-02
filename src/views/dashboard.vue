@@ -7,46 +7,24 @@
     </audio>
     <button @click="as">123</button>
   </div>
+  <Alert ref="alertRef" v-show="alertExist"></Alert>
 </template>
 <script>
-import {plus,b,c,aa} from '../assets/js/test'
-import {a,plusb} from '../assets/js/t1'
-import {text_invalidated} from '../assets/js/validate'
-import { reactive,  toRefs } from '@vue/reactivity'
-import { watch } from '@vue/runtime-core'
+import { toRefs } from '@vue/reactivity';
+import {defineAsyncComponent} from 'vue'
+const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
+import { alertConfig, alertEvent } from '../assets/js/alertData';
 export default {
+  components:{
+    Alert
+  },
   setup(){
-    const bb= ()=>{
-      console.log("b")
+    const { alertRef, alertExist } = toRefs(alertConfig)
+    const as = () =>{
+      alertEvent(1, 'NSS Template', 'deleted');
     }
-   const VNF = reactive({
-      options:'請選擇 ...',
-      invalidated:false
-   })
-   const {options, invalidated} = toRefs(VNF)
-   function as (){
-     text_invalidated.value = true
-   }
-   watch(options,()=>{
-     console.log(invalidated)
-     console.log(options.value)
-   })
-  // function select_Validate(options, set = '請選擇 ...' ){
-  //   if(Array.isArray(options) && Array.isArray(set)){
-
-  //   }else {
-  //     if(Array.isArray(options)){
-  //       console.log(Array.isArray(set))
-  //     }else{
-  //       for (const iterator of options) {
-  //         iterator 
-  //       }
-  //     } 
-  //   }
-
-  // }
     return {
-      plus,a,b,plusb,c,aa,bb,options,as,
+      alertRef, alertExist,as
     }
   }
 }

@@ -27,10 +27,10 @@ function select_Validate(option, set ){
 
 }
 
-// function selects_Validate(options, set = `${t('Please')}${t('select')} ...` ){
+// function selects_Validate(options, set ){
 //   for (const iterator of options) {
 //     if( iterator == set ){
-
+          
 //     }
 //   }
 // }

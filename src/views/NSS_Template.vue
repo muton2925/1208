@@ -1,7 +1,7 @@
 <template>
   <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :columnNumber="columnNumber" @update="updateTableData" :status="status">
     <template v-slot:header>
-      {{`${t('NSSI_Template')}${t('Template')}`}}
+      {{`${t('NSSI_Template')} ${t('Template')}`}}
       <!-- Network Slice Subnet Template -->
     </template>
     <template v-slot:button>
@@ -37,7 +37,7 @@
   </Table>
   <Modalcreate ref="modalCreate" @remove="removeCreateData">
     <template v-slot:header>
-      {{`${t('Create')}${t('new')}NSS${t('Template')}`}}
+      {{`${t('Create')}${t('new')}NSS ${t('Template')}`}}
       <!-- Create new NSS Template -->
     </template>
     <template v-slot:body>
@@ -65,7 +65,7 @@
             </div>
           </div>
           <div class="invalid-feedback">
-            {{`${t('Please')}${t('select')}${t('one')}VNF${t('Template')}`}}
+            {{`${t('Please')}${t('select')}${t('one')} VNF ${t('Template')}`}}
             <!-- 請選擇一個 VNF Template -->
           </div>
         </div>
@@ -92,7 +92,7 @@
             </div>
           </div>
           <div class="invalid-feedback">
-            {{`${t('Please')}${t('select')}${t('one')}NSD${t('Template')}`}}
+            {{`${t('Please')}${t('select')}${t('one')} NSD ${t('Template')}`}}
             <!-- 請選擇一個 NSD Template -->
           </div>
         </div>
@@ -119,7 +119,7 @@
             </div>
           </div>
           <div class="invalid-feedback">
-            {{`${t('Please')}${t('select')}${t('one')}NRM${t('Template')}`}}
+            {{`${t('Please')}${t('select')}${t('one')} NRM ${t('Template')}`}}
             <!-- 請選擇一個 NRM Template -->
           </div>
         </div>
@@ -143,7 +143,7 @@
             <option v-for="item in sortNFVMANOList" :key="item.name" :value="item.name">{{ item.name }}</option>
           </select>
           <div class="invalid-feedback">
-            {{`${t('Please')}${t('select')}${t('one')}NFVO`}}
+            {{`${t('Please')}${t('select')}${t('one')} NFVO`}}
             <!-- 請選擇一個 NFVO -->
           </div>
         </div>

@@ -1,17 +1,13 @@
 <template>
   <Table :column="th_list" :entrie="td_list" :columnSort="columnSort"  @update="updateTableData" :status="status">
     <template v-slot:header>
-      <!-- {{ t('Plugin_header') }}{{ t('Plugin') }} -->
       {{ `NFV MANO ${t('Plugin')}`}}
-      <!-- NFV MANO Plugin -->
     </template>
     <template v-slot:button>
       {{ t('Create') }} {{ t('Plugin') }}
-      <!-- Create Plugin -->
     </template>
     <template v-slot:table-name>
       {{ `NFV MANO ${t('Plugin')} ${t('list')}   `}}
-      <!-- NFV MANO Plugin List -->
     </template>
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.name">
@@ -39,37 +35,30 @@
   <Modalcreate ref="modalCreate" @remove="removeCreateData">
     <template v-slot:header>
       {{  `${t('Create')}${t('new')} NFV MANO ${t('Plugin')}` }}  
-      <!-- Create new NFV MANO Plugin -->
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">
             {{  `${t('Plugin')}${t('Name')} :` }}
-            <!-- Plugin Name : -->
-
           </label>
           <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="placeholder" v-model="fileName">
           <div class="invalid-feedback">
             <template v-if="repeatName">
               {{  `${t('this')}${t('Plugin')}${t('Name')}${t('already_exists')}` }}
-              <!-- 此 Plugin 名稱已存在 -->
             </template>
             <template v-else>
                {{  `${t('Plugin')}${t('Name')}${t('not_be_empty')}` }}
-              <!-- Plugin 名稱不得為空 -->
             </template>
           </div>
         </div>
         <div class="mb-2">
           <label for="UploadFile" class="form-label">
             {{  `${t('Plugin')}${t('File')} :` }}
-            <!-- Plugin File : -->
           </label>
           <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile" ref="uploadData_create" accept=".zip" @change="getFileData">
           <div class="invalid-feedback">
             {{  `${t('Plugin')}${t('File')}${t('not_be_empty')}` }}
-            <!-- 檔案不得為空 -->
           </div>
         </div>
       </form>
@@ -87,18 +76,16 @@
         <div class="mb-3">
           <label for="InputFile" class="form-label">
             {{  `${t('Plugin')}${t('Name')} :` }}
-            <!-- Plugin Name : -->
           </label>
           <input type="text" class="form-control" id="InputFile" :placeholder="placeholder" v-model="fileName" readonly>
         </div>
         <div class="mb-2">
           <label for="UploadFile2" class="form-label">
             {{  `${t('Plugin')}${t('File')} :` }}
-            <!-- Plugin File : -->
           </label>
           <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="getFileData">
           <div class="invalid-feedback">
-            檔案不得為空
+            {{`${t('File')}${t('not_be_empty')}`}}
           </div>
         </div>
       </form>
@@ -110,24 +97,23 @@
   <Modaldelete @delete="delete_plugin_modal" @remove="removeDeleteData">
     <template v-slot:header>
       {{  `${t('Delete')}${t('Service')}${t('Mapping')}${t('Plugin')}` }} 
-      <!-- Delete Service Mapping Plugin -->
     </template>
   </Modaldelete>
-  <Alert v-show="alertInfo.alertExist" v-bind="alertInfo"></Alert>
+  <Alert ref="alertRef" v-show="alertExist"></Alert>
 </template>
 <script setup>
-  import { computed, onBeforeMount, ref, watch } from 'vue';
+  import { computed, onBeforeMount, ref, watch, toRefs } from 'vue';
   import { Share } from '../assets/js/api';
   import { defineAsyncComponent } from 'vue';
   import { nfv_mano_plugin } from '../assets/js/api';
   import Table from '../components/global/table.vue';
-  import { useI18n } from 'vue-i18n'
-  import { delay } from '../assets/js/delay'
-  import { form } from '../assets/js/newFormData'
-  import { callCreate } from '../assets/js/create'
-  import { callUpdate } from '../assets/js/upload'
-  import { callDelete } from '../assets/js/delete'
-  import { text_invalidated, file_invalidated, file_Validate, text_Validate } from '../assets/js/validate'
+  import { useI18n } from 'vue-i18n';
+  import { delay } from '../assets/js/delay';
+  import { form } from '../assets/js/newFormData';
+  import { callCreate, callUpdate, callDelete, calldownload } from '../assets/js/templateOperate';
+  import { text_invalidated, file_invalidated, file_Validate, text_Validate } from '../assets/js/validate';
+  import { closeModal } from '../assets/js/closeModel';
+  import { alertConfig } from '../assets/js/alertData';
   const { PluginList } = Share();
   const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
   const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
@@ -146,18 +132,11 @@
       { name: "update_plugin", text: t("Update") },
       { name: "plugin_file", text: t("Download") },
       { name: "delete_plugin", text: t("Delete") },
-    ]
-  const fileData = ref({})
-  const filterEntries = ref([])
-  const columnSort = ref(['name','allocate_nssi','dellocate_nssi'])
-  const alertInfo = ref( {
-      alertExist: false,
-      alertStatus: false,
-      alertColor: '',
-      alertIcon: '',
-      alertTitle: '',
-      alertContent: '',
-  })
+    ];
+  const fileData = ref({});
+  const filterEntries = ref([]);
+  const columnSort = ref(['name','allocate_nssi','dellocate_nssi']);
+  const { alertRef, alertExist } = toRefs(alertConfig);
   let placeholder;
   let td_list =  ref([])
   let status = ref(false)
@@ -205,8 +184,14 @@
   const  create_plugin_modal = () => { // 點擊 Create Modal 內創建按鈕
     const createValidate = create_Validate()
     if(createValidate) {
-      const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]] )
-      callCreate( formData, modalCreate.value, [createPluginList, getTableData] )
+      const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]] );
+      const alertData = {
+        Template: `NFV MANO ${t('Plugin')}`,
+        configSuccess:  t('created'),
+        configUnsuccess:  t('create'),
+      }
+      callCreate( formData, [createPluginList, getTableData], alertData );
+      closeModal(modalCreate.value);
     }
   }
   const update_plugin_validate = () => { 
@@ -217,30 +202,23 @@
   const update_plugin_modal = () => { // 點擊 Update Modal 內更新按鈕
     const updateValidate = update_plugin_validate()
     if(updateValidate) {
-      const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]])
-      callUpdate([fileName.value, formData], modalUpdate.value, [updatePlugin, getTableData])
+      const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]]);
+      const alertData = {
+        Template: `NFV MANO ${t('Plugin')}`,
+        configSuccess:  t('updated'),
+        configUnsuccess:  t('update'),
+      }
+      callUpdate([fileName.value, formData], [updatePlugin, getTableData], alertData);
+      closeModal(modalUpdate.value);
     }
   }
   const delete_plugin_modal = () => { // 點擊 Delete Modal 內刪除按鈕
-    callDelete(fileName.value, [deletePlugin, getTableData])
-  }
-  async function setAlertData(color,icon,title,content) { // alert 的樣式
-    alertInfo.value.alertStatus = false; // 避免重複動作太快
-    alertInfo.value.alertExist = false; // 避免重複動作太快
-    alertInfo.value.alertColor = color;
-    alertInfo.value.alertIcon = icon;
-    alertInfo.value.alertTitle = title;
-    alertInfo.value.alertContent = content;
-    alertInfo.value.alertStatus = true;
-    alertInfo.value.alertExist = true;
-    await delay(1500);
-    alertInfo.value.alertStatus = false;
-    await delay(100);
-    alertInfo.value.alertExist = false;
-    alertInfo.value.alertColor = '';
-    alertInfo.value.alertIcon = '';
-    alertInfo.value.alertTitle = '';
-    alertInfo.value.alertContent = '';
+      const alertData = {
+        Template: `NFV MANO ${t('Plugin')}`,
+        configSuccess:  t('deleted'),
+        configUnsuccess:  t('delete'),
+      }
+    callDelete(fileName.value, [deletePlugin, getTableData], alertData)
   }
   const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
     filterEntries.value = val;
@@ -262,10 +240,13 @@
     fileName.value = '';
   }
   const download_template_button = file => { // 點擊 Download Modal 按鈕
-    if(file == null)
-      setAlertData('alert-danger', 'bi bi-x-circle-fill', 'Operates Unsuccessfully', 'Fail to download the NFV MANO Plugin !');
-    else
-      setAlertData('alert-success', 'bi bi-check-circle-fill', 'Operates Successfully', 'NFV MANO Plugin has been downloaded !');
+    const alertData = {
+      Template: `NFV MANO ${t('Plugin')}`,
+      configSuccess:  t('downloaded '),
+      configUnsuccess:  t('download'),
+    }
+    calldownload(file, alertData)
+    
   }
 
 

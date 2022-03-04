@@ -19,53 +19,45 @@
   </div>
 </template>
 <script>
-import { ref } from 'vue';
+import { computed, onMounted, ref, toRefs, watch } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
 export default {
   props: ['allPages'],
-  setup() {
+  setup(props, { emit }) {
+    const {allPages} = toRefs(props);
     const modal_page = ref(null)
-    return{
-      modal_page,
-    }
-  },
-  data() {
-    return {
-      pageNumber: '',
-      modal: '',
-      number_validate: false,
-    }
-  },
-  computed: {
-    page() {
-      return this.allPages;
-    }
-  },
-  watch: {
-    pageNumber() {
-      this.number_validate = false;
-    }
-  },
-  mounted() {
-    const th = this; 
-    this.$refs.modal_page.addEventListener('hidden.bs.modal', function () {
-      th.pageNumber = '';
-      th.number_validate = false;
-    });
-    this.modal = new Modal(this.$refs.modal_page, {});
-  },
-  methods: {
-    validate() {
+    let pageNumber = ref('');
+    let modal = ref('');
+    let number_validate = ref(false);
+    
+    const page = computed(()=> allPages.value)
+    watch(pageNumber,()=>{number_validate.value = false})
+    
+    onMounted(()=>{
+        modal_page.value.addEventListener('hidden.bs.modal', function () {
+          pageNumber.value = '';
+          number_validate.value = false;
+        });
+        modal.value = new Modal(modal_page.value, {});
+    })
+    const validate = () => {
       let re = /^[0-9]+$/;
-      let number = parseInt(this.pageNumber);
-      if(!re.test(number) || (number > this.allPages || number <= 0))
-        this.number_validate = true;
-      if(!this.number_validate) {
-        this.$emit('switch', number);
-        this.modal.hide();
+      let number = parseInt(pageNumber.value);
+      if(!re.test(number) || (number > allPages.value || number <= 0))
+        number_validate.value = true;
+      if(!number_validate.value) {
+        emit('switch', number);
+        modal.value.hide();
       }
     }
-  },
+    return{
+      modal_page,
+      validate,
+      page,
+      pageNumber,
+      number_validate
+    }
+  }
 }
 </script>
 <style scoped>

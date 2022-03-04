@@ -34,15 +34,17 @@
 </template>
 <script>
 import { ref } from 'vue';
+// import { inject, ref } from 'vue';
 import { mapState } from "vuex";
 import { Collapse } from 'bootstrap/dist/js/bootstrap.bundle.js'
 export default {
   inject:['reload'],
   setup() {
-    const generic_template_sm = ref(null)
-    const generic_template_md = ref(null)
-    const nssi_view_sm = ref(null)
-    const nssi_view_md = ref(null)
+    // const reload = inject('reload');
+    const generic_template_sm = ref(null);
+    const generic_template_md = ref(null);
+    const nssi_view_sm = ref(null);
+    const nssi_view_md = ref(null);
     return{
       generic_template_sm,generic_template_md,nssi_view_sm,nssi_view_md
     }

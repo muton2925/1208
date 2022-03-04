@@ -1,7 +1,8 @@
-import {ref} from 'vue'
+import {ref, reactive} from 'vue'
 export let text_invalidated = ref(false);
 export let file_invalidated = ref(false);
 export let select_invalidated = ref(false);
+export let selects_invalidated = reactive({})
 
 /**
  * 
@@ -12,6 +13,7 @@ function text_Validate(text){
   const [repeatName, fileName] = text
   if(repeatName || fileName == '') {
     text_invalidated.value = true;
+    return false
   }
   else {
     return true
@@ -21,19 +23,26 @@ function text_Validate(text){
 function select_Validate(option, set ){
   if ( option == set){
     select_invalidated.value = true;
+    return false
   }else{
     return true
   }
 
 }
 
-// function selects_Validate(options, set ){
-//   for (const iterator of options) {
-//     if( iterator == set ){
-          
-//     }
-//   }
-// }
+function set_selects_invalidated(selectKey){
+  for (const iterator of selectKey) {
+    selects_invalidated[iterator] = false;
+  }
+}
+
+function selects_Validate(options, set){
+  for (const iterator of options) {
+    if(iterator[1] == set){
+      selects_invalidated[iterator[0]] = true;
+    }
+  }
+}
 
 /**
  * 
@@ -52,7 +61,8 @@ function file_Validate(file){
 export { text_Validate }
 export { file_Validate }
 export { select_Validate } 
-// export { selects_Validate } 
+export { set_selects_invalidated } 
+export { selects_Validate } 
 // [text, select, file]
 // function text_validate() { // 驗證 Create Modal
 //     if(this.repeatName || this.templateName == '') {

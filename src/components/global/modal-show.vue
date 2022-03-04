@@ -16,31 +16,21 @@
   </div>
 </template>
 <script>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
 export default {
-  setup() {
+  setup(props, { emit }) {
     const modal_show = ref(null)
-    return{
-      modal_show,
-    }
-  },
-  data() {
-    return {
-      modal: '',
-    }
-  },
-  mounted() {
-    const th = this; 
-    this.$refs.modal_show.addEventListener('hidden.bs.modal', function () {
-      th.cancelEvent();
+    let modal = ref('');
+    onMounted(() => {
+      modal.value = new Modal(modal_show.value, {});
+      modal_show.value.addEventListener('hidden.bs.modal', function () {
+      emit('remove')
     })
-    this.modal = new Modal(this.$refs.modal_show, {})
-  },
-  methods: {
-    cancelEvent() {
-      this.$emit('remove');
-    },
+    })
+    return{
+      modal_show
+    }
   }
 }
 </script>

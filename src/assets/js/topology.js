@@ -219,8 +219,7 @@ function allocate_nssi( myChart, nsstID) {
         var nssiID = response.data.nSSIId;
         show_allocate_nssi_topology(myChart,nssiID);
     })
-    .catch((error) => {
-        console.log(error);
+    .catch(() => {
         alert("ERROR!!");
     });
 }
@@ -334,8 +333,7 @@ function delete_vnf(myChart, nodes, nssiID) {
       }, i*1000);
     }
   })
-  .catch((error) => {
-    console.log(error);
+  .catch(() => {
     alert("NSSI in not allocated");
     router.push({
       name: 'NSS_Instance'

@@ -3,18 +3,22 @@
     <i :class="[ alertStatus == 1 ? 'bi bi-check-circle-fill' : 'bi bi-x-circle-fill' ]"></i>
     <span class="ms-2">{{ alertTitle }}</span>
     <hr>
-    <p class="mb-0">{{ alertContent }}</p>
+    <p class="mb-0">{{ content }}</p>
   </div>
 </template>
 <script>
 import { ref, computed } from 'vue';  
 import { delay } from '../../assets/js/delay';
+import {useI18n} from 'vue-i18n';
 export default {
   setup() {
+    const { t } = useI18n;
     const alertShow = ref(false);
     const alertStatus = ref(null);
     const alertAction = ref(null);
     const alertComponent = ref(null);
+    let nssiStatus = ref(false);
+    let content = ref('');
     const alertTitle = computed(() => {
       if (alertStatus.value) 
         return `Operates Successfully`;
@@ -27,7 +31,18 @@ export default {
       else 
         return `Fail to ${ alertAction.value } the ${ alertComponent.value } !`;
     });
-    const alertInfo = async (status, name, action) => {
+    const NSSIAlertContent = computed(() => {
+       if (alertStatus.value)
+        return `${ alertComponent.value } ${ alertAction.value }${t('Success')} !`;
+      else 
+        return `${ alertComponent.value } ${t('yet')}${ alertAction.value } !!`;
+    })
+    const alertInfo = async (status, name, action, nssi = false) => {
+      if(nssi){
+        content.value = NSSIAlertContent
+      }else {
+        content.value = alertContent
+      }
       alertShow.value = true;
       alertComponent.value = name;
       alertStatus.value = status;
@@ -40,7 +55,7 @@ export default {
       alertShow,
       alertTitle,
       alertStatus,
-      alertContent,
+      nssiStatus,content
     };
   },
 };

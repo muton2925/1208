@@ -21,28 +21,27 @@
   </div>
 </template>
 <script>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
 import { useI18n } from 'vue-i18n';
 export default {
-  setup() {
-    const modal_delete = ref(null)
-    const { t } = useI18n()
-    return{
-      modal_delete,t
-    }
-  },
-  mounted() {
-    const th = this; 
-    this.$refs.modal_delete.addEventListener('hidden.bs.modal', function () {
-      th.cancelEvent();
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const modal = ref('');
+    const modal_delete = ref(null);
+    const delete_plugin = () => emit('delete');
+    const closeModalEvent = () => modal.value.hide();
+    onMounted(() => {
+      modal.value = new Modal(modal_delete.value, {});
+      modal_delete.value.addEventListener('hidden.bs.modal', function () {
+        emit('remove');
+      });
     })
-  },
-  methods: {
-    cancelEvent() {
-      this.$emit('remove');
-    },
-    delete_plugin() {
-      this.$emit('delete')
+    return {
+      t,
+      modal_delete,
+      closeModalEvent,
+      delete_plugin
     }
   }
 }

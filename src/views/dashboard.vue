@@ -5,12 +5,14 @@
         Your browser does not support the
         <code>audio</code> element.
     </audio>
-    <button @click="as">123</button>
+    <button @click="as(123)">123</button>
+    <button @click="as(456)">456</button>
+    {{ss.a}}
   </div>
   <Alert ref="alertRef" v-show="alertExist"></Alert>
 </template>
 <script>
-import { toRefs } from '@vue/reactivity';
+import { toRefs, reactive } from '@vue/reactivity';
 import {defineAsyncComponent} from 'vue'
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 import { alertConfig, alertEvent } from '../assets/js/alertData';
@@ -19,12 +21,15 @@ export default {
     Alert
   },
   setup(){
-    const { alertRef, alertExist } = toRefs(alertConfig)
-    const as = () =>{
+    const { alertRef, alertExist } = toRefs(alertConfig);
+    const ss = reactive({});
+    const as = (a) =>{
+      ss['a'] = a;
       alertEvent(1, 'NSS Template', 'deleted');
+      console.log(ss)
     }
     return {
-      alertRef, alertExist,as
+      alertRef, alertExist,as,ss
     }
   }
 }

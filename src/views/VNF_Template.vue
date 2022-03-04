@@ -69,7 +69,7 @@
             {{`NFVO${t('Name')} :`}}
           </label>
           <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_invalidated }" id="InputFile3" aria-label=".form-select example">
-            <option selected>
+            <option selected disabled :value="`${t('Please')}${t('select')} ...`">
               {{`${t('Please')}${t('select')} ...`}}
             </option>
             <option v-for="item in sortNFVMANOList" :key="item.name" :value="item.name">{{ item.name }}</option>

@@ -1,14 +1,15 @@
 import axios from 'axios'
-const baseURL = 'http://127.0.0.1:8000/'
+const baseURL = 'http://10.20.1.143:8000/'
+// const baseURL = 'http://127.0.0.1:8000/'
 const instance  = axios.create({
-    baseURL:baseURL
+    baseURL:baseURL,
+    timeout: 10000,
 })
 const Share = function(){
     const PluginList = ()=>instance.get(`plugin/management/`)
     const TemplateList = ()=>instance.get(`ObjectManagement/GenericTemplate/`)
     return {PluginList,TemplateList}
 }
-//axios.post(url + 'ObjectManagement/SliceTemplate/', form)
 const nss_template = function(){
     const selected = (TemplateId)=>instance.get(`ObjectManagement/GenericTemplate/${TemplateId}/`)
     const nssTemplateList = ()=>instance.get(`ObjectManagement/SliceTemplate/`)
@@ -35,15 +36,15 @@ const NSS_Instance = function(){
     return{nssInstanceIist, deleteNssi}   
 }
 const nssi_topology = function(){
-    const showNssi = ()=>instance.get('ObjectManagement/NSS/topology/')
+    const showNssi = (id)=>instance.get(`ObjectManagement/NSS/topology${id}`)
     const nssiSwitched = (paramsId)=> instance.get(`ObjectManagement/NSS/topology/${paramsId}/`)
-    const showDeallocateNssiTopology = (id)=> instance.get(`ObjectManagement/NSS/topology/${id}/`)
+    const showNssiTopology = (id)=> instance.get(`ObjectManagement/NSS/topology/${id}/`)
     const deleteVnf = (nssiID)=> instance.delete(`ObjectManagement/NSS/SliceProfiles/${nssiID}/`)
     const allocateNssi = (json)=> instance.post(`ObjectManagement/NSS/SliceProfiles/`, json, {
         headers: {
           'Content-Type': 'application/json'
         }})
     const showAllocateNssiTopology = (nssiID)=> instance.get(`ObjectManagement/NSS/topology/${nssiID}`)
-    return{showNssi, nssiSwitched, showDeallocateNssiTopology, deleteVnf, allocateNssi, showAllocateNssiTopology}
+    return{showNssi, nssiSwitched, showNssiTopology, deleteVnf, allocateNssi, showAllocateNssiTopology}
 }
 export {Share, nss_template, GenericTemplate, nfv_mano_plugin, NSS_Instance, nssi_topology}

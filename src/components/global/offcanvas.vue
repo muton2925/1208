@@ -10,78 +10,79 @@
             <div :id="item.url" class="collapse" :ref="item.url + '_xs'" data-bs-parent="#accordion-basic">
               <ul class="list-ul">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :class="{ 'currentRoute' : child.url == currentRoute }" :to="{ path :  '/' + child.url }" @click="closeCollapse(),routerEvent()"> {{ child.name }} </router-link>
+                  <a class="list-item" :class="{ 'currentRoute' : child.url == currentRoute }" @click="closeCollapse(),routerEvent(child.url)"> {{ child.name }} </a>
                 </li>
               </ul>
             </div>
         </template> 
         <template v-else>
-          <router-link class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" :to="{ path : '/' + item.url }" @click="closeCollapse(),routerEvent()">
+          <a class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" @click="closeCollapse(),routerEvent(item.url)">
             <i class="me-2" :class="item.icon"></i>
             {{ item.name }}
-          </router-link>
+          </a>
         </template>
       </li>
     </ul>
   </div>
 </template>
 <script>
-import { ref } from 'vue';
-import { mapState } from "vuex";
+import { computed, inject, onMounted, ref, watch } from 'vue';
+import { useStore  } from "vuex";
+import router from '@/router';
 import { Collapse,Offcanvas } from 'bootstrap/dist/js/bootstrap.bundle.js';
 export default {
-  inject:['reload'],
   setup() {
+    const reload = inject('reload');
+    const store = useStore()
     const offcanvas_ref = ref(null)
     const generic_template_xs = ref(null)
     const nssi_view_xs = ref(null)
-    return{
-      offcanvas_ref,
-      generic_template_xs,
-      nssi_view_xs
-    }
-  },
-  data() {
-    return {
-      offcanvas: '',
-      generic_template: '',
-      nssi_view: '',
-    }
-  },
-  computed: mapState({
-    currentWindowWidth: 'windowWidth',
-    currentRoute: 'currentRoute',
-    menuData: 'menuData',
-  }),
-  mounted() {
-    this.offcanvas = new Offcanvas(this.$refs.offcanvas_ref,{});
-    this.generic_template = new Collapse(this.$refs.generic_template_xs,{ toggle : false });
-    this.nssi_view = new Collapse(this.$refs.nssi_view_xs,{ toggle : false });
-  },
-  watch: {
-    currentWindowWidth: function (newVal) {
+    let offcanvas = ref('');
+    let generic_template = ref('');
+    let nssi_view = ref('');
+    let currentWindowWidth = computed(() => store.state.windowWidth);
+    let currentRoute =  computed(() => store.state.currentRoute);
+    let menuData =  computed(() => store.state.menuData);
+    watch(currentWindowWidth, (newVal)=>{
       if(newVal >= 576) {
-        this.closeCollapse();
+        closeCollapse();
       }
-    },
-  },
-  methods: {
-    routerEvent() {
-      this.reload();
-    },
-    routeStatus(url,route) {
-      const index = this.$store.state.menuData.findIndex(e => e.url == url);
-      if(this.$store.state.menuData[index].childNodes.findIndex(e => e.url == route) != -1)
+    })
+    onMounted(()=>{
+      offcanvas.value = new Offcanvas(offcanvas_ref.value,{});
+      generic_template.value = new Collapse(generic_template_xs.value,{ toggle : false });
+      nssi_view.value = new Collapse(nssi_view_xs.value,{ toggle : false });
+    })
+    const routerEvent = url => {
+      if(url == currentRoute.value)
+        reload();
+      else
+        router.push({ path : '/' + url });
+    }
+    const routeStatus = (url,route) => {
+      const index = menuData.value.findIndex(e => e.url == url);
+      if(menuData.value[index].childNodes.findIndex(e => e.url == route) != -1)
         return true;
       else
         return false;
-    },
-    closeCollapse() {
-      this.offcanvas.hide();
-      this.generic_template.hide();
-      this.nssi_view.hide();
-    },
+    }
+    const closeCollapse = () => {
+      offcanvas.value.hide();
+      generic_template.value.hide();
+      nssi_view.value.hide();
+    }
+    return{
+      offcanvas_ref,
+      generic_template_xs,
+      nssi_view_xs,
+      routerEvent,
+      routeStatus,
+      closeCollapse,
+      menuData,
+      currentRoute
+    }
   }
+
 }
 </script>
 <style scoped>
@@ -113,7 +114,6 @@ export default {
 }
 .currentRoute {
   font-weight: 800;
-  background-color: #e4e4e4;
 }
 .currentRoute:hover {
   background-color: #d3d3d3 !important;

@@ -10,7 +10,7 @@
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_md'" data-bs-parent="#sidebar-parent">
               <ul class="p-2">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" :to="{ path :  '/' + child.url }" @click="closeCollapse(),routerEvent()"> {{ child.name }} </router-link>
+                  <a class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" @click="closeCollapse(),routerEvent(child.url)"> {{ child.name }} </a>
                 </li>
               </ul>
             </div>
@@ -19,14 +19,14 @@
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_sm'" data-bs-parent="#sidebar-parent">
               <ul class="p-2">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <router-link class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" :to="{ path :  '/' + child.url }" @click="closeCollapse(),routerEvent()"> {{ child.name }} </router-link>
+                  <a class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" @click="closeCollapse(),routerEvent(child.url)"> {{ child.name }} </a>
                 </li>
               </ul>
             </div>
           </template>
         </template>
         <template v-else>
-          <router-link class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" :to="{ path : '/' + item.url }" @click="closeCollapse(),routerEvent()">{{ item.name }}</router-link>
+          <a class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" @click="closeCollapse(),routerEvent(item.url)">{{ item.name }}</a>
         </template>
       </li>
     </ul>
@@ -34,15 +34,17 @@
 </template>
 <script>
 import { ref } from 'vue';
+// import { inject, ref } from 'vue';
 import { mapState } from "vuex";
 import { Collapse } from 'bootstrap/dist/js/bootstrap.bundle.js'
 export default {
   inject:['reload'],
   setup() {
-    const generic_template_sm = ref(null)
-    const generic_template_md = ref(null)
-    const nssi_view_sm = ref(null)
-    const nssi_view_md = ref(null)
+    // const reload = inject('reload');
+    const generic_template_sm = ref(null);
+    const generic_template_md = ref(null);
+    const nssi_view_sm = ref(null);
+    const nssi_view_md = ref(null);
     return{
       generic_template_sm,generic_template_md,nssi_view_sm,nssi_view_md
     }
@@ -75,8 +77,11 @@ export default {
       else
         this.clickUrl = url;
     },
-    routerEvent() {
-      this.reload();
+    routerEvent(url) {
+      if(url == this.currentRoute)
+        this.reload();
+      else
+        this.$router.push({ path : '/' + url });
     },
     routeStatus(url,route) {
       const index = this.$store.state.menuData.findIndex(e => e.url == url);

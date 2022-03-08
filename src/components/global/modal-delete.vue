@@ -21,9 +21,9 @@
   </div>
 </template>
 <script>
+import { useI18n } from 'vue-i18n';
 import { onMounted, ref } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
-import { useI18n } from 'vue-i18n';
 export default {
   setup(props, { emit }) {
     const { t } = useI18n();
@@ -33,7 +33,7 @@ export default {
     const closeModalEvent = () => modal.value.hide();
     onMounted(() => {
       modal.value = new Modal(modal_delete.value, {});
-      modal_delete.value.addEventListener('hidden.bs.modal', function () {
+      modal_delete.value.addEventListener('hidden.bs.modal', () => {
         emit('remove');
       });
     })

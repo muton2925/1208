@@ -9,44 +9,33 @@
   <Header></Header>
   <Sidebar></Sidebar>
 </template>
-<script>
+<script setup>
+import { useStore } from 'vuex';
+import { useRoute } from 'vue-router';
+import { ref, watch, provide, nextTick, onMounted } from 'vue';
 import Header from "./components/global/header.vue";
 import Sidebar from "./components/global/sidebar.vue";
-export default {
-  components: {
-    Header,
-    Sidebar,
-  },
-  provide(){    
-    return {
-      reload: this.reload      
-    }
-  },
-  data() {
-    return {
-      isRouterAlive: true,
-    }
-  },
-  watch: {
-    $route() {
-      if(this.$route.path == '/')
-        this.$store.commit('changeRoute','dashboard');
-      else
-        this.$store.commit('changeRoute',this.$route.path.slice(1));
-    }
-  },
-  mounted() {
-    window.addEventListener("resize", () => {
-      this.$store.commit('changeWindowWidth');
-    });
-  },
-  methods: {
-    reload() {
-      this.isRouterAlive = false;
-      this.$nextTick( ()=> { this.isRouterAlive=true } ) 
-    }
-  }
+const store = useStore();
+const route = useRoute();
+const isRouterAlive = ref(true);
+const reload = () => {
+  isRouterAlive.value = false;
+  nextTick(() => {
+    isRouterAlive.value = true;
+  });
 };
+provide('reload', reload);
+watch(route, () => {
+  if(route.path == '/')
+    store.commit('changeRoute','dashboard');
+  else
+    store.commit('changeRoute', route.path.slice(1));
+});
+onMounted(() => {
+  window.addEventListener("resize", () => {
+    store.commit("changeWindowWidth");
+  });
+});
 </script>
 <style>
 ul {

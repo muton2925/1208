@@ -168,7 +168,6 @@ export default {
       showEntries: [10,50,100], // 每頁筆數列表
       currentPage: 1, // 當前頁數
       searchInput: '',
-      searchEntries: [],
       columns: this.column,
       entries: this.entrie,
       sortAsc: '',

@@ -160,7 +160,6 @@ export default {
     let showEntries = ref([10,50,100])// 每頁筆數列表
     let currentPage = ref(1) // 當前頁數
     let searchInput = ref('')
-    // let searchEntries = ref([])
     let columns = ref(column.value)
     let entries = ref(entrie.value)
     let sortAsc = ref('')
@@ -168,7 +167,7 @@ export default {
     let loadingStatus = ref(false)
     let Search = t('Search')
 
-        const loadingEvent = ()=> { // 表格 loading 效果
+    const loadingEvent = () => { // 表格 loading 效果
       loadingStatus.value = true;
       setTimeout(() => {
         loadingStatus.value = false;

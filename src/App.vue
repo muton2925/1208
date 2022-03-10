@@ -1,22 +1,28 @@
 <template>
-  <main>
-    <div class="grid-custom">
-      <div class="grid-main-custom" style="overflow: hidden;">
-        <router-view v-if="isRouterAlive"></router-view>
+  <template v-if="loginStatus">
+    <router-view></router-view>
+  </template>
+  <template v-else>
+    <main>
+      <div class="grid-custom">
+        <div class="grid-main-custom" style="overflow: hidden;">
+          <router-view v-if="isRouterAlive"></router-view>
+        </div>
       </div>
-    </div>
-  </main>
-  <Header></Header>
-  <Sidebar></Sidebar>
+    </main>
+    <Header></Header>
+    <Sidebar></Sidebar>
+  </template>
 </template>
 <script setup>
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
-import { ref, watch, provide, nextTick, onMounted } from 'vue';
+import { ref, watch, computed, provide, nextTick, onMounted } from 'vue';
 import Header from "./components/global/header.vue";
 import Sidebar from "./components/global/sidebar.vue";
 const store = useStore();
 const route = useRoute();
+const loginStatus = computed(() => store.state.loginStatus);
 const isRouterAlive = ref(true);
 const reload = () => {
   isRouterAlive.value = false;

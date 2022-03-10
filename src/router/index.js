@@ -11,6 +11,11 @@ const routes = [
     component: dashboard
   },
   {
+    path: '/login',
+    name: 'login',
+    component: () => import(/* webpackChunkName: "login" */ '../views/login.vue')
+  },
+  {
     path: '/nfv_mano_plugin',
     name: 'nfv_mano_plugin',
     component: () => import(/* webpackChunkName: "nfv_mano_plugin" */ '../views/nfv_mano_plugin.vue')

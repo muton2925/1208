@@ -3,6 +3,7 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     windowWidth: window.innerWidth,
+    loginStatus: true,
     currentRoute: '',
     menuData: [
       {
@@ -60,6 +61,9 @@ export default createStore({
     ],
   },
   mutations: {
+    changeLoginStatus(state) {
+      state.loginStatus = !state.loginStatus;
+    },
     changeWindowWidth(state) {
       state.windowWidth = window.innerWidth;
     },

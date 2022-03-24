@@ -40,9 +40,9 @@ export default {
     let offcanvas = ref('');
     let generic_template = ref('');
     let nssi_view = ref('');
-    let currentWindowWidth = computed(() => store.state.windowWidth);
-    let currentRoute =  computed(() => store.state.currentRoute);
-    let menuData =  computed(() => store.state.menuData);
+    const currentWindowWidth = computed(() => store.state.windowWidth);
+    const currentRoute =  computed(() => store.state.currentRoute);
+    const menuData =  computed(() => store.state.menuData);
     watch(currentWindowWidth, (newVal)=>{
       if(newVal >= 576) {
         closeCollapse();

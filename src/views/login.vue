@@ -1,13 +1,13 @@
 <template>
   <div class="d-flex flex-column min-vh-100" style="min-width: 500px;">
-    <div class="flex-grow-1 py-4">
-      <div class="d-flex flex-column mx-5 d-lg-block container-custom">
-        <div class="d-lg-inline-block align-top mx-auto text-center text-lg-start pe-lg-5 me-lg-3" style="width: 400px;">
+      <div class="flex-grow-1"></div>
+      <div class="d-flex flex-column mx-5 d-lg-block container-custom mb-8 mb-lg-0 pt-4 ">
+        <div class="d-lg-inline-block pt-30 align-middle mx-auto text-center text-lg-start pe-lg-5 me-lg-3" style="width: 400px;">
           <img class="login_icon" src="@/assets/free5gmano_icon.png" alt="free5gmano_icon"/>
           <h2 class="login_title">Free5g Mano，讓你和親朋好友保持聯繫，隨時分享生活中的每一刻。</h2>
         </div>
-        <div class="d-lg-inline-block align-top mx-auto text-center float-lg-end">
-          <div class="bg-white shadow rounded mt-4 p-3" style="width: 400px;">
+        <div class="d-lg-inline-block mt-5 mt-lg-0 mx-auto text-center float-lg-end">
+          <div class="bg-white shadow rounded mt-4 mt-lg-0 p-3" style="width: 400px;">
             <input class="form-control form-control-lg mb-3" type="email" placeholder="電子郵件地址">
             <input class="form-control form-control-lg mb-3" type="password" placeholder="密碼">
             <button class="w-100 btn btn-primary btn-lg text-white mb-3" @click="a">登入</button>
@@ -17,7 +17,8 @@
           </div>
         </div>
       </div>
-    </div>
+  
+    <div class="flex-grow-1"></div>
   </div>
 <ModalRegister></ModalRegister>
 </template>
@@ -53,6 +54,12 @@ const a = () => {
   display: flex;
   margin: 16px 0px 22px 0px;
   border-bottom: 1px solid #dadde1;
+}
+.mb-8 {
+    margin-bottom: 8rem;
+}
+.pt-30{
+    padding-top: 30px;
 }
 @media (min-width: 1075px) {
  .container-custom {

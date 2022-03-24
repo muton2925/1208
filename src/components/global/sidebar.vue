@@ -33,79 +33,83 @@
   </aside>
 </template>
 <script>
-import { ref } from 'vue';
-// import { inject, ref } from 'vue';
-import { mapState } from "vuex";
+import { ref, computed, watch, inject} from 'vue';
+import { useStore  } from "vuex";
+import { useRouter } from 'vue-router';
 import { Collapse } from 'bootstrap/dist/js/bootstrap.bundle.js'
 export default {
   inject:['reload'],
   setup() {
-    // const reload = inject('reload');
+    const reload = inject('reload');
+    const store = useStore();
+    const router = useRouter();
+
     const generic_template_sm = ref(null);
     const generic_template_md = ref(null);
     const nssi_view_sm = ref(null);
     const nssi_view_md = ref(null);
-    return{
-      generic_template_sm,generic_template_md,nssi_view_sm,nssi_view_md
-    }
-  },
-  data() {
-    return {
-      clickUrl: '',
-      generic_template_md_ref: '',
-      generic_template_sm_ref: '',
-      nssi_view_md_ref: '',
-      nssi_view_sm_ref: '',
-    };
-  },
-  computed: mapState({
-    currentWindowWidth: 'windowWidth',
-    currentRoute: 'currentRoute',
-    menuData: 'menuData',
-  }),
-  watch: {
-    currentWindowWidth(newVal) {
+    const clickUrl = ref('');
+    const generic_template_md_ref = ref('');
+    const generic_template_sm_ref = ref('');
+    const nssi_view_md_ref = ref('');
+    const nssi_view_sm_ref = ref('');
+    const currentWindowWidth = computed(() => store.state.windowWidth);
+    const currentRoute =  computed(() => store.state.currentRoute);
+    const menuData =  computed(() => store.state.menuData);
+    watch(currentWindowWidth, (newVal) => {
       if(newVal < 768) {
-        this.clickUrl = '';
+        clickUrl.value = '';
       }
+    })
+    const url = url => {
+      if(url == clickUrl.value)
+        clickUrl.value = '';
+      else
+        clickUrl.value = url;
     }
-  },
-  methods: {
-    url(url) {
-      if(url == this.clickUrl)
-        this.clickUrl = '';
+    const routerEvent = url => {
+      if(url == currentRoute.value)
+        reload();
       else
-        this.clickUrl = url;
-    },
-    routerEvent(url) {
-      if(url == this.currentRoute)
-        this.reload();
-      else
-        this.$router.push({ path : '/' + url });
-    },
-    routeStatus(url,route) {
-      const index = this.$store.state.menuData.findIndex(e => e.url == url);
-      if(this.$store.state.menuData[index].childNodes.findIndex(e => e.url == route) != -1)
+        router.push({ path : '/' + url });
+    }
+    const routeStatus = (url,route) => {
+      const index = menuData.value.findIndex(e => e.url == url);
+      if(menuData.value[index].childNodes.findIndex(e => e.url == route) != -1)
         return true;
       else
         return false;
-    },
-    closeCollapse() {
-      if(this.currentWindowWidth >= 768) {
-        this.clickUrl = '';
-        this.generic_template_md_ref = new Collapse(this.$refs.generic_template_md,{ toggle: false })
-        this.nssi_view_md_ref = new Collapse(this.$refs.nssi_view_md,{ toggle: false })
-        this.generic_template_md_ref.hide();
-        this.nssi_view_md_ref.hide();
+    }
+    const closeCollapse = () => {
+      if(currentWindowWidth.value >= 768) {
+        clickUrl.value = '';
+        generic_template_md_ref.value = new Collapse(generic_template_md.value,{ toggle: false })
+        nssi_view_md_ref.value = new Collapse(nssi_view_md.value,{ toggle: false })
+        generic_template_md_ref.value.hide();
+        nssi_view_md_ref.value.hide();
       }
       else {
-        this.generic_template_sm_ref = new Collapse(this.$refs.generic_template_sm,{ toggle: false })
-        this.nssi_view_sm_ref = new Collapse(this.$refs.nssi_view_sm,{ toggle: false })
-        this.generic_template_sm_ref.hide();
-        this.nssi_view_sm_ref.hide();
+        generic_template_sm_ref.value = new Collapse(generic_template_sm.value,{ toggle: false })
+        nssi_view_sm_ref.value = new Collapse(nssi_view_sm.value,{ toggle: false })
+        generic_template_sm_ref.value.hide();
+        nssi_view_sm_ref.value.hide();
       }
     }
+    return{
+      generic_template_sm,
+      generic_template_md,
+      nssi_view_sm,nssi_view_md,
+      clickUrl,
+      routerEvent,
+      url,
+      routeStatus,
+      closeCollapse,
+      menuData,
+      currentWindowWidth,
+      currentRoute
+    }
   }
+ 
 }
 </script>
 <style scoped>

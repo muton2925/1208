@@ -24,6 +24,7 @@
               <label for="password_confirm" class="form-label">再次輸入密碼 :</label>
               <input type="password" class="form-control input-custom" id="password_confirm" placeholder="再次輸入密碼">
             </div>
+
             <div class="text-center my-1">
               <button class="btn btn-success px-5" data-bs-toggle="modal" data-bs-target="#register_Modal">註 冊</button>
             </div>

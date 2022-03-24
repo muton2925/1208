@@ -5,7 +5,7 @@
         <h3>
           <slot name="header"></slot>
         </h3>
-        <button v-if="btn" class="btn btn-primary ms-3 text-white" data-bs-toggle="modal" data-bs-target="#create_plugin_Modal">
+        <button v-if="showBtn" class="btn btn-primary ms-3 text-white" data-bs-toggle="modal" data-bs-target="#create_plugin_Modal">
           <i class="d-sm-none bi bi-folder-plus"></i>
           <span class="d-none d-sm-inline">
             <slot name="button"></slot>
@@ -146,34 +146,136 @@
 </template>
 <script>
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue';
+import { computed, ref, toRefs, watch } from 'vue';
 import { $array } from 'alga-js';
 import { defineAsyncComponent } from 'vue';
+import {useStore} from 'vuex';
 const Modalpage = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ './modal-page.vue'));
 export default {
-  setup(props) {
-    const btn = ref(props.showBtn)
-    const { t } = useI18n()
+  setup(props,{ emit }) {
+    const {  column, entrie, columnSort, status } = toRefs(props);
+    const store = useStore()
+    const { t } = useI18n();
+    let currentEntries = ref(10)// 當前每頁筆數
+    let showEntries = ref([10,50,100])// 每頁筆數列表
+    let currentPage = ref(1) // 當前頁數
+    let searchInput = ref('')
+    let columns = ref(column.value)
+    let entries = ref(entrie.value)
+    let sortAsc = ref('')
+    let sortDesc = ref('')
+    let loadingStatus = ref(false)
     let Search = t('Search')
+
+    const loadingEvent = () => { // 表格 loading 效果
+      loadingStatus.value = true;
+      setTimeout(() => {
+        loadingStatus.value = false;
+      },500)
+    }
+    const columnNumber = computed(() => { return column.value.length });
+    const currentWindowWidth = computed(() => { return store.state.windowWidth });
+    const pageStatus = computed(() => { return status.value });
+    const allPages = computed(() => { 
+        if(entries.value.length != 0)
+          return $array.pages(entries.value, currentEntries.value);
+        else
+          return 1;
+      });
+    const filterEntries = computed(() => { 
+        loadingEvent();
+        return $array.paginate(entries.value, currentPage.value, currentEntries.value); 
+      });
+    const showInfo = computed(() => { return $array.pageInfo(entries.value, currentPage.value, currentEntries.value); });
+    const showPagination = computed(() => { return $array.pagination(allPages.value, currentPage.value, 2); });
+    watch(entrie, (newVal)=> {
+        searchInput.value = '';
+        entries.value = newVal;
+        entries.value = $array.searchBy(entries.value, [searchInput.value], columnSort.value);
+        if(sortAsc.value != '') {
+          entries.value = $array.sortBy(entries.value, sortAsc.value, 'asc');
+        }
+        if(sortDesc.value != '') {
+          entries.value = $array.sortBy(entries.value, sortDesc.value, 'desc'); 
+        }
+    }, {
+      deep: true
+    })
+    watch(filterEntries, (newVal) => {
+      if(newVal.length == 0 && currentPage.value != 1)
+        currentPage.value -= 1 ;
+      emit('update', newVal);
+    }, {
+      deep: true
+    })
+
+
+    const paginateEntries = () => {  // 換筆數事件
+      currentPage.value = 1;
+    }
+    const searchEvent = () => { // 搜尋事件
+      currentPage.value = 1;
+      entries.value = $array.searchBy(entrie.value, [searchInput.value], columnSort.value);
+      if(sortAsc.value != '') {
+        entries.value = $array.sortBy(entries.value, sortAsc.value, 'asc');
+      }
+      if(sortDesc.value != '') {
+        entries.value = $array.sortBy(entries.value, sortDesc.value, 'desc'); 
+      }
+    }
+    const paginateEvent = page => { // 換頁事件
+      if(page != '...')
+        currentPage.value = page;
+    }
+    const sortableColumn = name => { // 判斷各個 TH 是否能做排序
+      return columnSort.value.includes(name);
+    }
+    const sortColumn = name => { // 排序事件
+      if(sortableColumn(name)){
+        if(sortAsc.value == name){
+          entries.value = $array.sortBy(entries.value, name , 'desc');
+          sortAsc.value = '';
+          sortDesc.value = name;
+        }
+        else{
+          entries.value = $array.sortBy(entries.value, name , 'asc');
+          sortAsc.value = name;
+          sortDesc.value = '';
+        }
+      }
+    }
+    const switchPage = val => {
+      currentPage.value =  val;
+    }
     return {
-      btn,t,Search
+      t,
+      Search,
+      entries,
+      currentEntries,
+      switchPage,
+      sortColumn,
+      searchInput,
+      paginateEvent,
+      paginateEntries,
+      searchEvent,
+      showEntries,
+      columns,
+      columnNumber,
+      currentWindowWidth,
+      pageStatus,
+      showPagination,
+      showInfo,
+      sortAsc,
+      sortDesc,
+      loadingStatus,
+      allPages,
+      filterEntries,
+      sortableColumn,
+      currentPage
     }
   },
   components: {
     Modalpage
-  },
-  data() {
-    return {
-      currentEntries: 10, // 當前每頁筆數
-      showEntries: [10,50,100], // 每頁筆數列表
-      currentPage: 1, // 當前頁數
-      searchInput: '',
-      columns: this.column,
-      entries: this.entrie,
-      sortAsc: '',
-      sortDesc: '',
-      loadingStatus: false,
-    }
   },
   props:{
     showBtn:{
@@ -194,102 +296,6 @@ export default {
       typeof: Boolean,
       default: false
     },
-  },
-  computed: {
-    columnNumber() {
-      return this.column.length;
-    },
-    currentWindowWidth() {
-      return this.$store.state.windowWidth;
-    },
-    pageStatus() {
-      return this.status;
-    },
-    allPages() {
-      if(this.entries.length != 0)
-        return $array.pages(this.entries, this.currentEntries);
-      else
-        return 1;
-    },
-    filterEntries() {
-      this.loadingEvent();
-      return $array.paginate(this.entries, this.currentPage, this.currentEntries); // paginate ( 所有資料 , 當前頁數 , 每頁幾筆 );
-    },
-    showInfo() {
-      return $array.pageInfo(this.entries, this.currentPage, this.currentEntries); // pageInfo ( 所有資料 , 當前頁數 , 每頁幾筆 )
-    },
-    showPagination() {
-      return $array.pagination(this.allPages, this.currentPage, 2);  // pagination ( 全部頁數 , 目前頁數 , 差多少頁會顯示 ... )
-    },
-  },
-  watch: {
-    entrie: {
-      handler: function(newVal) {
-        this.searchInput = '';
-        this.entries = newVal;
-        this.entries = $array.searchBy(this.entries, [this.searchInput], this.columnSort);
-        if(this.sortAsc != '') {
-          this.entries = $array.sortBy(this.entries, this.sortAsc, 'asc');
-        }
-        if(this.sortDesc != '') {
-          this.entries = $array.sortBy(this.entries, this.sortDesc, 'desc'); 
-        }
-      },
-      deep: true
-    },
-    filterEntries: {
-      handler: function(newVal) {
-        if(newVal.length == 0 && this.currentPage != 1)
-          this.currentPage -= 1 ;
-        this.$emit('update', newVal);
-      },
-      deep: true,
-    }
-  },
-  methods: {
-    loadingEvent() { // 表格 loading 效果
-      this.loadingStatus = true;
-      setTimeout(() => {
-        this.loadingStatus = false;
-      },500)
-    },
-    paginateEntries() {  // 換筆數事件
-      this.currentPage = 1;
-    },
-    searchEvent() { // 搜尋事件
-      this.currentPage = 1;
-      this.entries = $array.searchBy(this.entrie, [this.searchInput], this.columnSort);
-      if(this.sortAsc != '') {
-        this.entries = $array.sortBy(this.entries, this.sortAsc, 'asc');
-      }
-      if(this.sortDesc != '') {
-        this.entries = $array.sortBy(this.entries, this.sortDesc, 'desc'); 
-      }
-    },
-    paginateEvent(page) { // 換頁事件
-      if(page != '...')
-        this.currentPage = page;
-    },
-    sortableColumn(name) { // 判斷各個 TH 是否能做排序
-      return this.columnSort.includes(name);
-    },
-    sortColumn(name) { // 排序事件
-      if(this.sortableColumn(name)){
-        if(this.sortAsc == name){
-          this.entries = $array.sortBy(this.entries, name , 'desc');
-          this.sortAsc = '';
-          this.sortDesc = name;
-        }
-        else{
-          this.entries = $array.sortBy(this.entries, name , 'asc');
-          this.sortAsc = name;
-          this.sortDesc = '';
-        }
-      }
-    },
-    switchPage(val) {
-      this.currentPage = val;
-    }
   }
 }
 </script>

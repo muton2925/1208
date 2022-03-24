@@ -24,6 +24,15 @@ const store = useStore();
 const route = useRoute();
 const loginStatus = computed(() => store.state.loginStatus);
 const isRouterAlive = ref(true);
+const info = sessionStorage.getItem('token');
+if (info) {
+  const token = JSON.parse(info).token;
+  console.log("sss")
+  // 如果token不為空，且確實有這個欄位則讓路由變更
+  if (token.length > 0 || token !== undefined) {
+    store.commit("changeLoginStatus");
+  } 
+}
 const reload = () => {
   isRouterAlive.value = false;
   nextTick(() => {

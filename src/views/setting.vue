@@ -6,12 +6,14 @@
 {{t('show')}}
 </template>
 <script setup>
-
-import { watch ,ref} from 'vue';
+import { useStore } from 'vuex';
+import { watch, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 const { t, locale } = useI18n()
-let loc = ref('en')
+const store = useStore();
+let loc = ref(store.state.localeLang)
 watch(loc,()=>{
+    store.commit("changeLocaleLang", loc.value);
     locale.value = loc.value
 })
 </script>

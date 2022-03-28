@@ -59,6 +59,7 @@ export default createStore({
         ],
       },
     ],
+    localeLang:''
   },
   mutations: {
     changeLoginStatus(state) {
@@ -69,6 +70,9 @@ export default createStore({
     },
     changeRoute(state,payload) {
       state.currentRoute = payload;
+    },
+    changeLocaleLang(state,payload) {
+      state.localeLang = payload;
     },
   },
   actions: {

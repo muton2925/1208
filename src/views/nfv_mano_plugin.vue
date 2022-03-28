@@ -14,6 +14,14 @@
         <td class="tablecell-custom">{{ item.name }}</td>
         <td class="tablecell-custom">{{ item.allocate_nssi }}</td>
         <td class="tablecell-custom">{{ item.deallocate_nssi }}</td>
+        <!-- <td class="w-0">
+          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="get_plugin_name(item.name)">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+              <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
+            </div>
+          </div>
+        </td> -->
         <td class="w-0">
           <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="get_plugin_name(item.name)">
             <i class="bi bi-wrench"></i>
@@ -102,18 +110,16 @@
   <Alert ref="alertRef" v-show="alertExist"></Alert>
 </template>
 <script setup>
-  import { computed, onBeforeMount, ref, watch, toRefs } from 'vue';
-  import { Share } from '../assets/js/api';
-  import { defineAsyncComponent } from 'vue';
-  import { nfv_mano_plugin } from '../assets/js/api';
-  import Table from '../components/global/table.vue';
   import { useI18n } from 'vue-i18n';
   import { delay } from '../assets/js/delay';
   import { form } from '../assets/js/newFormData';
+  import Table from '../components/global/table.vue';
+  import { alertConfig } from '../assets/js/alertData';
+  import { closeModal } from '../assets/js/closeModel';
+  import { Share, nfv_mano_plugin } from '../assets/js/api';
+  import { ref, toRefs, watch, computed, onBeforeMount, defineAsyncComponent } from 'vue';
   import { callCreate, callUpdate, callDelete, calldownload } from '../assets/js/templateOperate';
   import { text_invalidated, file_invalidated, file_Validate, text_Validate } from '../assets/js/validate';
-  import { closeModal } from '../assets/js/closeModel';
-  import { alertConfig } from '../assets/js/alertData';
   const { PluginList } = Share();
   const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
   const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
@@ -138,17 +144,16 @@
   const columnSort = ref(['name','allocate_nssi','dellocate_nssi']);
   const { alertRef, alertExist } = toRefs(alertConfig);
   let placeholder;
-  let td_list =  ref([])
+  let td_list = ref([])
   let status = ref(false)
   let fileName = ref('')
-  
-  if(locale.value == 'en'){
+
+  if(locale.value == 'en') 
     placeholder = `${t('Please')}${t('enter',['a '])}${t('Plugin')}${t('Name')}`
-  }else{
+  else 
     placeholder = `${t('Please')}${t('enter')}${t('Plugin')}${t('Name')}`
-  }
   
-  onBeforeMount(async ()=> {
+  onBeforeMount(async () => {
     try {
       await getTableData();
     }
@@ -158,13 +163,12 @@
     await delay(700);
     status.value = true;
   })
-  
-  const repeatName = computed(()=>{
+  const repeatName = computed(() => {
     return td_list.value.map(e => { return e.name }).includes(fileName.value)
   })   
   
-  watch(fileName,()=>{ text_invalidated.value = false; })
-  watch(fileData,()=>{ file_invalidated.value = false; })
+  watch(fileName, () => { text_invalidated.value = false; })
+  watch(fileData, () => { file_invalidated.value = false; })
   
   const getTableData = async () => { // 顯示 Table 資料
     const res = await PluginList();
@@ -176,37 +180,37 @@
    // 更新 Update Modal 內檔案
   const getFileData = e => { fileData.value = e.target.files; }
   const create_Validate = () => { 
-    const textValidate = text_Validate( [repeatName.value, fileName.value] );
-    const fileValidate = file_Validate( fileData.value[0] );
+    const textValidate = text_Validate([repeatName.value, fileName.value]);
+    const fileValidate = file_Validate(fileData.value[0]);
     const validate = textValidate && fileValidate; 
     return validate
   }
-  const  create_plugin_modal = () => { // 點擊 Create Modal 內創建按鈕
+  const create_plugin_modal = () => { // 點擊 Create Modal 內創建按鈕
     const createValidate = create_Validate()
     if(createValidate) {
-      const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]] );
+      const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]]);
       const alertData = {
         Template: `NFV MANO ${t('Plugin')}`,
-        configSuccess:  t('created'),
-        configUnsuccess:  t('create'),
+        configSuccess: t('created'),
+        configUnsuccess: t('create'),
       }
-      callCreate( formData, [createPluginList, getTableData], alertData );
+      callCreate(formData, [createPluginList, getTableData], alertData);
       closeModal(modalCreate.value);
     }
   }
   const update_plugin_validate = () => { 
-    const fileValidate = file_Validate( fileData.value[0] );
+    const fileValidate = file_Validate(fileData.value[0]);
     return fileValidate
   }
-  const get_plugin_name = name =>  { fileName.value = name; }
+  const get_plugin_name = name => { fileName.value = name; }
   const update_plugin_modal = () => { // 點擊 Update Modal 內更新按鈕
     const updateValidate = update_plugin_validate()
     if(updateValidate) {
       const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]]);
       const alertData = {
         Template: `NFV MANO ${t('Plugin')}`,
-        configSuccess:  t('updated'),
-        configUnsuccess:  t('update'),
+        configSuccess: t('updated'),
+        configUnsuccess: t('update'),
       }
       callUpdate([fileName.value, formData], [updatePlugin, getTableData], alertData);
       closeModal(modalUpdate.value);
@@ -215,8 +219,8 @@
   const delete_plugin_modal = () => { // 點擊 Delete Modal 內刪除按鈕
       const alertData = {
         Template: `NFV MANO ${t('Plugin')}`,
-        configSuccess:  t('deleted'),
-        configUnsuccess:  t('delete'),
+        configSuccess: t('deleted'),
+        configUnsuccess: t('delete'),
       }
     callDelete(fileName.value, [deletePlugin, getTableData], alertData)
   }
@@ -242,13 +246,9 @@
   const download_template_button = file => { // 點擊 Download Modal 按鈕
     const alertData = {
       Template: `NFV MANO ${t('Plugin')}`,
-      configSuccess:  t('downloaded '),
-      configUnsuccess:  t('download'),
+      configSuccess: t('downloaded '),
+      configUnsuccess: t('download'),
     }
     calldownload(file, alertData)
-    
   }
-
-
-
 </script>

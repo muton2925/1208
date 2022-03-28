@@ -179,7 +179,7 @@ const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Moda
     const modalCreate = ref(null)
     const modalUpdate = ref(null)
     const uploadData_update = ref(null)
-    const {t} = useI18n();
+    const { t } = useI18n();
     const th_list = [
         { name: "templateId", text: t("ID") },
         { name: "name", text: `${t("Template")}${t("Name")}` },

@@ -35,7 +35,7 @@ const a = () => {
     'token':123
   })
   sessionStorage.setItem("token", token);
-  router.replace({
+  router.push({
     path: '/dashboard'
   }); 
 };

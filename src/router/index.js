@@ -64,11 +64,11 @@ const routes = [
     meta: { requireAuth: true },
     component: () => import(/* webpackChunkName: "nssi_topology" */ '../views/setting.vue')
   },  
-  {
-    path: '*',
-    redirect: '/404',
-    hidden: true
-  }
+  // {
+  //   path: '*',
+  //   redirect: '/404',
+  //   hidden: true
+  // }
 ]
 
 const router = createRouter({

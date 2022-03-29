@@ -110,145 +110,145 @@
   <Alert ref="alertRef" v-show="alertExist"></Alert>
 </template>
 <script setup>
-  import { useI18n } from 'vue-i18n';
-  import { delay } from '../assets/js/delay';
-  import { form } from '../assets/js/newFormData';
-  import Table from '../components/global/table.vue';
-  import { alertConfig } from '../assets/js/alertData';
-  import { closeModal } from '../assets/js/closeModel';
-  import { Share, nfv_mano_plugin } from '../assets/js/api';
-  import { ref, toRefs, watch, computed, onBeforeMount, defineAsyncComponent } from 'vue';
-  import { callCreate, callUpdate, callDelete, calldownload } from '../assets/js/templateOperate';
-  import { text_invalidated, file_invalidated, file_Validate, text_Validate } from '../assets/js/validate';
-  const { PluginList } = Share();
-  const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
-  const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
-  const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
-  const Modalupdate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalupdate" */ '../components/global/modal-update.vue'));
-  const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Modaldelete" */ '../components/global/modal-delete.vue'));
-  const modalCreate = ref(null)
-  const modalUpdate = ref(null)
-  const uploadData_create = ref(null)
-  const uploadData_update = ref(null)
-  const { t, locale } = useI18n()
-  const th_list = [
-      { name: "name", text: `${t("Plugin")}${t("Name")}` },
-      { name: "allocate_nssi", text: `${t("Allocate")}NSSI${t("File")}` },
-      { name: "dellocate_nssi", text: `${t("Deallocate")}NSSI${t("File")}` },
-      { name: "update_plugin", text: t("Update") },
-      { name: "plugin_file", text: t("Download") },
-      { name: "delete_plugin", text: t("Delete") },
-    ];
-  const fileData = ref({});
-  const filterEntries = ref([]);
-  const columnSort = ref(['name','allocate_nssi','dellocate_nssi']);
-  const { alertRef, alertExist } = toRefs(alertConfig);
-  let placeholder;
-  let td_list = ref([])
-  let status = ref(false)
-  let fileName = ref('')
+import { useI18n } from 'vue-i18n';
+import { delay } from '../assets/js/delay';
+import { form } from '../assets/js/newFormData';
+import Table from '../components/global/table.vue';
+import { alertConfig } from '../assets/js/alertData';
+import { closeModal } from '../assets/js/closeModel';
+import { Share, nfv_mano_plugin } from '../assets/js/api';
+import { ref, toRefs, watch, computed, onBeforeMount, defineAsyncComponent } from 'vue';
+import { callCreate, callUpdate, callDelete, calldownload } from '../assets/js/templateOperate';
+import { text_invalidated, file_invalidated, file_Validate, text_Validate } from '../assets/js/validate';
+const { PluginList } = Share();
+const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
+const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
+const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
+const Modalupdate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalupdate" */ '../components/global/modal-update.vue'));
+const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Modaldelete" */ '../components/global/modal-delete.vue'));
+const modalCreate = ref(null)
+const modalUpdate = ref(null)
+const uploadData_create = ref(null)
+const uploadData_update = ref(null)
+const { t, locale } = useI18n()
+const th_list = [
+  { name: "name", text: `${t("Plugin")}${t("Name")}` },
+  { name: "allocate_nssi", text: `${t("Allocate")}NSSI${t("File")}` },
+  { name: "dellocate_nssi", text: `${t("Deallocate")}NSSI${t("File")}` },
+  { name: "update_plugin", text: t("Update") },
+  { name: "plugin_file", text: t("Download") },
+  { name: "delete_plugin", text: t("Delete") },
+];
+const fileData = ref({});
+const filterEntries = ref([]);
+const columnSort = ref(['name','allocate_nssi','dellocate_nssi']);
+const { alertRef, alertExist } = toRefs(alertConfig);
+let placeholder;
+let td_list = ref([])
+let status = ref(false)
+let fileName = ref('')
 
-  if(locale.value == 'en') 
-    placeholder = `${t('Please')}${t('enter',['a '])}${t('Plugin')}${t('Name')}`
-  else 
-    placeholder = `${t('Please')}${t('enter')}${t('Plugin')}${t('Name')}`
+if(locale.value == 'en') 
+  placeholder = `${t('Please')}${t('enter',['a '])}${t('Plugin')}${t('Name')}`
+else 
+  placeholder = `${t('Please')}${t('enter')}${t('Plugin')}${t('Name')}`
   
-  onBeforeMount(async () => {
-    try {
-      await getTableData();
-    }
-    catch(err) {
-      console.log(err);
-    }
-    await delay(700);
-    status.value = true;
-  })
-  const repeatName = computed(() => {
-    return td_list.value.map(e => { return e.name }).includes(fileName.value)
-  })   
-  
-  watch(fileName, () => { text_invalidated.value = false; })
-  watch(fileData, () => { file_invalidated.value = false; })
-  
-  const getTableData = async () => { // 顯示 Table 資料
-    const res = await PluginList();
-    td_list.value = [];
-    for(let i of res.data) {     
-      td_list.value.push(i);
-    }
+onBeforeMount(async () => {
+  try {
+    await getTableData();
   }
+  catch(err) {
+    console.log(err);
+  }
+  await delay(700);
+  status.value = true;
+})
+const repeatName = computed(() => {
+  return td_list.value.map(e => { return e.name }).includes(fileName.value)
+})   
+  
+watch(fileName, () => { text_invalidated.value = false; })
+watch(fileData, () => { file_invalidated.value = false; })
+  
+const getTableData = async () => { // 顯示 Table 資料
+  const res = await PluginList();
+  td_list.value = [];
+  for(let i of res.data) {     
+    td_list.value.push(i);
+  }
+}
    // 更新 Update Modal 內檔案
-  const getFileData = e => { fileData.value = e.target.files; }
-  const create_Validate = () => { 
-    const textValidate = text_Validate([repeatName.value, fileName.value]);
-    const fileValidate = file_Validate(fileData.value[0]);
-    const validate = textValidate && fileValidate; 
-    return validate
-  }
-  const create_plugin_modal = () => { // 點擊 Create Modal 內創建按鈕
-    const createValidate = create_Validate()
-    if(createValidate) {
-      const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]]);
-      const alertData = {
-        Template: `NFV MANO ${t('Plugin')}`,
-        configSuccess: t('created'),
-        configUnsuccess: t('create'),
-      }
-      callCreate(formData, [createPluginList, getTableData], alertData);
-      closeModal(modalCreate.value);
-    }
-  }
-  const update_plugin_validate = () => { 
-    const fileValidate = file_Validate(fileData.value[0]);
-    return fileValidate
-  }
-  const get_plugin_name = name => { fileName.value = name; }
-  const update_plugin_modal = () => { // 點擊 Update Modal 內更新按鈕
-    const updateValidate = update_plugin_validate()
-    if(updateValidate) {
-      const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]]);
-      const alertData = {
-        Template: `NFV MANO ${t('Plugin')}`,
-        configSuccess: t('updated'),
-        configUnsuccess: t('update'),
-      }
-      callUpdate([fileName.value, formData], [updatePlugin, getTableData], alertData);
-      closeModal(modalUpdate.value);
-    }
-  }
-  const delete_plugin_modal = () => { // 點擊 Delete Modal 內刪除按鈕
-      const alertData = {
-        Template: `NFV MANO ${t('Plugin')}`,
-        configSuccess: t('deleted'),
-        configUnsuccess: t('delete'),
-      }
-    callDelete(fileName.value, [deletePlugin, getTableData], alertData)
-  }
-  const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
-    filterEntries.value = val;
-  }
-  const removeCreateData = () => { // 關閉 Create Modal
-    fileName.value = '';
-    fileData.value = {};
-    text_invalidated.value = false;
-    file_invalidated.value = false;
-    uploadData_create.value.value = null;
-  }
-  const removeUpdateData = () => { // 關閉 Update Modal
-    fileName.value = '';
-    fileData.value = {};
-    file_invalidated.value = false;
-    uploadData_update.value.value = null; 
-  }
-  const removeDeleteData = () => { // 關閉 Delete Modal
-    fileName.value = '';
-  }
-  const download_template_button = file => { // 點擊 Download Modal 按鈕
+const getFileData = e => { fileData.value = e.target.files; }
+const create_Validate = () => { 
+  const textValidate = text_Validate([repeatName.value, fileName.value]);
+  const fileValidate = file_Validate(fileData.value[0]);
+  const validate = textValidate && fileValidate; 
+  return validate
+}
+const create_plugin_modal = () => { // 點擊 Create Modal 內創建按鈕
+  const createValidate = create_Validate()
+  if(createValidate) {
+    const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]]);
     const alertData = {
       Template: `NFV MANO ${t('Plugin')}`,
-      configSuccess: t('downloaded '),
-      configUnsuccess: t('download'),
+      configSuccess: t('created'),
+      configUnsuccess: t('create'),
     }
-    calldownload(file, alertData)
+    callCreate(formData, [createPluginList, getTableData], alertData);
+    closeModal(modalCreate.value);
   }
+}
+const update_plugin_validate = () => { 
+  const fileValidate = file_Validate(fileData.value[0]);
+  return fileValidate
+}
+const get_plugin_name = name => { fileName.value = name; }
+const update_plugin_modal = () => { // 點擊 Update Modal 內更新按鈕
+  const updateValidate = update_plugin_validate()
+  if(updateValidate) {
+    const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]]);
+    const alertData = {
+      Template: `NFV MANO ${t('Plugin')}`,
+      configSuccess: t('updated'),
+      configUnsuccess: t('update'),
+    }
+    callUpdate([fileName.value, formData], [updatePlugin, getTableData], alertData);
+    closeModal(modalUpdate.value);
+  }
+}
+const delete_plugin_modal = () => { // 點擊 Delete Modal 內刪除按鈕
+    const alertData = {
+      Template: `NFV MANO ${t('Plugin')}`,
+      configSuccess: t('deleted'),
+      configUnsuccess: t('delete'),
+    }
+  callDelete(fileName.value, [deletePlugin, getTableData], alertData)
+}
+const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
+  filterEntries.value = val;
+}
+const removeCreateData = () => { // 關閉 Create Modal
+  fileName.value = '';
+  fileData.value = {};
+  text_invalidated.value = false;
+  file_invalidated.value = false;
+  uploadData_create.value.value = null;
+}
+const removeUpdateData = () => { // 關閉 Update Modal
+  fileName.value = '';
+  fileData.value = {};
+  file_invalidated.value = false;
+  uploadData_update.value.value = null; 
+}
+const removeDeleteData = () => { // 關閉 Delete Modal
+  fileName.value = '';
+}
+const download_template_button = file => { // 點擊 Download Modal 按鈕
+  const alertData = {
+    Template: `NFV MANO ${t('Plugin')}`,
+    configSuccess: t('downloaded '),
+    configUnsuccess: t('download'),
+  }
+  calldownload(file, alertData)
+}
 </script>

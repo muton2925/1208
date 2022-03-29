@@ -18,6 +18,11 @@
         <td class="tablecell-custom">{{ item.description }}</td>
         <td class="tablecell-custom">{{ item.nfvoType }}</td>
         <td class="w-0">
+          <div class="d-flex justify-content-center form-check form-switch mb-0">
+            <input class="form-check-input cursor-pointer" type="checkbox" role="switch" checked>
+          </div>
+        </td>
+        <td class="w-0">
           <div class="d-flex justify-content-center align-items-center text-white bg-info rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#show_plugin_Modal" @click="show_template_button(item)">
             <i class="bi bi-file-text-fill"></i>
           </div>
@@ -229,6 +234,7 @@ const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Moda
         { name: "templateId", text: t("ID") },
         { name: "description", text: t("Description") },
         { name: "nfvoType", text: t("NFVO") },
+        { name: "template_share", text: `分 享` },
         { name: "template_list", text: t("Template") },
         { name: "allocate_nssi", text: t("Allocate") },
         { name: "delete_template", text: t("Delete") },

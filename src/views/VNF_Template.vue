@@ -21,6 +21,11 @@
         <td class="tablecell-custom">{{ item.nfvoType }}</td>
         <td class="tablecell-custom">{{ item.operationStatus }}</td>
         <td class="w-0">
+          <div class="d-flex justify-content-center form-check form-switch mb-0">
+            <input class="form-check-input cursor-pointer" type="checkbox" role="switch" checked>
+          </div>
+        </td>
+        <td class="w-0">
           <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="update_template_button(item.templateId,item.nfvoType)">
             <i class="bi bi-wrench"></i>
           </div>
@@ -176,6 +181,7 @@ const th_list = [
     { name: "templateType", text: t('Type') },
     { name: "nfvoType", text: t("NFVO") },
     { name: "operationStatus", text: `VNF ${t('Status')}` },
+    { name: "template_share", text: `分 享` },
     { name: "update_template", text: t("Update") },
     { name: "template_Download", text: t("Download") },
     { name: "delete_template", text: t("Delete") },

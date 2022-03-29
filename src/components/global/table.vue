@@ -119,12 +119,12 @@
             <table class="table table-bordered table-striped table-hover align-middle mb-0">
               <thead>
                 <tr>
-                  <th v-for="i in 5" :key="i"><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></th>
+                  <th v-for="i in 7" :key="i"><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="i in 5" :key="i" class="placeholder-glow">
-                  <td v-for="i in 5" :key="i"><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
+                <tr v-for="i in 7" :key="i" class="placeholder-glow">
+                  <td v-for="i in 7" :key="i"><div class="d-flex mx-auto placeholder rounded-pill col-12 col-md-10 col-xl-7"></div></td>
                 </tr>
               </tbody>
             </table>

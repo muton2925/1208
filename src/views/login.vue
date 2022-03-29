@@ -1,8 +1,8 @@
 <template>
   <div class="container-fluid container-custom">
-    <div class="dropdown position-fixed cursor-pointer top-0 end-0 mt-2 me-2">
+    <div class="dropdown position-fixed cursor-pointer top-0 end-0 mt-3 me-4">
       <a class="dropdown-toggle text-decoration-none text-black" data-bs-toggle="dropdown" aria-expanded="false">TW</a>
-      <ul class="dropdown-menu dropdown-custom" aria-labelledby="dropdownMenu">
+      <ul class="dropdown-menu dropdown-menu-end dropdown-custom" aria-labelledby="dropdownMenu">
         <li><a class="dropdown-item" href="#">TW</a></li>
         <li><hr class="dropdown-divider my-0"></li>
         <li><a class="dropdown-item" href="#">EN</a></li>

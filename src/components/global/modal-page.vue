@@ -6,7 +6,7 @@
           <div class="col-12 col-sm d-flex justify-content-center align-items-center py-1">
             <span>switch page</span>
             <input type="text" inputmode="numeric" class="form-control input-custom text-center mx-2" :class="{ 'border-danger' : number_validate }" v-model="pageNumber" @keypress.enter="validate">
-            <span>of {{ page }} pages</span>
+            <span>of {{ allPages }} pages</span>
           </div>
           <button type="button" class="btn btn-primary text-white col col-sm-auto mt-2 mt-sm-0" @click="validate">Go</button>
           <div class="col-12 d-flex justify-content-center align-items-center mt-2 mt-sm-2" :class="{ 'd-none' : !number_validate }">
@@ -16,49 +16,43 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>  
 </template>
-<script>
-import { computed, onMounted, ref, toRefs, watch } from 'vue';
+<script setup>
+import { ref, toRefs, watch, onMounted, defineProps, defineEmits } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
-export default {
-  props: ['allPages'],
-  setup(props, { emit }) {
-    const {allPages} = toRefs(props);
-    const modal_page = ref(null)
-    let pageNumber = ref('');
-    let modal = ref('');
-    let number_validate = ref(false);
-    
-    const page = computed(()=> allPages.value)
-    watch(pageNumber,()=>{number_validate.value = false})
-    
-    onMounted(()=>{
-        modal_page.value.addEventListener('hidden.bs.modal', function () {
-          pageNumber.value = '';
-          number_validate.value = false;
-        });
-        modal.value = new Modal(modal_page.value, {});
-    })
-    const validate = () => {
-      let re = /^[0-9]+$/;
-      let number = parseInt(pageNumber.value);
-      if(!re.test(number) || (number > allPages.value || number <= 0))
-        number_validate.value = true;
-      if(!number_validate.value) {
-        emit('switch', number);
-        modal.value.hide();
-      }
-    }
-    return{
-      modal_page,
-      validate,
-      page,
-      pageNumber,
-      number_validate
-    }
+const props = defineProps({
+  allPages: {
+    type: Number,
+    required: true,
   }
-}
+});
+const { allPages } = toRefs(props);
+let modal;
+const pageNumber = ref('');
+const modal_page = ref(null);
+const number_validate = ref(false);
+const emit = defineEmits(['switch']);
+const validate = () => {
+  const re = /^[0-9]+$/;
+  let number = parseInt(pageNumber.value);
+  if(!re.test(number) || (number > allPages.value || number <= 0))
+    number_validate.value = true;
+  if(!number_validate.value) {
+    emit('switch', number);
+    modal.hide();
+  }
+};
+
+watch(pageNumber, () => { number_validate.value = false; });
+  
+onMounted(()=>{
+  modal = new Modal(modal_page.value, {});
+  modal_page.value.addEventListener('hidden.bs.modal', () => {
+    pageNumber.value = '';
+    number_validate.value = false;
+  });
+});
 </script>
 <style scoped>
 .input-custom {

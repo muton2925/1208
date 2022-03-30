@@ -156,8 +156,8 @@ export default {
     const {  column, entrie, columnSort, status } = toRefs(props);
     const store = useStore()
     const { t } = useI18n();
-    let currentEntries = ref(10)// 當前每頁筆數
-    let showEntries = ref([10,50,100])// 每頁筆數列表
+    let currentEntries = ref(2)// 當前每頁筆數
+    let showEntries = ref([2,10,50,100])// 每頁筆數列表
     let currentPage = ref(1) // 當前頁數
     let searchInput = ref('')
     let columns = ref(column.value)

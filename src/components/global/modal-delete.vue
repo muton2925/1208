@@ -35,7 +35,7 @@ onMounted(() => {
   modal_delete.value.addEventListener('hidden.bs.modal', () => {
     emit('remove');
   });
-})
+});
 
 defineExpose({
   modal,

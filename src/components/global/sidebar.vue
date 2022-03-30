@@ -33,9 +33,9 @@
   </aside>
 </template>
 <script>
-import { ref, computed, watch, inject} from 'vue';
 import { useStore  } from "vuex";
 import { useRouter } from 'vue-router';
+import { ref, computed, watch, inject } from 'vue';
 import { Collapse } from 'bootstrap/dist/js/bootstrap.bundle.js'
 export default {
   inject:['reload'],
@@ -43,7 +43,6 @@ export default {
     const reload = inject('reload');
     const store = useStore();
     const router = useRouter();
-
     const generic_template_sm = ref(null);
     const generic_template_md = ref(null);
     const nssi_view_sm = ref(null);

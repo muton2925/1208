@@ -58,6 +58,12 @@ export default createStore({
           },
         ],
       },
+      {
+        name: "Setting",
+        icon: "bi bi-bootstrap",
+        url: "setting",
+        childNodes: [],
+      }
     ],
     localeLang:''
   },

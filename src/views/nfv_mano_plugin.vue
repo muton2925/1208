@@ -14,14 +14,11 @@
         <td class="tablecell-custom">{{ item.name }}</td>
         <td class="tablecell-custom">{{ item.allocate_nssi }}</td>
         <td class="tablecell-custom">{{ item.deallocate_nssi }}</td>
-        <!-- <td class="w-0">
-          <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="get_plugin_name(item.name)">
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
-              <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
-            </div>
+        <td class="w-0">
+          <div class="d-flex justify-content-center form-check form-switch mb-0">
+            <input class="form-check-input cursor-pointer" type="checkbox" role="switch" checked>
           </div>
-        </td> -->
+        </td>
         <td class="w-0">
           <div class="d-flex justify-content-center align-items-center text-white bg-warning rounded-circle cursor-pointer mx-auto" style="width:30px; height:30px" data-bs-toggle="modal" data-bs-target="#update_plugin_Modal" @click="get_plugin_name(item.name)">
             <i class="bi bi-wrench"></i>
@@ -135,6 +132,7 @@ const th_list = [
   { name: "name", text: `${t("Plugin")}${t("Name")}` },
   { name: "allocate_nssi", text: `${t("Allocate")}NSSI${t("File")}` },
   { name: "dellocate_nssi", text: `${t("Deallocate")}NSSI${t("File")}` },
+  { name: "template_share", text: `分 享` },
   { name: "update_plugin", text: t("Update") },
   { name: "plugin_file", text: t("Download") },
   { name: "delete_plugin", text: t("Delete") },

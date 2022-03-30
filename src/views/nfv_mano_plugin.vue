@@ -1,13 +1,13 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort"  @update="updateTableData" :status="status">
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :status="status" @update="updateTableData">
     <template v-slot:header>
-      {{ `NFV MANO ${t('Plugin')}`}}
+      {{ `NFV MANO ${ t('Plugin') }`}}
     </template>
     <template v-slot:button>
       {{ t('Create') }} {{ t('Plugin') }}
     </template>
     <template v-slot:table-name>
-      {{ `NFV MANO ${t('Plugin')} ${t('list')}   `}}
+      {{ `NFV MANO ${ t('Plugin') } ${ t('list') }`}}
     </template>
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.name">
@@ -39,69 +39,69 @@
   </Table>
   <Modalcreate ref="modalCreate" @remove="removeCreateData">
     <template v-slot:header>
-      {{  `${t('Create')}${t('new')} NFV MANO ${t('Plugin')}` }}  
+      {{ `${ t('Create') }${ t('new') } NFV MANO ${ t('Plugin') }` }}  
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">
-            {{  `${t('Plugin')}${t('Name')} :` }}
+            {{ `${ t('Plugin') }${ t('Name') } :` }}
           </label>
-          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="placeholder" v-model="fileName">
+          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="placeholder" v-model.trim="fileName">
           <div class="invalid-feedback">
             <template v-if="repeatName">
-              {{  `${t('this')}${t('Plugin')}${t('Name')}${t('already_exists')}` }}
+              {{ `${ t('this') }${ t('Plugin') }${ t('Name') }${ t('already_exists') }` }}
             </template>
             <template v-else>
-               {{  `${t('Plugin')}${t('Name')}${t('not_be_empty')}` }}
+              {{ `${ t('Plugin') }${ t('Name') }${ t('not_be_empty') }` }}
             </template>
           </div>
         </div>
         <div class="mb-2">
           <label for="UploadFile" class="form-label">
-            {{  `${t('Plugin')}${t('File')} :` }}
+            {{ `${ t('Plugin') }${ t('File') } :` }}
           </label>
           <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile" ref="uploadData_create" accept=".zip" @change="getFileData">
           <div class="invalid-feedback">
-            {{  `${t('Plugin')}${t('File')}${t('not_be_empty')}` }}
+            {{ `${ t('Plugin') }${ t('File') }${ t('not_be_empty') }` }}
           </div>
         </div>
       </form>
     </template>
     <template v-slot:footer>
-      <button type="button" class="btn btn-primary text-white" @click="create_plugin_modal">{{t('Create')}}</button>
+      <button type="button" class="btn btn-primary text-white" @click="create_plugin_modal">{{ t('Create') }}</button>
     </template>
   </Modalcreate>
   <Modalupdate ref="modalUpdate" @remove="removeUpdateData">
     <template v-slot:header>
-      {{  `${t('Update')}${t('Service')}${t('Mapping')}${t('Plugin')}` }}  
+      {{ `${ t('Update') }${ t('Service') }${ t('Mapping') }${ t('Plugin') }` }}  
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">
-            {{  `${t('Plugin')}${t('Name')} :` }}
+            {{ `${ t('Plugin') }${ t('Name') } :` }}
           </label>
           <input type="text" class="form-control" id="InputFile" :placeholder="placeholder" v-model="fileName" readonly>
         </div>
         <div class="mb-2">
           <label for="UploadFile2" class="form-label">
-            {{  `${t('Plugin')}${t('File')} :` }}
+            {{ `${ t('Plugin') }${ t('File') } :` }}
           </label>
           <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="getFileData">
           <div class="invalid-feedback">
-            {{`${t('File')}${t('not_be_empty')}`}}
+            {{ `${ t('File') }${ t('not_be_empty') }` }}
           </div>
         </div>
       </form>
     </template>
     <template v-slot:footer>
-      <button type="button" class="btn btn-warning text-white" @click="update_plugin_modal">{{t('Update')}}</button>
+      <button type="button" class="btn btn-warning text-white" @click="update_plugin_modal">{{ t('Update') }}</button>
     </template>
   </Modalupdate>
   <Modaldelete @delete="delete_plugin_modal" @remove="removeDeleteData">
     <template v-slot:header>
-      {{  `${t('Delete')}${t('Service')}${t('Mapping')}${t('Plugin')}` }} 
+      {{ `${ t('Delete') }${ t('Service') }${ t('Mapping') }${ t('Plugin') }` }} 
     </template>
   </Modaldelete>
   <Alert ref="alertRef" v-show="alertExist"></Alert>
@@ -117,40 +117,123 @@ import { Share, nfv_mano_plugin } from '../assets/js/api';
 import { ref, toRefs, watch, computed, onBeforeMount, defineAsyncComponent } from 'vue';
 import { callCreate, callUpdate, callDelete, calldownload } from '../assets/js/templateOperate';
 import { text_invalidated, file_invalidated, file_Validate, text_Validate } from '../assets/js/validate';
-const { PluginList } = Share();
-const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
 const Modalupdate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalupdate" */ '../components/global/modal-update.vue'));
 const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Modaldelete" */ '../components/global/modal-delete.vue'));
-const modalCreate = ref(null)
-const modalUpdate = ref(null)
-const uploadData_create = ref(null)
-const uploadData_update = ref(null)
-const { t, locale } = useI18n()
+const { PluginList } = Share();
+const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
+const modalCreate = ref(null);
+const modalUpdate = ref(null);
+const uploadData_create = ref(null);
+const uploadData_update = ref(null);
+const { t, locale } = useI18n();
 const th_list = [
-  { name: "name", text: `${t("Plugin")}${t("Name")}` },
-  { name: "allocate_nssi", text: `${t("Allocate")}NSSI${t("File")}` },
-  { name: "dellocate_nssi", text: `${t("Deallocate")}NSSI${t("File")}` },
+  { name: "name", text: `${ t("Plugin") }${ t("Name") }` },
+  { name: "allocate_nssi", text: `${ t("Allocate") }NSSI${ t("File") }` },
+  { name: "dellocate_nssi", text: `${ t("Deallocate") }NSSI${ t("File") }` },
   { name: "template_share", text: `分 享` },
   { name: "update_plugin", text: t("Update") },
   { name: "plugin_file", text: t("Download") },
   { name: "delete_plugin", text: t("Delete") },
 ];
+const td_list = ref([]);
+const fileName = ref('');
 const fileData = ref({});
+const status = ref(false);
 const filterEntries = ref([]);
-const columnSort = ref(['name','allocate_nssi','dellocate_nssi']);
 const { alertRef, alertExist } = toRefs(alertConfig);
+const columnSort = ref(['name', 'allocate_nssi', 'dellocate_nssi']);
 let placeholder;
-let td_list = ref([])
-let status = ref(false)
-let fileName = ref('')
-
 if(locale.value == 'en') 
-  placeholder = `${t('Please')}${t('enter',['a '])}${t('Plugin')}${t('Name')}`
+  placeholder = `${ t('Please') }${ t('enter', ['a '])}${ t('Plugin') }${ t('Name') }`;
 else 
-  placeholder = `${t('Please')}${t('enter')}${t('Plugin')}${t('Name')}`
-  
+  placeholder = `${ t('Please') }${ t('enter') }${ t('Plugin') }${ t('Name') }`;
+const repeatName = computed(() => { return td_list.value.map(e => { return e.name }).includes(fileName.value); });
+const get_plugin_name = name => { fileName.value = name; }; // Update Modal 內名稱
+const getFileData = e => { fileData.value = e.target.files; }; // 更新 Update Modal 內檔案
+const getTableData = async () => { // 顯示 Table 資料
+  const res = await PluginList();
+  td_list.value = [];
+  for(let i of res.data) {     
+    td_list.value.push(i);
+  }
+};
+const create_validate = () => {  // Create Modal 驗證
+  const textValidate = text_Validate([repeatName.value, fileName.value]);
+  const fileValidate = file_Validate(fileData.value[0]);
+  const validate = textValidate && fileValidate; 
+  return validate;
+};
+const create_plugin_modal = () => { // 點擊 Create Modal 內創建按鈕
+  const createValidate = create_validate();
+  if(createValidate) {
+    const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]]);
+    const alertData = {
+      Template: `NFV MANO ${ t('Plugin') }`,
+      configSuccess: t('created'),
+      configUnsuccess: t('create'),
+    };
+    callCreate(formData, [createPluginList, getTableData], alertData);
+    closeModal(modalCreate.value);
+  }
+};
+const update_plugin_validate = () => { // Update Modal 驗證
+  const fileValidate = file_Validate(fileData.value[0]);
+  return fileValidate;
+};
+const update_plugin_modal = () => { // 點擊 Update Modal 內更新按鈕
+  const updateValidate = update_plugin_validate();
+  if(updateValidate) {
+    const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]]);
+    const alertData = {
+      Template: `NFV MANO ${t('Plugin')}`,
+      configSuccess: t('updated'),
+      configUnsuccess: t('update'),
+    };
+    callUpdate([fileName.value, formData], [updatePlugin, getTableData], alertData);
+    closeModal(modalUpdate.value);
+  }
+};
+const delete_plugin_modal = () => { // 點擊 Delete Modal 內刪除按鈕
+  const alertData = {
+    Template: `NFV MANO ${ t('Plugin') }`,
+    configSuccess: t('deleted'),
+    configUnsuccess: t('delete'),
+  };
+  callDelete(fileName.value, [deletePlugin, getTableData], alertData);
+};
+const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
+  filterEntries.value = val;
+};
+const removeCreateData = () => { // 關閉 Create Modal
+  fileName.value = '';
+  fileData.value = {};
+  text_invalidated.value = false;
+  file_invalidated.value = false;
+  uploadData_create.value.value = null;
+};
+const removeUpdateData = () => { // 關閉 Update Modal
+  fileName.value = '';
+  fileData.value = {};
+  file_invalidated.value = false;
+  uploadData_update.value.value = null; 
+};
+const removeDeleteData = () => { // 關閉 Delete Modal
+  fileName.value = '';
+};
+const download_template_button = file => { // 點擊 Download Modal 按鈕
+  const alertData = {
+    Template: `NFV MANO ${t('Plugin')}`,
+    configSuccess: t('downloaded '),
+    configUnsuccess: t('download'),
+  };
+  calldownload(file, alertData);
+};
+
+watch(fileName, () => { text_invalidated.value = false; });
+watch(fileData, () => { file_invalidated.value = false; });
+
 onBeforeMount(async () => {
   try {
     await getTableData();
@@ -160,93 +243,5 @@ onBeforeMount(async () => {
   }
   await delay(700);
   status.value = true;
-})
-const repeatName = computed(() => {
-  return td_list.value.map(e => { return e.name }).includes(fileName.value)
-})   
-  
-watch(fileName, () => { text_invalidated.value = false; })
-watch(fileData, () => { file_invalidated.value = false; })
-  
-const getTableData = async () => { // 顯示 Table 資料
-  const res = await PluginList();
-  td_list.value = [];
-  for(let i of res.data) {     
-    td_list.value.push(i);
-  }
-}
-   // 更新 Update Modal 內檔案
-const getFileData = e => { fileData.value = e.target.files; }
-const create_Validate = () => { 
-  const textValidate = text_Validate([repeatName.value, fileName.value]);
-  const fileValidate = file_Validate(fileData.value[0]);
-  const validate = textValidate && fileValidate; 
-  return validate
-}
-const create_plugin_modal = () => { // 點擊 Create Modal 內創建按鈕
-  const createValidate = create_Validate()
-  if(createValidate) {
-    const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]]);
-    const alertData = {
-      Template: `NFV MANO ${t('Plugin')}`,
-      configSuccess: t('created'),
-      configUnsuccess: t('create'),
-    }
-    callCreate(formData, [createPluginList, getTableData], alertData);
-    closeModal(modalCreate.value);
-  }
-}
-const update_plugin_validate = () => { 
-  const fileValidate = file_Validate(fileData.value[0]);
-  return fileValidate
-}
-const get_plugin_name = name => { fileName.value = name; }
-const update_plugin_modal = () => { // 點擊 Update Modal 內更新按鈕
-  const updateValidate = update_plugin_validate()
-  if(updateValidate) {
-    const formData = form(["name", "pluginFile"], [fileName.value, fileData.value[0]]);
-    const alertData = {
-      Template: `NFV MANO ${t('Plugin')}`,
-      configSuccess: t('updated'),
-      configUnsuccess: t('update'),
-    }
-    callUpdate([fileName.value, formData], [updatePlugin, getTableData], alertData);
-    closeModal(modalUpdate.value);
-  }
-}
-const delete_plugin_modal = () => { // 點擊 Delete Modal 內刪除按鈕
-    const alertData = {
-      Template: `NFV MANO ${t('Plugin')}`,
-      configSuccess: t('deleted'),
-      configUnsuccess: t('delete'),
-    }
-  callDelete(fileName.value, [deletePlugin, getTableData], alertData)
-}
-const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
-  filterEntries.value = val;
-}
-const removeCreateData = () => { // 關閉 Create Modal
-  fileName.value = '';
-  fileData.value = {};
-  text_invalidated.value = false;
-  file_invalidated.value = false;
-  uploadData_create.value.value = null;
-}
-const removeUpdateData = () => { // 關閉 Update Modal
-  fileName.value = '';
-  fileData.value = {};
-  file_invalidated.value = false;
-  uploadData_update.value.value = null; 
-}
-const removeDeleteData = () => { // 關閉 Delete Modal
-  fileName.value = '';
-}
-const download_template_button = file => { // 點擊 Download Modal 按鈕
-  const alertData = {
-    Template: `NFV MANO ${t('Plugin')}`,
-    configSuccess: t('downloaded '),
-    configUnsuccess: t('download'),
-  }
-  calldownload(file, alertData)
-}
+});
 </script>

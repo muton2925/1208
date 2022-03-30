@@ -52,7 +52,6 @@ onBeforeRouteLeave((to) => {
      }
    }
 })
-
 </script>
 <style scoped>
 .container-custom {

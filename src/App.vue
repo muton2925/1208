@@ -21,6 +21,7 @@ import { useRoute } from 'vue-router';
 import Header from "./components/global/header.vue";
 import Sidebar from "./components/global/sidebar.vue";
 import { ref, watch, computed, provide, nextTick, onMounted } from 'vue';
+provide('reload', reload);
 const store = useStore();
 const route = useRoute();
 const isRouterAlive = ref(true);
@@ -48,18 +49,18 @@ if (info) {
   if (token.length > 0 || token !== undefined)
     store.commit("changeLoginStatus");
 }
-provide('reload', reload);
+
 watch(route, () => {
   if(route.path == '/')
     store.commit('changeRoute', 'dashboard');
   else
     store.commit('changeRoute', route.path.slice(1));
 });
+
 onMounted(() => {
   window.addEventListener("resize", () => {
     store.commit("changeWindowWidth");
   });
-  
 });
 </script>
 <style>

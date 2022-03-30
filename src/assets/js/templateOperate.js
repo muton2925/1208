@@ -29,6 +29,7 @@ import { alertEvent } from './alertData'
  * @param {*} element 
  * @param {*} apiList 
  */
+
  async function callUpdate(updateData, apiList, alertData) { // 點擊 Update Modal 內更新按鈕
     const [fileName, form] = updateData
     const [updatePlugin, getTableData] = apiList
@@ -49,6 +50,7 @@ import { alertEvent } from './alertData'
  * @param {*} fileName 
  * @param {*} apiList 
  */
+
 async function callDelete(fileName, apiList, alertData) { // 點擊 Delete Modal 內刪除按鈕
   const [deletePlugin, getTableData] = apiList
   const { Template, configSuccess, configUnsuccess } = alertData
@@ -66,6 +68,7 @@ async function callDelete(fileName, apiList, alertData) { // 點擊 Delete Modal
  * 
  * @param {*} file 
  */
+
 const calldownload = (file, alertData) => { // 點擊 Download Modal 按鈕
   const { Template, configSuccess, configUnsuccess } = alertData
   if(file == null)

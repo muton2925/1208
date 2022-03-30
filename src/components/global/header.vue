@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-sm navbar-dark fixed-top flex-nowrap pe-3 py-0 bg-blue shadow-normal vw-mincontent" style="z-index: 0;">
+  <nav class="navbar navbar-expand-sm navbar-dark fixed-top flex-nowrap pe-3 py-0 bg-blue shadow-normal vw-mincontent">
     <div class="container-fluid px-0">
       <router-link class="navbar-brand white-space-normal bg-white px-3 py-0" to="/dashboard">
         <img src="../../assets/free5gmano_icon.png" alt="free5gmano_icon" width="70" height="70"/>
@@ -12,13 +12,8 @@
   </nav>
   <Offcanvas></Offcanvas>
 </template>
-<script>
+<script setup>
 import Offcanvas from './offcanvas.vue';
-export default {
-  components: {
-    Offcanvas,
-  },
-};
 </script>
 <style scoped>
 .navbar_custom {

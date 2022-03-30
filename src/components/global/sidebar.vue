@@ -3,14 +3,14 @@
     <ul id="sidebar-parent" class="text-white">
       <li class="position-relative" v-for="item in menuData" :key="item.name">
         <template v-if="item.childNodes.length > 0">
-          <a class="list-item" :class="{ 'currentRoute' : routeStatus(item.url,currentRoute) }" data-bs-toggle="collapse" :data-bs-target="'#' + item.url" @click="url(item.url)">{{ item.name }}
-            <i v-if="currentWindowWidth >= 768" :class="[[ item.url == clickUrl ? 'bi bi-chevron-up' : 'bi bi-chevron-down' ],'ms-auto']"></i>
+          <a class="list-item" :class="{ 'currentRoute' : routeStatus(item.url, currentRoute) }" data-bs-toggle="collapse" :data-bs-target="'#' + item.url" @click="url(item.url)">{{ item.name }}
+            <i v-if="currentWindowWidth >= 768" :class="[[ item.url == clickUrl ? 'bi bi-chevron-up' : 'bi bi-chevron-down' ], 'ms-auto']"></i>
           </a>
           <template v-if="currentWindowWidth >= 768">
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_md'" data-bs-parent="#sidebar-parent">
               <ul class="p-2">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <a class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" @click="closeCollapse(),routerEvent(child.url)"> {{ child.name }} </a>
+                  <a class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" @click="closeCollapse(), routerEvent(child.url)"> {{ child.name }} </a>
                 </li>
               </ul>
             </div>
@@ -19,97 +19,79 @@
             <div :id="item.url" class="collapse collapse-item" :ref="item.url + '_sm'" data-bs-parent="#sidebar-parent">
               <ul class="p-2">
                 <li v-for="child in item.childNodes" :key="child.name">
-                  <a class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" @click="closeCollapse(),routerEvent(child.url)"> {{ child.name }} </a>
+                  <a class="list-item" :class="{ 'currentRouteCollapseItem' : child.url == currentRoute }" @click="closeCollapse(), routerEvent(child.url)"> {{ child.name }} </a>
                 </li>
               </ul>
             </div>
           </template>
         </template>
         <template v-else>
-          <a class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" @click="closeCollapse(),routerEvent(item.url)">{{ item.name }}</a>
+          <a class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" @click="closeCollapse(), routerEvent(item.url)">{{ item.name }}</a>
         </template>
       </li>
     </ul>
   </aside>
 </template>
-<script>
-import { useStore  } from "vuex";
+<script setup>
+import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
-import { ref, computed, watch, inject } from 'vue';
-import { Collapse } from 'bootstrap/dist/js/bootstrap.bundle.js'
-export default {
-  inject:['reload'],
-  setup() {
-    const reload = inject('reload');
-    const store = useStore();
-    const router = useRouter();
-    const generic_template_sm = ref(null);
-    const generic_template_md = ref(null);
-    const nssi_view_sm = ref(null);
-    const nssi_view_md = ref(null);
-    const clickUrl = ref('');
-    const generic_template_md_ref = ref('');
-    const generic_template_sm_ref = ref('');
-    const nssi_view_md_ref = ref('');
-    const nssi_view_sm_ref = ref('');
-    const currentWindowWidth = computed(() => store.state.windowWidth);
-    const currentRoute =  computed(() => store.state.currentRoute);
-    const menuData =  computed(() => store.state.menuData);
-    watch(currentWindowWidth, (newVal) => {
-      if(newVal < 768) {
-        clickUrl.value = '';
-      }
-    })
-    const url = url => {
-      if(url == clickUrl.value)
-        clickUrl.value = '';
-      else
-        clickUrl.value = url;
-    }
-    const routerEvent = url => {
-      if(url == currentRoute.value)
-        reload();
-      else
-        router.push({ path : '/' + url });
-    }
-    const routeStatus = (url,route) => {
-      const index = menuData.value.findIndex(e => e.url == url);
-      if(menuData.value[index].childNodes.findIndex(e => e.url == route) != -1)
-        return true;
-      else
-        return false;
-    }
-    const closeCollapse = () => {
-      if(currentWindowWidth.value >= 768) {
-        clickUrl.value = '';
-        generic_template_md_ref.value = new Collapse(generic_template_md.value,{ toggle: false })
-        nssi_view_md_ref.value = new Collapse(nssi_view_md.value,{ toggle: false })
-        generic_template_md_ref.value.hide();
-        nssi_view_md_ref.value.hide();
-      }
-      else {
-        generic_template_sm_ref.value = new Collapse(generic_template_sm.value,{ toggle: false })
-        nssi_view_sm_ref.value = new Collapse(nssi_view_sm.value,{ toggle: false })
-        generic_template_sm_ref.value.hide();
-        nssi_view_sm_ref.value.hide();
-      }
-    }
-    return{
-      generic_template_sm,
-      generic_template_md,
-      nssi_view_sm,nssi_view_md,
-      clickUrl,
-      routerEvent,
-      url,
-      routeStatus,
-      closeCollapse,
-      menuData,
-      currentWindowWidth,
-      currentRoute
-    }
+import { ref, watch, computed, inject } from 'vue';
+import { Collapse } from 'bootstrap/dist/js/bootstrap.bundle.js';
+const store = useStore();
+const router = useRouter();
+const clickUrl = ref('');
+const reload = inject('reload');
+const nssi_view_sm = ref(null);
+const nssi_view_md = ref(null);
+const nssi_view_md_ref = ref('');
+const nssi_view_sm_ref = ref('');
+const generic_template_sm = ref(null);
+const generic_template_md = ref(null);
+const generic_template_md_ref = ref('');
+const generic_template_sm_ref = ref('');
+const menuData =  computed(() => store.state.menuData);
+const currentRoute =  computed(() => store.state.currentRoute);
+const currentWindowWidth = computed(() => store.state.windowWidth);
+
+const url = url => {
+  if(url == clickUrl.value)
+    clickUrl.value = '';
+  else
+    clickUrl.value = url;
+};
+const routerEvent = url => {
+  if(url == currentRoute.value)
+    reload();
+  else
+    router.push({ path : '/' + url });
+};
+const routeStatus = (url,route) => {
+  const index = menuData.value.findIndex(e => e.url == url);
+  if(menuData.value[index].childNodes.findIndex(e => e.url == route) != -1)
+    return true;
+  else
+    return false;
+};
+const closeCollapse = () => {
+  if(currentWindowWidth.value >= 768) {
+    clickUrl.value = '';
+    nssi_view_md_ref.value = new Collapse(nssi_view_md.value, { toggle: false });
+    generic_template_md_ref.value = new Collapse(generic_template_md.value, { toggle: false });
+    nssi_view_md_ref.value.hide();
+    generic_template_md_ref.value.hide();
   }
- 
-}
+  else {
+    nssi_view_sm_ref.value = new Collapse(nssi_view_sm.value, { toggle: false });
+    generic_template_sm_ref.value = new Collapse(generic_template_sm.value, { toggle: false });
+    nssi_view_sm_ref.value.hide();
+    generic_template_sm_ref.value.hide();
+  }
+};
+
+watch(currentWindowWidth, (newVal) => {
+  if(newVal < 768) 
+    clickUrl.value = '';
+});
 </script>
 <style scoped>
 .sidebar-custom {

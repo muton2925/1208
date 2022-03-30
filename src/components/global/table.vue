@@ -28,7 +28,7 @@
               {{ t(`entries`) }}
             </div>
             <div class="d-flex ms-auto">
-              <input type="text" class="form-control form-control" :placeholder="Search" v-model="searchInput" @input="searchEvent">
+              <input type="text" class="form-control form-control" :placeholder="Search" v-model.trim="searchInput" @input="searchEvent">
             </div>
           </div>
           <div class="mb-2 mb-lg-3 table-custom" style="min-height: 115px">
@@ -40,13 +40,12 @@
                       <div class="d-flex justify-content-between">
                         <!-- <span>{{ t(`__thList.${item.text}`) }}</span> -->
                         <span>{{ item.text }}</span>
-                        <i :class="[[ item.name == this.sortDesc ? 'bi bi-sort-alpha-up' : 'bi bi-sort-alpha-down' ],{ 'text-danger' : item.name == this.sortAsc || item.name == this.sortDesc },'ms-2']"></i>
+                        <i :class="[[ item.name == this.sortDesc ? 'bi bi-sort-alpha-up' : 'bi bi-sort-alpha-down' ], { 'text-danger' : item.name == this.sortAsc || item.name == this.sortDesc }, 'ms-2']"></i>
                       </div>
                     </template>
                     <template v-else>
                       <div>{{ item.text }}</div>
                       <!-- <div>{{ t(`__thList.${item.text}`) }}</div> -->
-                      
                     </template>
                   </th>
                 </tr>
@@ -144,159 +143,121 @@
     <Modalpage :allPages="allPages" @switch="switchPage"></Modalpage>
   </div>
 </template>
-<script>
+<script setup>
 import { useStore } from 'vuex';
 import { $array } from 'alga-js';
 import { useI18n } from 'vue-i18n';
-import { ref, toRefs, watch, computed, defineAsyncComponent } from 'vue';
+import { delay } from '@/assets/js/delay';
+import { ref, toRefs, watch, computed, defineEmits, defineProps, defineAsyncComponent } from 'vue';
 const Modalpage = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ './modal-page.vue'));
-export default {
-  setup(props,{ emit }) {
-    const {  column, entrie, columnSort, status } = toRefs(props);
-    const store = useStore()
-    const { t } = useI18n();
-    let currentEntries = ref(2)// 當前每頁筆數
-    let showEntries = ref([2,10,50,100])// 每頁筆數列表
-    let currentPage = ref(1) // 當前頁數
-    let searchInput = ref('')
-    let columns = ref(column.value)
-    let entries = ref(entrie.value)
-    let sortAsc = ref('')
-    let sortDesc = ref('')
-    let loadingStatus = ref(false)
-    let Search = t('Search')
-
-    const loadingEvent = () => { // 表格 loading 效果
-      loadingStatus.value = true;
-      setTimeout(() => {
-        loadingStatus.value = false;
-      },500)
-    }
-    const columnNumber = computed(() => { return column.value.length });
-    const currentWindowWidth = computed(() => { return store.state.windowWidth });
-    const pageStatus = computed(() => { return status.value });
-    const allPages = computed(() => { 
-        if(entries.value.length != 0)
-          return $array.pages(entries.value, currentEntries.value);
-        else
-          return 1;
-      });
-    const filterEntries = computed(() => { 
-        loadingEvent();
-        return $array.paginate(entries.value, currentPage.value, currentEntries.value); 
-      });
-    const showInfo = computed(() => { return $array.pageInfo(entries.value, currentPage.value, currentEntries.value); });
-    const showPagination = computed(() => { return $array.pagination(allPages.value, currentPage.value, 2); });
-    watch(entrie, (newVal)=> {
-        searchInput.value = '';
-        entries.value = newVal;
-        entries.value = $array.searchBy(entries.value, [searchInput.value], columnSort.value);
-        if(sortAsc.value != '') {
-          entries.value = $array.sortBy(entries.value, sortAsc.value, 'asc');
-        }
-        if(sortDesc.value != '') {
-          entries.value = $array.sortBy(entries.value, sortDesc.value, 'desc'); 
-        }
-    }, {
-      deep: true
-    })
-    watch(filterEntries, (newVal) => {
-      if(newVal.length == 0 && currentPage.value != 1)
-        currentPage.value -= 1 ;
-      emit('update', newVal);
-    }, {
-      deep: true
-    })
-
-
-    const paginateEntries = () => {  // 換筆數事件
-      currentPage.value = 1;
-    }
-    const searchEvent = () => { // 搜尋事件
-      currentPage.value = 1;
-      entries.value = $array.searchBy(entrie.value, [searchInput.value], columnSort.value);
-      if(sortAsc.value != '') {
-        entries.value = $array.sortBy(entries.value, sortAsc.value, 'asc');
-      }
-      if(sortDesc.value != '') {
-        entries.value = $array.sortBy(entries.value, sortDesc.value, 'desc'); 
-      }
-    }
-    const paginateEvent = page => { // 換頁事件
-      if(page != '...')
-        currentPage.value = page;
-    }
-    const sortableColumn = name => { // 判斷各個 TH 是否能做排序
-      return columnSort.value.includes(name);
-    }
-    const sortColumn = name => { // 排序事件
-      if(sortableColumn(name)){
-        if(sortAsc.value == name){
-          entries.value = $array.sortBy(entries.value, name , 'desc');
-          sortAsc.value = '';
-          sortDesc.value = name;
-        }
-        else{
-          entries.value = $array.sortBy(entries.value, name , 'asc');
-          sortAsc.value = name;
-          sortDesc.value = '';
-        }
-      }
-    }
-    const switchPage = val => {
-      currentPage.value =  val;
-    }
-    return {
-      t,
-      Search,
-      entries,
-      currentEntries,
-      switchPage,
-      sortColumn,
-      searchInput,
-      paginateEvent,
-      paginateEntries,
-      searchEvent,
-      showEntries,
-      columns,
-      columnNumber,
-      currentWindowWidth,
-      pageStatus,
-      showPagination,
-      showInfo,
-      sortAsc,
-      sortDesc,
-      loadingStatus,
-      allPages,
-      filterEntries,
-      sortableColumn,
-      currentPage
-    }
+const emit = defineEmits(['update']);
+const props = defineProps({
+  showBtn:{
+    typeof: Boolean,
+    default: true,
   },
-  components: {
-    Modalpage
+  column: {
+    typeof: Array,
   },
-  props:{
-    showBtn:{
-      typeof: Boolean,
-      default: true,
-    },
-    column: {
-      typeof: Array,
-    },
-    entrie: {
-      typeof: Array,
-      default: []
-    },
-    columnSort: {
-      typeof: Array,
-    },
-    status: {
-      typeof: Boolean,
-      default: false
-    },
+  entrie: {
+    typeof: Array,
+    default: []
+  },
+  columnSort: {
+    typeof: Array,
+  },
+  status: {
+    typeof: Boolean,
+    default: false
+  },
+});
+const { column, entrie, columnSort, status } = toRefs(props);
+const { t } = useI18n();
+let Search = t('Search');
+const store = useStore();  
+const sortAsc = ref(''); // 當前 ASC 排序 , 若空值則無
+const sortDesc = ref(''); // 當前 DESC 排序 , 若空值則無
+const searchInput = ref(''); // 當前搜尋
+const currentPage = ref(1); // 當前頁數    
+const currentEntries = ref(10); // 當前每頁筆數    
+const showEntries = [10, 50, 100]; // 每頁筆數列表  
+const loadingStatus = ref(false);  // 表格載入中的狀態
+const entries = ref(entrie.value); // 頁面 td 資料
+const columns = ref(column.value); // 頁面 tr 資料
+const columnNumber = column.value.length; // 頁面 tr 個數
+const pageStatus = computed(() => { return status.value; }); // 頁面初始載入狀態
+const currentWindowWidth = computed(() => {  return store.state.windowWidth; }); // 當前視窗寬度
+const showPagination = computed(() => { return $array.pagination(allPages.value, currentPage.value, 2); }); // 右下角頁數資訊
+const showInfo = computed(() => { return $array.pageInfo(entries.value, currentPage.value, currentEntries.value); }); // 左下角筆數資訊
+const filterEntries = computed(() => { // 當前頁數顯示的資料
+  loadingEvent();
+  return $array.paginate(entries.value, currentPage.value, currentEntries.value); 
+});
+const allPages = computed(() => { // 所有頁數 (隨搜尋結果變動)
+  if(entries.value.length != 0)
+    return $array.pages(entries.value, currentEntries.value);
+  else
+    return 1;
+});    
+const loadingEvent = async () => { // 表格 loading 效果
+  loadingStatus.value = true;
+  await delay(500);
+  loadingStatus.value = false;
+};
+const paginateEntries = () => {  // 換筆數事件
+  currentPage.value = 1;
+};
+const paginateEvent = page => { // 換頁事件
+  if(page != '...')
+    currentPage.value = page;
+};
+const switchPage = val => { // Modal 換頁事件
+  currentPage.value =  val;
+};
+const searchEvent = () => { // 搜尋事件
+  currentPage.value = 1;
+  entries.value = $array.searchBy(entrie.value, [searchInput.value], columnSort.value);
+  if(sortAsc.value != '') 
+    entries.value = $array.sortBy(entries.value, sortAsc.value, 'asc');
+  if(sortDesc.value != '') 
+    entries.value = $array.sortBy(entries.value, sortDesc.value, 'desc'); 
+};
+const sortableColumn = name => { // 判斷各個 TH 是否能做排序
+  return columnSort.value.includes(name);
+};
+const sortColumn = name => { // 排序事件
+  if(sortableColumn(name)) {
+    if(sortAsc.value == name) {
+      entries.value = $array.sortBy(entries.value, name, 'desc');
+      sortAsc.value = '';
+      sortDesc.value = name;
+    }
+    else {
+      entries.value = $array.sortBy(entries.value, name, 'asc');
+      sortAsc.value = name;
+      sortDesc.value = '';
+    }
   }
-}
+};
+
+watch(entrie, (newVal) => {
+  searchInput.value = '';
+  entries.value = newVal;
+  entries.value = $array.searchBy(entries.value, [searchInput.value], columnSort.value);
+  if(sortAsc.value != '') 
+    entries.value = $array.sortBy(entries.value, sortAsc.value, 'asc');
+  if(sortDesc.value != '') 
+    entries.value = $array.sortBy(entries.value, sortDesc.value, 'desc'); 
+}, {
+  deep: true
+});
+watch(filterEntries, (newVal) => {
+  if(newVal.length == 0 && currentPage.value != 1)
+    currentPage.value -= 1 ;
+  emit('update', newVal);
+}, {
+  deep: true
+});
 </script>
 <style>
 .container-header h3 {

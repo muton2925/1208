@@ -3,20 +3,20 @@
     <ul id="accordion-basic">
       <li v-for="item in menuData" :key="item.name">
         <template v-if="item.childNodes.length > 0">
-          <div class="list-item" :class="{ 'currentRoute' : routeStatus(item.url,currentRoute) }" data-bs-toggle="collapse" :data-bs-target="'#' + item.url">
+          <div class="list-item" :class="{ 'currentRoute' : routeStatus(item.url, currentRoute) }" data-bs-toggle="collapse" :data-bs-target="'#' + item.url">
             <i class="me-2" :class="item.icon"></i>
             {{ item.name }}
-            </div>
-            <div :id="item.url" class="collapse" :ref="item.url + '_xs'" data-bs-parent="#accordion-basic">
-              <ul class="list-ul">
-                <li v-for="child in item.childNodes" :key="child.name">
-                  <a class="list-item" :class="{ 'currentRoute' : child.url == currentRoute }" @click="closeCollapse(),routerEvent(child.url)"> {{ child.name }} </a>
-                </li>
-              </ul>
-            </div>
+          </div>
+          <div :id="item.url" class="collapse" :ref="item.url + '_xs'" data-bs-parent="#accordion-basic">
+            <ul class="list-ul">
+              <li v-for="child in item.childNodes" :key="child.name">
+                <a class="list-item" :class="{ 'currentRoute' : child.url == currentRoute }" @click="closeCollapse(), routerEvent(child.url)"> {{ child.name }} </a>
+              </li>
+            </ul>
+          </div>
         </template> 
         <template v-else>
-          <a class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" @click="closeCollapse(),routerEvent(item.url)">
+          <a class="list-item" :class="{ 'currentRoute' : item.url == currentRoute }" @click="closeCollapse(), routerEvent(item.url)">
             <i class="me-2" :class="item.icon"></i>
             {{ item.name }}
           </a>
@@ -25,65 +25,52 @@
     </ul>
   </div>
 </template>
-<script>
-import { computed, inject, onMounted, ref, watch } from 'vue';
-import { useStore  } from "vuex";
+<script setup>
 import router from '@/router';
-import { Collapse,Offcanvas } from 'bootstrap/dist/js/bootstrap.bundle.js';
-export default {
-  setup() {
-    const reload = inject('reload');
-    const store = useStore()
-    const offcanvas_ref = ref(null)
-    const generic_template_xs = ref(null)
-    const nssi_view_xs = ref(null)
-    let offcanvas = ref('');
-    let generic_template = ref('');
-    let nssi_view = ref('');
-    const currentWindowWidth = computed(() => store.state.windowWidth);
-    const currentRoute =  computed(() => store.state.currentRoute);
-    const menuData =  computed(() => store.state.menuData);
-    watch(currentWindowWidth, (newVal)=>{
-      if(newVal >= 576) {
-        closeCollapse();
-      }
-    })
-    onMounted(()=>{
-      offcanvas.value = new Offcanvas(offcanvas_ref.value,{});
-      generic_template.value = new Collapse(generic_template_xs.value,{ toggle : false });
-      nssi_view.value = new Collapse(nssi_view_xs.value,{ toggle : false });
-    })
-    const routerEvent = url => {
-      if(url == currentRoute.value)
-        reload();
-      else
-        router.push({ path : '/' + url });
-    }
-    const routeStatus = (url,route) => {
-      const index = menuData.value.findIndex(e => e.url == url);
-      if(menuData.value[index].childNodes.findIndex(e => e.url == route) != -1)
-        return true;
-      else
-        return false;
-    }
-    const closeCollapse = () => {
-      offcanvas.value.hide();
-      generic_template.value.hide();
-      nssi_view.value.hide();
-    }
-    return{
-      offcanvas_ref,
-      generic_template_xs,
-      nssi_view_xs,
-      routerEvent,
-      routeStatus,
-      closeCollapse,
-      menuData,
-      currentRoute
-    }
-  }
+import { useStore } from "vuex";
+import { ref, watch, inject, computed, onMounted } from 'vue';
+import { Collapse, Offcanvas } from 'bootstrap/dist/js/bootstrap.bundle.js';
+const store = useStore();
+const nssi_view = ref('');
+const nssi_view_xs = ref(null);
+const offcanvas = ref('');
+const offcanvas_ref = ref(null);
+const generic_template = ref('');
+const generic_template_xs = ref(null);
+const reload = inject('reload');
+const menuData =  computed(() => store.state.menuData);
+const currentRoute =  computed(() => store.state.currentRoute);
+const currentWindowWidth = computed(() => store.state.windowWidth);
 
+const routerEvent = url => {
+  if(url == currentRoute.value)
+    reload();
+  else
+    router.push({ path : '/' + url });
 }
+const routeStatus = (url,route) => {
+  const index = menuData.value.findIndex(e => e.url == url);
+  if(menuData.value[index].childNodes.findIndex(e => e.url == route) != -1)
+    return true;
+  else
+    return false;
+}
+const closeCollapse = () => {
+  offcanvas.value.hide();
+  nssi_view.value.hide();
+  generic_template.value.hide();
+}
+
+watch(currentWindowWidth, (newVal) => {
+  if(newVal >= 576) 
+    closeCollapse();
+})
+
+onMounted(() => {
+  offcanvas.value = new Offcanvas(offcanvas_ref.value, {});
+  nssi_view.value = new Collapse(nssi_view_xs.value, { toggle : false });
+  generic_template.value = new Collapse(generic_template_xs.value, { toggle : false });
+})
 </script>
 <style scoped>
 .offcanvas-custom {

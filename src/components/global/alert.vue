@@ -31,9 +31,9 @@ const alertContent = computed(() => {
 });
 const NSSIAlertContent = computed(() => {
   if(alertStatus.value)
-    return `${ alertComponent.value } ${ alertAction.value }${t('Success')} !`;
+    return `${ alertComponent.value } ${ alertAction.value }${ t('Success') } !`;
   else 
-    return `${ alertComponent.value } ${t('yet')}${ alertAction.value } !!`;
+    return `${ alertComponent.value } ${ t('yet') }${ alertAction.value } !!`;
 })
 const alertInfo = async (status, name, action, nssi = false) => {
   if(nssi)

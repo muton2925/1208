@@ -46,7 +46,7 @@ const validate = () => {
 
 watch(pageNumber, () => { number_validate.value = false; });
   
-onMounted(()=>{
+onMounted(() => {
   modal = new Modal(modal_page.value, {});
   modal_page.value.addEventListener('hidden.bs.modal', () => {
     pageNumber.value = '';

@@ -19,27 +19,24 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
 import { useI18n } from 'vue-i18n';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineEmits, defineExpose } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
-export default {
- setup(props, { emit }) {
-    const { t } = useI18n();
-    const modal = ref('');
-    const modal_create = ref(null);
-    const closeModalEvent = () => modal.value.hide();
-    onMounted(() => {
-      modal.value = new Modal(modal_create.value, {});
-      modal_create.value.addEventListener('hidden.bs.modal', () => {
-        emit('remove');
-      });
-    })
-    return {
-      t,
-      modal_create,
-      closeModalEvent,
-    }
-  }
-}
+let modal;
+const { t } = useI18n();
+const modal_create = ref(null);
+const emit = defineEmits(['remove']);
+const closeModalEvent = () => modal.hide();
+
+onMounted(() => {
+  modal = new Modal(modal_create.value, {});
+  modal_create.value.addEventListener('hidden.bs.modal', () => {
+    emit('remove');
+  });
+})
+
+defineExpose({
+  closeModalEvent,
+});
 </script>

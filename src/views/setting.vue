@@ -50,7 +50,7 @@ import { ref, onMounted } from 'vue';
 import { delay } from '@/assets/js/delay';
 const pageStatus = ref(false);
 onMounted(async () => {
-  await delay(1000);
+  await delay(700);
   pageStatus.value = true;
 })
 </script>

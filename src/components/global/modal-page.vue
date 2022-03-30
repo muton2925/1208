@@ -19,8 +19,8 @@
   </div>  
 </template>
 <script setup>
-import { ref, toRefs, watch, onMounted, defineProps, defineEmits } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
+import { ref, toRefs, watch, onMounted, defineProps, defineEmits } from 'vue';
 const props = defineProps({
   allPages: {
     type: Number,

@@ -12,7 +12,7 @@
           <slot name="body"></slot>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{t('Cancel')}}</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ t('Cancel') }}</button>
           <slot name="footer"></slot>
         </div>
       </div>
@@ -34,7 +34,7 @@ onMounted(() => {
   modal_create.value.addEventListener('hidden.bs.modal', () => {
     emit('remove');
   });
-})
+});
 
 defineExpose({
   closeModalEvent,

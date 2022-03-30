@@ -12,34 +12,31 @@
           <slot name="body"></slot>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{t('Cancel')}}</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ t('Cancel') }}</button>
           <slot name="footer"></slot>
         </div>
       </div>
     </div>
   </div>
 </template>
-<script>
-import { onMounted, ref } from 'vue';
-import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
+<script setup>
 import { useI18n } from 'vue-i18n';
-export default {
-  setup(props, { emit }) {
-    const { t } = useI18n();
-    const modal = ref('');
-    const modal_update = ref(null);
-    const closeModalEvent = () => modal.value.hide();
-    onMounted(() => {
-      modal.value = new Modal(modal_update.value, {});
-      modal_update.value.addEventListener('hidden.bs.modal', function () {
-        emit('remove');
-      });
-    })
-    return {
-      t,
-      modal_update,
-      closeModalEvent,
-    }
-  },
-}
+import { ref, onMounted, defineEmits, defineExpose } from 'vue';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
+let modal = '';
+const { t } = useI18n();
+const modal_update = ref(null);
+const emit = defineEmits(['remove']);
+const closeModalEvent = () => modal.hide();
+
+onMounted(() => {
+  modal = new Modal(modal_update.value, {});
+  modal_update.value.addEventListener('hidden.bs.modal', () => {
+    emit('remove');
+  });
+});
+
+defineExpose({
+  closeModalEvent,
+});
 </script>

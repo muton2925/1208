@@ -48,7 +48,7 @@ const routerEvent = url => {
   else
     router.push({ path : '/' + url });
 }
-const routeStatus = (url,route) => {
+const routeStatus = (url, route) => {
   const index = menuData.value.findIndex(e => e.url == url);
   if(menuData.value[index].childNodes.findIndex(e => e.url == route) != -1)
     return true;

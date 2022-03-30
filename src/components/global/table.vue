@@ -145,11 +145,10 @@
   </div>
 </template>
 <script>
-import { useI18n } from 'vue-i18n'
-import { computed, ref, toRefs, watch } from 'vue';
+import { useStore } from 'vuex';
 import { $array } from 'alga-js';
-import { defineAsyncComponent } from 'vue';
-import {useStore} from 'vuex';
+import { useI18n } from 'vue-i18n';
+import { ref, toRefs, watch, computed, defineAsyncComponent } from 'vue';
 const Modalpage = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ './modal-page.vue'));
 export default {
   setup(props,{ emit }) {

@@ -16,8 +16,8 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, defineEmits, defineExpose } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
+import { ref, onMounted, defineEmits, defineExpose } from 'vue';
 let modal;
 const modal_show = ref(null);
 const emit = defineEmits(['remove']);

@@ -22,8 +22,8 @@
 </template>
 <script setup>
 import { useI18n } from 'vue-i18n';
-import { ref, onMounted, defineEmits, defineExpose } from 'vue';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
+import { ref, onMounted, defineEmits, defineExpose } from 'vue';
 let modal;
 const { t } = useI18n();
 const modal_delete = ref(null);

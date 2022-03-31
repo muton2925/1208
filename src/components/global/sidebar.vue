@@ -52,7 +52,6 @@ const generic_template_sm_ref = ref('');
 const menuData =  computed(() => store.state.menuData);
 const currentRoute =  computed(() => store.state.currentRoute);
 const currentWindowWidth = computed(() => store.state.windowWidth);
-
 const url = url => {
   if(url == clickUrl.value)
     clickUrl.value = '';

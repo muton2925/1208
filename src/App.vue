@@ -21,7 +21,6 @@ import { useRoute } from 'vue-router';
 import Header from "./components/global/header.vue";
 import Sidebar from "./components/global/sidebar.vue";
 import { ref, watch, computed, provide, nextTick, onMounted } from 'vue';
-provide('reload', reload);
 const store = useStore();
 const route = useRoute();
 const isRouterAlive = ref(true);
@@ -34,6 +33,7 @@ const reload = () => {
     isRouterAlive.value = true;
   });
 };
+provide('reload', reload);
 // let lang = navigator.language;//常規瀏覽器語言
 // lang = lang.slice(0, 2);//擷取lang前2位字元
 // if(lang == 'zh'){

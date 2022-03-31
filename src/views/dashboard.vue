@@ -5,61 +5,53 @@
         Your browser does not support the
         <code>audio</code> element.
     </audio>
-    <button @click="as(123)">123</button>
-    <button @click="sa(456)">456</button> 
+    <button @click="logout">logout</button>
     <div class="form-check form-switch">
-      <input @change="sa(e)" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
-      <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
-    </div>
-    <div class="form-check form-switch">
-      <input @change="sa('id')" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+      <input  class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
       <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
     </div>
   </div>
-  <Alert ref="alertRef" v-show="alertExist"></Alert>
 </template>
 <script>
-import { toRefs, reactive } from '@vue/reactivity';
-import {computed, defineAsyncComponent,ref} from 'vue'
 import { useStore } from 'vuex';
-const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
-import { alertConfig, alertEvent } from '../assets/js/alertData';
-import { useRouter } from 'vue-router';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
+// import axios  from 'axios';
 export default {
-  components:{
-    Alert
-  },
   setup(){
-    let a = ref(undefined)
-    const b = computed(()=>{
-      console.log(a.value)
-      if(a.value !='選擇檔案類型'){
-        return false
-      }else{
-        return true
-      }
-    })
+    // axios.post('http://10.20.1.40:80/basic/login/',{
+  
+    //     name: "安安",
+    //     password: "123523",
+      
+    // }).then(res=>{
+    //   console.log(res)
+    // })
+    // .catch(err=>{
+    //   console.log(err)
+    // })
+
+
     const router = useRouter();
     const store = useStore();
-    const { alertRef, alertExist } = toRefs(alertConfig);
-    const ss = reactive({});
-    const as = (a) =>{
-      ss['a'] = a;
-      alertEvent(1, 'NSS Template', 'deleted');
-      console.log(ss)
-      sessionStorage.removeItem("token");
+    onBeforeRouteLeave( () => {
+      const info = sessionStorage.getItem('token');
+      if(!info){
+          router.push({
+          name: 'dashboard'
+       })
+      }
+    })
+    const logout = () => {
+      sessionStorage.removeItem('token')
       store.commit("changeLoginStatus");
       router.push({
-        path: '/'
-      }); 
-    }
-
-    const sa = (id) =>{
-      console.log(id)
+          path: '/'
+      })
     }
     return {
-      alertRef, alertExist,as,ss,a,b,sa
+      logout
     }
+
   }
 }
 </script>

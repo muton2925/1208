@@ -348,10 +348,10 @@ const delete_template_modal = () => { // 點擊 Delete Modal 內刪除按鈕
 };
 const removeCreateData = () => { // 關閉 Create Modal
   templateDescription.value = '';
-  currentVNF.value = `${ t('NSSI_Template') } ${ t('Template') }`;
-  currentNSD.value = `${ t('NSSI_Template') } ${ t('Template') }`;
-  currentNRM.value = `${ t('NSSI_Template') } ${ t('Template') }`;
-  currentNFVMANO.value = `${ t('NSSI_Template') } ${ t('Template') }`;
+  currentVNF.value = `${ t('Please') }${ t('select') } ...`;
+  currentNSD.value = `${ t('Please') }${ t('select') } ...`;
+  currentNRM.value = `${ t('Please') }${ t('select') } ...`;
+  currentNFVMANO.value = `${ t('Please') }${ t('select') } ...`;
   select_vnf_invalidated.value = false;
   select_nsd_invalidated.value = false;
   select_nrm_invalidated.value = false;

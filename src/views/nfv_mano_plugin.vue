@@ -108,15 +108,15 @@
 </template>
 <script setup>
 import { useI18n } from 'vue-i18n';
-import { delay } from '../assets/js/delay';
-import { form } from '../assets/js/newFormData';
+import { delay } from '@/assets/js/delay';
+import { form } from '@/assets/js/newFormData';
 import Table from '../components/global/table.vue';
-import { alertConfig } from '../assets/js/alertData';
-import { closeModal } from '../assets/js/closeModel';
-import { Share, nfv_mano_plugin } from '../assets/js/api';
+import { alertConfig } from '@/assets/js/alertData';
+import { closeModal } from '@/assets/js/closeModel';
+import { Share, nfv_mano_plugin } from '@/assets/js/api';
 import { ref, toRefs, watch, computed, onBeforeMount, defineAsyncComponent } from 'vue';
-import { callCreate, callUpdate, callDelete, calldownload } from '../assets/js/templateOperate';
-import { text_invalidated, file_invalidated, file_Validate, text_Validate } from '../assets/js/validate';
+import { callCreate, callUpdate, callDelete, calldownload } from '@/assets/js/templateOperate';
+import { text_invalidated, file_invalidated, file_Validate, text_Validate } from '@/assets/js/validate';
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
 const Modalupdate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalupdate" */ '../components/global/modal-update.vue'));
@@ -144,7 +144,7 @@ const fileData = ref({});
 const status = ref(false);
 const filterEntries = ref([]);
 const { alertRef, alertExist } = toRefs(alertConfig);
-const columnSort = ref(['name', 'allocate_nssi', 'dellocate_nssi']);
+const columnSort = ['name', 'allocate_nssi', 'dellocate_nssi'];
 const repeatName = computed(() => { 
   return td_list.value.map(e => { return e.name }).includes(fileName.value); 
 });

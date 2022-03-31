@@ -127,16 +127,16 @@
 <script setup>
 import { $array } from 'alga-js';
 import { useI18n } from 'vue-i18n';
-import { Share } from '../assets/js/api';
-import { delay } from '../assets/js/delay';
-import { form } from '../assets/js/newFormData';
-import { GenericTemplate } from '../assets/js/api';
+import { Share } from '@/assets/js/api';
+import { delay } from '@/assets/js/delay';
+import { form } from '@/assets/js/newFormData';
+import { GenericTemplate } from '@/assets/js/api';
 import Table from '../components/global/table.vue';
-import { closeModal } from '../assets/js/closeModel';
-import { alertConfig } from '../assets/js/alertData';
+import { closeModal } from '@/assets/js/closeModel';
+import { alertConfig } from '@/assets/js/alertData';
 import { ref, toRefs, watch, computed, onBeforeMount, defineAsyncComponent } from 'vue';
-import { callCreate, callUpdate, callDelete, calldownload } from '../assets/js/templateOperate';
-import { text_invalidated, file_invalidated, select_invalidated, file_Validate, text_Validate, select_Validate } from '../assets/js/validate';
+import { callCreate, callUpdate, callDelete, calldownload } from '@/assets/js/templateOperate';
+import { text_invalidated, file_invalidated, select_invalidated, file_Validate, text_Validate, select_Validate } from '@/assets/js/validate';
 const { t } = useI18n();
 const { PluginList, TemplateList } = Share();
 const { alertRef, alertExist } = toRefs(alertConfig);
@@ -172,7 +172,7 @@ const templateDescription = ref('');
 const description = t('Description');
 const templateNameplaceholder = `${ t("Template") }${ t("Name") }`;
 const currentNFVMANO = ref(`${ t('Please') }${ t('select') } ...`);
-const columnSort = ref(['templateId', 'name', 'description', 'templateType', 'nfvoType', 'operationStatus']);
+const columnSort = ['templateId', 'name', 'description', 'templateType', 'nfvoType', 'operationStatus'];
 const repeatName = computed(() => {
   return td_list.value.map(e => e.name ).includes(templateName.value);
 });

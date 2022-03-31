@@ -23,7 +23,7 @@ import { toRefs, reactive } from '@vue/reactivity';
 import {computed, defineAsyncComponent,ref} from 'vue'
 import { useStore } from 'vuex';
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
-import { alertConfig, alertEvent } from '../assets/js/alertData';
+import { alertConfig, alertEvent } from '@/assets/js/alertData';
 import { useRouter } from 'vue-router';
 export default {
   components:{

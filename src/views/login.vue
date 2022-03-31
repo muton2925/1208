@@ -42,16 +42,17 @@ const a = () => {
     path: '/dashboard'
   }); 
 };
+
 onBeforeRouteLeave((to) => {
    const info = sessionStorage.getItem('token');
-   if(!info){
-     if(to.meta.requireAuth){
+   if(!info) {
+     if(to.meta.requireAuth) {
         router.push({
         name: 'login'
       })
      }
    }
-})
+});
 </script>
 <style scoped>
 .container-custom {

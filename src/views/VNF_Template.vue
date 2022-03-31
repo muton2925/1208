@@ -198,7 +198,7 @@ const templateDescription = ref('');
 const description = t('Description');
 const templateNameplaceholder = `${ t("Template") }${ t("Name") }`;
 const currentNFVMANO = ref(`${ t('Please') }${ t('select') } ...`);
-const columnSort = ref(['templateId', 'name', 'description', 'templateType', 'nfvoType', 'operationStatus']);
+const columnSort = ['templateId', 'name', 'description', 'templateType', 'nfvoType', 'operationStatus'];
 const repeatName = computed(() => { 
   return td_list.value.map(e => e.name).includes(templateName.value); 
 });  

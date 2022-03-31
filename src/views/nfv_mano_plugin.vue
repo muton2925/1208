@@ -42,15 +42,18 @@
       {{ `${ t('Create') }${ t('new') } NFV MANO ${ t('Plugin') }` }}  
     </template>
     <template v-slot:body>
-      <form>
+      <div>
         <div class="mb-3">
           <label for="InputFile" class="form-label">
             {{ `${ t('Plugin') }${ t('Name') } :` }}
           </label>
-          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="placeholder" v-model.trim="fileName">
+          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="placeholder" v-model.trim="fileName" @keypress.enter="create_plugin_modal">
           <div class="invalid-feedback">
             <template v-if="repeatName">
               {{ `${ t('this') }${ t('Plugin') }${ t('Name') }${ t('already_exists') }` }}
+            </template>
+            <template v-else-if="fileName.length > 20">
+              {{ `請勿輸入超過 20 個字元` }}
             </template>
             <template v-else>
               {{ `${ t('Plugin') }${ t('Name') }${ t('not_be_empty') }` }}
@@ -66,7 +69,7 @@
             {{ `${ t('Plugin') }${ t('File') }${ t('not_be_empty') }` }}
           </div>
         </div>
-      </form>
+      </div>
     </template>
     <template v-slot:footer>
       <button type="button" class="btn btn-primary text-white" @click="create_plugin_modal">{{ t('Create') }}</button>
@@ -148,6 +151,10 @@ const columnSort = ['name', 'allocate_nssi', 'dellocate_nssi'];
 const repeatName = computed(() => { 
   return td_list.value.map(e => { return e.name }).includes(fileName.value); 
 });
+if(locale.value == 'en') 
+  placeholder = `${ t('Please') }${ t('enter', ['a '])}${ t('Plugin') }${ t('Name') }`;
+else 
+  placeholder = `${ t('Please') }${ t('enter') }${ t('Plugin') }${ t('Name') }`;
 const get_plugin_name = name => { // Update Modal 內名稱
   fileName.value = name; 
 }; 
@@ -234,10 +241,7 @@ watch(fileName, () => { text_invalidated.value = false; });
 watch(fileData, () => { file_invalidated.value = false; });
 
 onBeforeMount(async () => {
-  if(locale.value == 'en') 
-    placeholder = `${ t('Please') }${ t('enter', ['a '])}${ t('Plugin') }${ t('Name') }`;
-  else 
-    placeholder = `${ t('Please') }${ t('enter') }${ t('Plugin') }${ t('Name') }`;
+
   try {
     await getTableData();
   }

@@ -1,7 +1,7 @@
-import { createI18n } from 'vue-i18n'
+import { createI18n } from 'vue-i18n';
 // 載入語言
-import tw from '@/lang/tw.json'
-import en from '@/lang/en.json'
+import tw from '@/lang/tw.json';
+import en from '@/lang/en.json';
 const i18n = createI18n({
   locale: 'en',           // 設定語言
   // locale: 'tw',           // 設定語言
@@ -10,7 +10,6 @@ const i18n = createI18n({
   messages: {
     tw,
     en
-  }
-
-})
-export default i18n
+  },
+});
+export default i18n;

@@ -38,14 +38,12 @@
                   <th scope="col" class="table-light cursor-pointer col-1" :class="{ 'w-0' : !sortableColumn(item.name) }" v-for="item in columns" :key="item.name" @click="sortColumn(item.name)">
                     <template v-if="sortableColumn(item.name)">
                       <div class="d-flex justify-content-between">
-                        <!-- <span>{{ t(`__thList.${item.text}`) }}</span> -->
                         <span>{{ item.text }}</span>
                         <i :class="[[ item.name == this.sortDesc ? 'bi bi-sort-alpha-up' : 'bi bi-sort-alpha-down' ], { 'text-danger' : item.name == this.sortAsc || item.name == this.sortDesc }, 'ms-2']"></i>
                       </div>
                     </template>
                     <template v-else>
                       <div>{{ item.text }}</div>
-                      <!-- <div>{{ t(`__thList.${item.text}`) }}</div> -->
                     </template>
                   </th>
                 </tr>

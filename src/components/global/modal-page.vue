@@ -25,7 +25,7 @@ const props = defineProps({
   allPages: {
     type: Number,
     required: true,
-  },
+  }
 });
 const { allPages } = toRefs(props);
 let modal;

@@ -12,7 +12,7 @@ export const selects_invalidated = reactive({});
 
 const text_Validate = text => {
   const [repeatName, fileName] = text;
-  if(repeatName || fileName == '') {
+  if(repeatName || fileName == '' || fileName.length > 20) {
     text_invalidated.value = true;
     return false;
   }

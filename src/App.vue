@@ -34,16 +34,16 @@ const reload = () => {
     isRouterAlive.value = true;
   });
 };
-// Cookies.set('foo', 'bar')
-let lang = navigator.language;//常規瀏覽器語言
-lang = lang.slice(0, 2);//擷取lang前2位字元
-if(lang == 'zh'){
-  store.commit("changeLocaleLang", 'tw');
-  locale.value = store.state.localeLang;
-}else{
-  store.commit("changeLocaleLang", 'en');
-  locale.value = store.state.localeLang;
-}
+provide('reload', reload);
+// let lang = navigator.language;//常規瀏覽器語言
+// lang = lang.slice(0, 2);//擷取lang前2位字元
+// if(lang == 'zh'){
+//   store.commit("changeLocaleLang", 'tw');
+//   locale.value = store.state.localeLang;
+// }else{
+//   store.commit("changeLocaleLang", 'en');
+//   locale.value = store.state.localeLang;
+// }
 if (info) {
   const token = JSON.parse(info).token;
   // 如果token不為空，且確實有這個欄位則讓路由變更

@@ -162,6 +162,7 @@ import { Share, GenericTemplate } from '@/assets/js/api';
 import { computed, onBeforeMount, ref, watch, toRefs, defineAsyncComponent } from 'vue';
 import { callCreate, callUpdate, callDelete, calldownload } from '@/assets/js/templateOperate';
 import { text_invalidated, file_invalidated, select_invalidated, file_Validate, text_Validate, select_Validate } from '@/assets/js/validate';
+const { t } = useI18n();
 const { PluginList, TemplateList } = Share();
 const { alertRef, alertExist } = toRefs(alertConfig);
 const { createGenericTemplate, updateGenericTemplate, deleteGenericTemplate } = GenericTemplate();
@@ -173,7 +174,6 @@ const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Moda
 const modalCreate = ref(null);
 const modalUpdate = ref(null);
 const uploadData_update = ref(null);
-const { t } = useI18n();
 const status = ref(false); 
 const th_list = [
   { name: "templateId", text: t("ID") },
@@ -275,27 +275,6 @@ const delete_template_modal = () => { // 點擊 Delete Modal 內刪除按鈕
 const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
   filterEntries.value = val;
 };
-const removeShowData = () => { // 關閉 Show Modal
-  templateId.value = '';
-  templateVNFList.value = {};
-};
-const removeCreateData = () =>  { // 關閉 Create Modal
-  templateName.value = '';
-  templateDescription.value = '';
-  currentNFVMANO.value = `${ t('Please') }${ t('select') } ...`;
-  text_invalidated.value = false;
-  select_invalidated.value = false;
-};
-const removeUpdateData = () => { // 關閉 Update Modal
-  templateId.value = '';
-  fileData.value = {};
-  currentNFVMANO.value = `${ t('Please') }${ t('select') } ...`;
-  file_invalidated.value = false;
-  uploadData_update.value.value = null;
-};
-const removeDeleteData = () =>  { // 關閉 Delete Modal
-  templateId.value = '';
-};
 const download_template_button = file => { // 點擊 Download Modal 按鈕
   const alertData = {
     Template: `${ t('template_header', 0) } ${ t('Template') }`,
@@ -319,6 +298,27 @@ const show_template_button = (id, content) => { // 點擊 Show Modal 按鈕
       templateVNFList.value[value[0]].push(tojson.node_templates.VNF1.properties.descriptor_id);
     }
   }
+};
+const removeShowData = () => { // 關閉 Show Modal
+  templateId.value = '';
+  templateVNFList.value = {};
+};
+const removeCreateData = () =>  { // 關閉 Create Modal
+  templateName.value = '';
+  templateDescription.value = '';
+  currentNFVMANO.value = `${ t('Please') }${ t('select') } ...`;
+  text_invalidated.value = false;
+  select_invalidated.value = false;
+};
+const removeUpdateData = () => { // 關閉 Update Modal
+  templateId.value = '';
+  fileData.value = {};
+  currentNFVMANO.value = `${ t('Please') }${ t('select') } ...`;
+  file_invalidated.value = false;
+  uploadData_update.value.value = null;
+};
+const removeDeleteData = () =>  { // 關閉 Delete Modal
+  templateId.value = '';
 };
 
 watch(templateName, () => { text_invalidated.value = false; });

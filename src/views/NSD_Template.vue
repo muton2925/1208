@@ -172,6 +172,7 @@ import { alertConfig } from '@/assets/js/alertData';
 import { ref, toRefs, watch, computed, onBeforeMount, defineAsyncComponent } from 'vue';
 import { callCreate, callUpdate, callDelete, calldownload } from '../assets/js/templateOperate';
 import { text_invalidated, file_invalidated, select_invalidated, file_Validate, text_Validate, select_Validate } from '../assets/js/validate';
+const { t } = useI18n();
 const { PluginList, TemplateList } = Share();
 const { alertRef, alertExist } = toRefs(alertConfig);
 const { createGenericTemplate, updateGenericTemplate, deleteGenericTemplate } = GenericTemplate();
@@ -183,7 +184,6 @@ const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Moda
 const modalCreate = ref(null);
 const modalUpdate = ref(null);
 const uploadData_update = ref(null);
-const { t } = useI18n();
 const status = ref(false);  
 const th_list = [
   { name: "templateId", text: t("ID") },
@@ -286,6 +286,23 @@ const delete_template_modal = () => { // 點擊 Delete Modal 內刪除按鈕
 const updateTableData = val => { // 每次執行 Table 操作，更新資料
   filterEntries.value = val;
 };
+const download_template_button = file => { // 點擊 Download Modal 按鈕
+  const alertData = {
+    Template: `${ t('template_header', 1) } ${ t('Template') }`,
+    configSuccess: t('downloaded'),
+    configUnsuccess: t('download'),
+  };
+  calldownload(file, alertData);
+};
+const show_template_button = item => { // 點擊 Show Modal 按鈕
+  templateId.value = item.templateId;
+  if(item.operationStatus == 'UPLOAD') {
+    let topology_template_string = item.content[0].topology_template;
+    let topology_template_JSON = JSON.parse(topology_template_string.replace(/'/g, '"'));
+    let topology_template_array = topology_template_JSON.node_templates.NS1.properties.constituent_vnfd;
+    templateVNFList.value = topology_template_array;
+  }
+};
 const removeShowData = () => { // 關閉 Show Modal
   templateId.value = '';
   templateVNFList.value = [];
@@ -306,23 +323,6 @@ const removeUpdateData = () => { // 關閉 Update Modal
 };
 const removeDeleteData = () => { // 關閉 Delete Modal
   templateId.value = '';
-};
-const download_template_button = file => { // 點擊 Download Modal 按鈕
-  const alertData = {
-    Template: `${ t('template_header', 1) } ${ t('Template') }`,
-    configSuccess: t('downloaded'),
-    configUnsuccess: t('download'),
-  };
-  calldownload(file, alertData);
-};
-const show_template_button = item => { // 點擊 Show Modal 按鈕
-  templateId.value = item.templateId;
-  if(item.operationStatus == 'UPLOAD') {
-    let topology_template_string = item.content[0].topology_template;
-    let topology_template_JSON = JSON.parse(topology_template_string.replace(/'/g, '"'));
-    let topology_template_array = topology_template_JSON.node_templates.NS1.properties.constituent_vnfd;
-    templateVNFList.value = topology_template_array;
-  }
 };
 
 watch(templateName, () => { text_invalidated.value = false; });

@@ -128,6 +128,7 @@ const modalUpdate = ref(null);
 const uploadData_create = ref(null);
 const uploadData_update = ref(null);
 const { t, locale } = useI18n();
+let placeholder;
 const th_list = [
   { name: "name", text: `${ t("Plugin") }${ t("Name") }` },
   { name: "allocate_nssi", text: `${ t("Allocate") }NSSI${ t("File") }` },
@@ -144,20 +145,18 @@ const status = ref(false);
 const filterEntries = ref([]);
 const { alertRef, alertExist } = toRefs(alertConfig);
 const columnSort = ref(['name', 'allocate_nssi', 'dellocate_nssi']);
-let placeholder;
-if(locale.value == 'en') 
-  placeholder = `${ t('Please') }${ t('enter', ['a '])}${ t('Plugin') }${ t('Name') }`;
-else 
-  placeholder = `${ t('Please') }${ t('enter') }${ t('Plugin') }${ t('Name') }`;
-const repeatName = computed(() => { return td_list.value.map(e => { return e.name }).includes(fileName.value); });
-const get_plugin_name = name => { fileName.value = name; }; // Update Modal 內名稱
-const getFileData = e => { fileData.value = e.target.files; }; // 更新 Update Modal 內檔案
+const repeatName = computed(() => { 
+  return td_list.value.map(e => { return e.name }).includes(fileName.value); 
+});
+const get_plugin_name = name => { // Update Modal 內名稱
+  fileName.value = name; 
+}; 
+const getFileData = e => { // 更新 Update Modal 內檔案
+  fileData.value = e.target.files;
+}; 
 const getTableData = async () => { // 顯示 Table 資料
   const res = await PluginList();
-  td_list.value = [];
-  for(let i of res.data) {     
-    td_list.value.push(i);
-  }
+  td_list.value = res.data;
 };
 const create_validate = () => {  // Create Modal 驗證
   const textValidate = text_Validate([repeatName.value, fileName.value]);
@@ -235,6 +234,10 @@ watch(fileName, () => { text_invalidated.value = false; });
 watch(fileData, () => { file_invalidated.value = false; });
 
 onBeforeMount(async () => {
+  if(locale.value == 'en') 
+    placeholder = `${ t('Please') }${ t('enter', ['a '])}${ t('Plugin') }${ t('Name') }`;
+  else 
+    placeholder = `${ t('Please') }${ t('enter') }${ t('Plugin') }${ t('Name') }`;
   try {
     await getTableData();
   }

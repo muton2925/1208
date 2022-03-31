@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" @update="updateTableData" :status="status">
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :status="status" @update="updateTableData">
     <template v-slot:header>
       {{`${ t('template_header', 0) } ${ t('Template') }`}}
     </template>
@@ -199,9 +199,12 @@ const description = t('Description');
 const templateNameplaceholder = `${ t("Template") }${ t("Name") }`;
 const currentNFVMANO = ref(`${ t('Please') }${ t('select') } ...`);
 const columnSort = ref(['templateId', 'name', 'description', 'templateType', 'nfvoType', 'operationStatus']);
-const repeatName = computed(() => { return td_list.value.map(e => e.name).includes(templateName.value); });  
-const sortNFVMANOList = computed(() => { return $array.sortBy(nfv_mano_list.value, 'name', 'asc'); });
-
+const repeatName = computed(() => { 
+  return td_list.value.map(e => e.name).includes(templateName.value); 
+});  
+const sortNFVMANOList = computed(() => { 
+  return $array.sortBy(nfv_mano_list.value, 'name', 'asc');
+});
 const getPluginList = async () => {  // 顯示 Table 資料
   const res = await PluginList();
   nfv_mano_list.value = res.data;
@@ -232,8 +235,12 @@ const create_template_modal = () => { // 點擊 Create Modal 內創建按鈕
     closeModal(modalCreate.value);
   }
 };
-const get_templateId = id =>  { templateId.value = id; }
-const getFileData = e => { fileData.value = e.target.files; };
+const get_templateId = id => { 
+  templateId.value = id; 
+};
+const getFileData = e => { 
+  fileData.value = e.target.files;
+};
 const update_template_validate = () => { 
   const fileValidate = file_Validate(fileData.value[0]);
   return fileValidate;
@@ -278,17 +285,17 @@ const removeCreateData = () =>  { // 關閉 Create Modal
   currentNFVMANO.value = `${ t('Please') }${ t('select') } ...`;
   text_invalidated.value = false;
   select_invalidated.value = false;
-}
+};
 const removeUpdateData = () => { // 關閉 Update Modal
   templateId.value = '';
   fileData.value = {};
   currentNFVMANO.value = `${ t('Please') }${ t('select') } ...`;
   file_invalidated.value = false;
   uploadData_update.value.value = null;
-}
+};
 const removeDeleteData = () =>  { // 關閉 Delete Modal
   templateId.value = '';
-}
+};
 const download_template_button = file => { // 點擊 Download Modal 按鈕
   const alertData = {
     Template: `${ t('template_header', 0) } ${ t('Template') }`,

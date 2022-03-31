@@ -33,12 +33,15 @@ export default {
 
     const router = useRouter();
     const store = useStore();
-    onBeforeRouteLeave( () => {
+    onBeforeRouteLeave( (to) => {
+      console.log(to)
       const info = sessionStorage.getItem('token');
-      if(!info){
+      if(info){
+        if(to.name == "login"){
           router.push({
-          name: 'dashboard'
-       })
+            name: 'dashboard'
+          })
+        }
       }
     })
     const logout = () => {

@@ -1,12 +1,12 @@
-import router from '@/router'
-import * as echarts from 'echarts'
-import {  ref } from 'vue';
-import {nssi_topology} from './api'
+import router from '@/router';
+import * as echarts from 'echarts';
+import { ref } from 'vue';
+import { nssi_topology } from './api';
 var label;
-var datas,nssi_num; 
-let NSViewChartContent = ref()
-const { showNssi, nssiSwitched, showNssiTopology, allocateNssi,  deleteVnf} = nssi_topology()
-function show_nssi(dom,unmount) {
+var datas, nssi_num; 
+let NSViewChartContent = ref();
+const { showNssi, nssiSwitched, showNssiTopology, allocateNssi,  deleteVnf } = nssi_topology();
+function show_nssi(dom, unmount) {
     var myChart;
     function myChartResize (){
        myChart.resize();

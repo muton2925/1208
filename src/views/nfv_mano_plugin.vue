@@ -115,7 +115,7 @@ import { alertConfig } from '@/assets/js/alertData';
 import { closeModal } from '@/assets/js/closeModel';
 import { Share, nfv_mano_plugin } from '@/assets/js/api';
 import { ref, toRefs, watch, computed, onBeforeMount, defineAsyncComponent } from 'vue';
-import { callCreate, callUpdate, callDelete, calldownload } from '@/assets/js/templateOperate';
+import { callCreate, callUpdate, callDelete, callDownload } from '@/assets/js/templateOperate';
 import { text_invalidated, file_invalidated, file_Validate, text_Validate } from '@/assets/js/validate';
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
@@ -227,7 +227,7 @@ const download_template_button = file => { // 點擊 Download Modal 按鈕
     configSuccess: t('downloaded '),
     configUnsuccess: t('download'),
   };
-  calldownload(file, alertData);
+  callDownload(file, alertData);
 };
 
 watch(fileName, () => { text_invalidated.value = false; });

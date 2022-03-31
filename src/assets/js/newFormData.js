@@ -6,10 +6,10 @@
  * 
  */
 
-export const form = (formKey, formData) =>{
-    let form = new FormData();
-    for (let index = 0; index < formKey.length; index++) {
-      form.append(formKey[index], formData[index]);
-    }
-    return form
-}
+export const form = (formKey, formData) => {
+  let form = new FormData();
+  for (let index = 0; index < formKey.length; index++) {
+    form.append(formKey[index], formData[index]);
+  }
+  return form;
+};

@@ -135,7 +135,7 @@ import Table from '../components/global/table.vue';
 import { closeModal } from '@/assets/js/closeModel';
 import { alertConfig } from '@/assets/js/alertData';
 import { ref, toRefs, watch, computed, onBeforeMount, defineAsyncComponent } from 'vue';
-import { callCreate, callUpdate, callDelete, calldownload } from '@/assets/js/templateOperate';
+import { callCreate, callUpdate, callDelete, callDownload } from '@/assets/js/templateOperate';
 import { text_invalidated, file_invalidated, select_invalidated, file_Validate, text_Validate, select_Validate } from '@/assets/js/validate';
 const { t } = useI18n();
 const { PluginList, TemplateList } = Share();
@@ -255,7 +255,7 @@ const download_template_button = file => { // 點擊 Download Modal 按鈕
     configSuccess: t('downloaded'),
     configUnsuccess: t('download'),
   };
-  calldownload(file, alertData);
+  callDownload(file, alertData);
 };
 const removeCreateData = () => { // 關閉 Create Modal
   templateName.value = '';

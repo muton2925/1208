@@ -37,7 +37,7 @@
       </tr>
     </template>
   </Table>
-  <Modalcreate ref="modalCreate" @remove="removeCreateData">
+  <Modalcreate ref="modalCreate" @remove="removeCreateData" @keypress.enter="create_plugin_modal">
     <template v-slot:header>
       {{ `${ t('Create') }${ t('new') } NFV MANO ${ t('Plugin') }` }}  
     </template>
@@ -47,13 +47,10 @@
           <label for="InputFile" class="form-label">
             {{ `${ t('Plugin') }${ t('Name') } :` }}
           </label>
-          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="placeholder" v-model.trim="fileName" @keypress.enter="create_plugin_modal">
+          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="placeholder" v-model.trim="fileName" autocomplete="off">
           <div class="invalid-feedback">
             <template v-if="repeatName">
               {{ `${ t('this') }${ t('Plugin') }${ t('Name') }${ t('already_exists') }` }}
-            </template>
-            <template v-else-if="fileName.length > 20">
-              {{ `請勿輸入超過 20 個字元` }}
             </template>
             <template v-else>
               {{ `${ t('Plugin') }${ t('Name') }${ t('not_be_empty') }` }}
@@ -61,10 +58,10 @@
           </div>
         </div>
         <div class="mb-2">
-          <label for="UploadFile" class="form-label">
+          <label for="UploadFileCreate" class="form-label">
             {{ `${ t('Plugin') }${ t('File') } :` }}
           </label>
-          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile" ref="uploadData_create" accept=".zip" @change="getFileData">
+          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFileCreate" ref="uploadData_create" accept=".zip" @change="getFileData">
           <div class="invalid-feedback">
             {{ `${ t('Plugin') }${ t('File') }${ t('not_be_empty') }` }}
           </div>
@@ -75,7 +72,7 @@
       <button type="button" class="btn btn-primary text-white" @click="create_plugin_modal">{{ t('Create') }}</button>
     </template>
   </Modalcreate>
-  <Modalupdate ref="modalUpdate" @remove="removeUpdateData">
+  <Modalupdate ref="modalUpdate" @remove="removeUpdateData" @keypress.enter="update_plugin_modal">
     <template v-slot:header>
       {{ `${ t('Update') }${ t('Service') }${ t('Mapping') }${ t('Plugin') }` }}  
     </template>
@@ -88,10 +85,10 @@
           <input type="text" class="form-control" id="InputFile" :placeholder="placeholder" v-model="fileName" readonly>
         </div>
         <div class="mb-2">
-          <label for="UploadFile2" class="form-label">
+          <label for="UploadFileUpdate" class="form-label">
             {{ `${ t('Plugin') }${ t('File') } :` }}
           </label>
-          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="getFileData">
+          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFileUpdate" ref="uploadData_update" accept=".zip" @change="getFileData">
           <div class="invalid-feedback">
             {{ `${ t('File') }${ t('not_be_empty') }` }}
           </div>
@@ -102,7 +99,7 @@
       <button type="button" class="btn btn-warning text-white" @click="update_plugin_modal">{{ t('Update') }}</button>
     </template>
   </Modalupdate>
-  <Modaldelete @delete="delete_plugin_modal" @remove="removeDeleteData">
+  <Modaldelete ref="modalDelete" @remove="removeDeleteData" @keypress.enter="delete_plugin_modal" @delete="delete_plugin_modal">
     <template v-slot:header>
       {{ `${ t('Delete') }${ t('Service') }${ t('Mapping') }${ t('Plugin') }` }} 
     </template>
@@ -128,6 +125,7 @@ const { PluginList } = Share();
 const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
 const modalCreate = ref(null);
 const modalUpdate = ref(null);
+const modalDelete = ref(null);
 const uploadData_create = ref(null);
 const uploadData_update = ref(null);
 const { t, locale } = useI18n();
@@ -160,6 +158,10 @@ const get_plugin_name = name => { // Update Modal 內名稱
 }; 
 const getFileData = e => { // 更新 Update Modal 內檔案
   fileData.value = e.target.files;
+  if(e.target.id == 'UploadFileCreate')
+    modalCreate.value.focusModalEvent();
+  else
+    modalUpdate.value.focusModalEvent();
 }; 
 const getTableData = async () => { // 顯示 Table 資料
   const res = await PluginList();
@@ -208,6 +210,7 @@ const delete_plugin_modal = () => { // 點擊 Delete Modal 內刪除按鈕
     configUnsuccess: t('delete'),
   };
   callDelete(fileName.value, [deletePlugin, getTableData], alertData);
+  closeModal(modalDelete.value);
 };
 const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
   filterEntries.value = val;

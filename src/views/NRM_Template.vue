@@ -40,7 +40,7 @@
       </tr>
     </template>
   </Table>
-  <Modalcreate ref="modalCreate" @remove="removeCreateData">
+  <Modalcreate ref="modalCreate" @remove="removeCreateData" @keypress.enter="create_template_modal">
     <template v-slot:header>
       {{`${ t('Create') }${ t('new') }NRM ${ t('Template') }`}}
     </template>
@@ -50,7 +50,7 @@
           <label for="InputFile" class="form-label">
             {{`${ t('Template') }${ t('Name') } :`}}
           </label>
-          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="templateNameplaceholder" v-model="templateName">
+          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="templateNameplaceholder" v-model.trim="templateName" autocomplete="off">
           <div class="invalid-feedback">
             <template v-if="repeatName">
               {{`${ t('this') }${ t('Template') }${ t('Name') }${ t('already_exists') }`}}
@@ -64,13 +64,13 @@
           <label for="InputFile2" class="form-label">
             {{`NRM ${ t('Description') } :`}}
           </label>
-          <input type="text" class="form-control" id="InputFile2" :placeholder="description" v-model="templateDescription">
+          <input type="text" class="form-control" id="InputFile2" :placeholder="description" v-model.trim="templateDescription" autocomplete="off">
         </div>
         <div class="mb-2">
           <label for="InputFile3" class="form-label">
             {{`NFVO ${ t('Name') } :`}}
           </label>
-          <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_invalidated }" id="InputFile3" aria-label=".form-select example">
+          <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_invalidated }" id="InputFile3" aria-label=".form-select" @change="selectNFVMANO">
             <option selected disabled :value="`${t('Please')}${t('select')} ...`">
               {{`${ t('Please') }${ t('select') } ...`}}
             </option>
@@ -88,7 +88,7 @@
       </button>
     </template>
   </Modalcreate>
-  <Modalupdate ref="modalUpdate" @remove="removeUpdateData">
+  <Modalupdate ref="modalUpdate" @remove="removeUpdateData" @keypress.enter="update_template_modal">
     <template v-slot:header>
       {{`${ t('Update') }NRM ${ t('Template') }`}}
     </template>
@@ -117,7 +117,7 @@
       </button>
     </template>
   </Modalupdate>
-  <Modaldelete ref="modalDelete" @delete="delete_template_modal" @remove="removeDeleteData">
+  <Modaldelete ref="modalDelete" @remove="removeDeleteData" @keypress.enter="delete_template_modal" @delete="delete_template_modal">
     <template v-slot:header>
       {{`${ t('Delete') }NRM ${ t('Template') }`}}
     </template>
@@ -148,6 +148,7 @@ const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Moda
 
 const modalCreate = ref(null);
 const modalUpdate = ref(null);
+const modalDelete = ref(null);
 const uploadData_update = ref(null);
 const status = ref(false);
 const th_list = [
@@ -187,6 +188,9 @@ const getTableData = async () => {  // 顯示 Table 資料
   const res = await TemplateList();
   td_list.value = res.data.filter(x => x.templateType == 'NRM');
 };
+const selectNFVMANO = () => {
+  modalCreate.value.focusModalEvent();
+};
 const create_Validate = () => { 
   const set = `${ t('Please') }${ t('select') } ...`;
   const textValidate = text_Validate([repeatName.value, templateName.value]);
@@ -211,6 +215,7 @@ const create_template_modal = () => { // 點擊 Create Modal 內創建按鈕
 };
 const getFileData = e => { 
   fileData.value = e.target.files;
+  modalUpdate.value.focusModalEvent();
 };
 const update_template_validate = () => { 
   const fileValidate = file_Validate(fileData.value[0]);
@@ -245,6 +250,7 @@ const delete_template_modal = () => { // 點擊 Delete Modal 內刪除按鈕
     configUnsuccess: t('delete'),
   };
   callDelete(templateId.value, [deleteGenericTemplate, getTableData], alertData);
+  closeModal(modalDelete.value);
 };
 const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
   filterEntries.value = val;

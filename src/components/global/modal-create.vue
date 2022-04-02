@@ -28,6 +28,7 @@ const { t } = useI18n();
 const modal_create = ref(null);
 const emit = defineEmits(['remove']);
 const closeModalEvent = () => modal.hide();
+const focusModalEvent = () => modal_create.value.focus();
 
 onMounted(() => {
   modal = new Modal(modal_create.value, {});
@@ -38,5 +39,6 @@ onMounted(() => {
 
 defineExpose({
   closeModalEvent,
+  focusModalEvent,
 });
 </script>

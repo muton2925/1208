@@ -1,11 +1,11 @@
 <template>
-  <div class="modal fade" id="change_page_Modal" ref="modal_page" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="change_page_Modal" ref="modal_page" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" @keypress.enter="validate">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body d-flex align-items-center flex-wrap p-2 p-sm-3">
           <div class="col-12 col-sm d-flex justify-content-center align-items-center py-1">
             <span>switch page</span>
-            <input type="text" inputmode="numeric" class="form-control input-custom text-center mx-2" :class="{ 'border-danger' : number_validate }" v-model="pageNumber" @keypress.enter="validate">
+            <input type="text" inputmode="numeric" class="form-control input-custom text-center mx-2" :class="{ 'border-danger' : number_validate }" v-model="pageNumber">
             <span>of {{ allPages }} pages</span>
           </div>
           <button type="button" class="btn btn-primary text-white col col-sm-auto mt-2 mt-sm-0" @click="validate">Go</button>
@@ -35,7 +35,7 @@ const number_validate = ref(false);
 const emit = defineEmits(['switch']);
 const validate = () => {
   const re = /^[0-9]+$/;
-  let number = parseInt(pageNumber.value);
+  const number = parseInt(pageNumber.value);
   if(!re.test(number) || (number > allPages.value || number <= 0))
     number_validate.value = true;
   if(!number_validate.value) {

@@ -47,30 +47,30 @@ const routerEvent = url => {
     reload();
   else
     router.push({ path : '/' + url });
-}
+};
 const routeStatus = (url, route) => {
   const index = menuData.value.findIndex(e => e.url == url);
   if(menuData.value[index].childNodes.findIndex(e => e.url == route) != -1)
     return true;
   else
     return false;
-}
+};
 const closeCollapse = () => {
   offcanvas.value.hide();
   nssi_view.value.hide();
   generic_template.value.hide();
-}
+};
 
 watch(currentWindowWidth, (newVal) => {
   if(newVal >= 576) 
     closeCollapse();
-})
+});
 
 onMounted(() => {
   offcanvas.value = new Offcanvas(offcanvas_ref.value, {});
   nssi_view.value = new Collapse(nssi_view_xs.value, { toggle : false });
   generic_template.value = new Collapse(generic_template_xs.value, { toggle : false });
-})
+});
 </script>
 <style scoped>
 .offcanvas-custom {

@@ -15,20 +15,19 @@
 <script>
 import { useStore } from 'vuex';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
-// import axios  from 'axios';
+import axios  from 'axios';
 export default {
   setup(){
-    // axios.post('http://10.20.1.40:80/basic/login/',{
-  
-    //     name: "安安",
-    //     password: "123523",
-      
-    // }).then(res=>{
-    //   console.log(res)
-    // })
-    // .catch(err=>{
-    //   console.log(err)
-    // })
+    axios.post('http://10.20.1.40:80/basic/login/',{
+        name: "安s安",
+        password: "123523",
+        // email: '123456@gmail.com'
+    }).then(res=>{
+      console.log(res)
+    })
+    .catch(err=>{
+      console.log(err)
+    })
 
 
     const router = useRouter();

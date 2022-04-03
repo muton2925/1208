@@ -1,5 +1,5 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" @update="updateTableData" :status="status">
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :status="status" @update="updateTableData">
     <template v-slot:header>
       {{`${ t('template_header', 0) } ${ t('Template') }`}}
     </template>
@@ -160,8 +160,9 @@ import { closeModal } from '@/assets/js/closeModel';
 import { alertConfig } from '@/assets/js/alertData';
 import { Share, GenericTemplate } from '@/assets/js/api';
 import { computed, onBeforeMount, ref, watch, toRefs, defineAsyncComponent } from 'vue';
-import { callCreate, callUpdate, callDelete, calldownload } from '@/assets/js/templateOperate';
+import { callCreate, callUpdate, callDelete, callDownload } from '@/assets/js/templateOperate';
 import { text_invalidated, file_invalidated, select_invalidated, file_Validate, text_Validate, select_Validate } from '@/assets/js/validate';
+const { t } = useI18n();
 const { PluginList, TemplateList } = Share();
 const { alertRef, alertExist } = toRefs(alertConfig);
 const { createGenericTemplate, updateGenericTemplate, deleteGenericTemplate } = GenericTemplate();
@@ -173,7 +174,6 @@ const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Moda
 const modalCreate = ref(null);
 const modalUpdate = ref(null);
 const uploadData_update = ref(null);
-const { t } = useI18n();
 const status = ref(false); 
 const th_list = [
   { name: "templateId", text: t("ID") },
@@ -198,10 +198,13 @@ const templateDescription = ref('');
 const description = t('Description');
 const templateNameplaceholder = `${ t("Template") }${ t("Name") }`;
 const currentNFVMANO = ref(`${ t('Please') }${ t('select') } ...`);
-const columnSort = ref(['templateId', 'name', 'description', 'templateType', 'nfvoType', 'operationStatus']);
-const repeatName = computed(() => { return td_list.value.map(e => e.name).includes(templateName.value); });  
-const sortNFVMANOList = computed(() => { return $array.sortBy(nfv_mano_list.value, 'name', 'asc'); });
-
+const columnSort = ['templateId', 'name', 'description', 'templateType', 'nfvoType', 'operationStatus'];
+const repeatName = computed(() => { 
+  return td_list.value.map(e => e.name).includes(templateName.value); 
+});  
+const sortNFVMANOList = computed(() => { 
+  return $array.sortBy(nfv_mano_list.value, 'name', 'asc');
+});
 const getPluginList = async () => {  // 顯示 Table 資料
   const res = await PluginList();
   nfv_mano_list.value = res.data;
@@ -232,8 +235,12 @@ const create_template_modal = () => { // 點擊 Create Modal 內創建按鈕
     closeModal(modalCreate.value);
   }
 };
-const get_templateId = id =>  { templateId.value = id; }
-const getFileData = e => { fileData.value = e.target.files; };
+const get_templateId = id => { 
+  templateId.value = id; 
+};
+const getFileData = e => { 
+  fileData.value = e.target.files;
+};
 const update_template_validate = () => { 
   const fileValidate = file_Validate(fileData.value[0]);
   return fileValidate;
@@ -268,34 +275,13 @@ const delete_template_modal = () => { // 點擊 Delete Modal 內刪除按鈕
 const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
   filterEntries.value = val;
 };
-const removeShowData = () => { // 關閉 Show Modal
-  templateId.value = '';
-  templateVNFList.value = {};
-};
-const removeCreateData = () =>  { // 關閉 Create Modal
-  templateName.value = '';
-  templateDescription.value = '';
-  currentNFVMANO.value = `${ t('Please') }${ t('select') } ...`;
-  text_invalidated.value = false;
-  select_invalidated.value = false;
-}
-const removeUpdateData = () => { // 關閉 Update Modal
-  templateId.value = '';
-  fileData.value = {};
-  currentNFVMANO.value = `${ t('Please') }${ t('select') } ...`;
-  file_invalidated.value = false;
-  uploadData_update.value.value = null;
-}
-const removeDeleteData = () =>  { // 關閉 Delete Modal
-  templateId.value = '';
-}
 const download_template_button = file => { // 點擊 Download Modal 按鈕
   const alertData = {
     Template: `${ t('template_header', 0) } ${ t('Template') }`,
     configSuccess: t('downloaded'),
     configUnsuccess: t('download'),
   };
-  calldownload(file, alertData);
+  callDownload(file, alertData);
 };
 const show_template_button = (id, content) => { // 點擊 Show Modal 按鈕
   templateId.value = id;
@@ -312,6 +298,27 @@ const show_template_button = (id, content) => { // 點擊 Show Modal 按鈕
       templateVNFList.value[value[0]].push(tojson.node_templates.VNF1.properties.descriptor_id);
     }
   }
+};
+const removeShowData = () => { // 關閉 Show Modal
+  templateId.value = '';
+  templateVNFList.value = {};
+};
+const removeCreateData = () =>  { // 關閉 Create Modal
+  templateName.value = '';
+  templateDescription.value = '';
+  currentNFVMANO.value = `${ t('Please') }${ t('select') } ...`;
+  text_invalidated.value = false;
+  select_invalidated.value = false;
+};
+const removeUpdateData = () => { // 關閉 Update Modal
+  templateId.value = '';
+  fileData.value = {};
+  currentNFVMANO.value = `${ t('Please') }${ t('select') } ...`;
+  file_invalidated.value = false;
+  uploadData_update.value.value = null;
+};
+const removeDeleteData = () =>  { // 關閉 Delete Modal
+  templateId.value = '';
 };
 
 watch(templateName, () => { text_invalidated.value = false; });

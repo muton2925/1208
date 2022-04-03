@@ -17,6 +17,7 @@
         <td class="w-0">
           <div class="d-flex justify-content-center form-check form-switch mb-0">
             <input class="form-check-input cursor-pointer" type="checkbox" role="switch" checked>
+            <!-- (item.name, item.share) -->
           </div>
         </td>
         <td class="w-0">
@@ -108,15 +109,15 @@
 </template>
 <script setup>
 import { useI18n } from 'vue-i18n';
-import { delay } from '../assets/js/delay';
-import { form } from '../assets/js/newFormData';
+import { delay } from '@/assets/js/delay';
+import { form } from '@/assets/js/newFormData';
 import Table from '../components/global/table.vue';
-import { alertConfig } from '../assets/js/alertData';
-import { closeModal } from '../assets/js/closeModel';
-import { Share, nfv_mano_plugin } from '../assets/js/api';
+import { alertConfig } from '@/assets/js/alertData';
+import { closeModal } from '@/assets/js/closeModel';
+import { Share, nfv_mano_plugin } from '@/assets/js/api';
 import { ref, toRefs, watch, computed, onBeforeMount, defineAsyncComponent } from 'vue';
-import { callCreate, callUpdate, callDelete, calldownload } from '../assets/js/templateOperate';
-import { text_invalidated, file_invalidated, file_Validate, text_Validate } from '../assets/js/validate';
+import { callCreate, callUpdate, callDelete, callDownload } from '@/assets/js/templateOperate';
+import { text_invalidated, file_invalidated, file_Validate, text_Validate } from '@/assets/js/validate';
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
 const Modalupdate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalupdate" */ '../components/global/modal-update.vue'));
@@ -128,11 +129,12 @@ const modalUpdate = ref(null);
 const uploadData_create = ref(null);
 const uploadData_update = ref(null);
 const { t, locale } = useI18n();
+let placeholder;
 const th_list = [
   { name: "name", text: `${ t("Plugin") }${ t("Name") }` },
   { name: "allocate_nssi", text: `${ t("Allocate") }NSSI${ t("File") }` },
   { name: "dellocate_nssi", text: `${ t("Deallocate") }NSSI${ t("File") }` },
-  { name: "template_share", text: `分 享` },
+  { name: "template_share", text: t("Share") },
   { name: "update_plugin", text: t("Update") },
   { name: "plugin_file", text: t("Download") },
   { name: "delete_plugin", text: t("Delete") },
@@ -143,21 +145,20 @@ const fileData = ref({});
 const status = ref(false);
 const filterEntries = ref([]);
 const { alertRef, alertExist } = toRefs(alertConfig);
-const columnSort = ref(['name', 'allocate_nssi', 'dellocate_nssi']);
-let placeholder;
-if(locale.value == 'en') 
-  placeholder = `${ t('Please') }${ t('enter', ['a '])}${ t('Plugin') }${ t('Name') }`;
-else 
-  placeholder = `${ t('Please') }${ t('enter') }${ t('Plugin') }${ t('Name') }`;
-const repeatName = computed(() => { return td_list.value.map(e => { return e.name }).includes(fileName.value); });
-const get_plugin_name = name => { fileName.value = name; }; // Update Modal 內名稱
-const getFileData = e => { fileData.value = e.target.files; }; // 更新 Update Modal 內檔案
+const columnSort = ['name', 'allocate_nssi', 'dellocate_nssi'];
+const repeatName = computed(() => { 
+  return td_list.value.map(e => { return e.name }).includes(fileName.value); 
+});
+const get_plugin_name = name => { // Update Modal 內名稱
+  fileName.value = name; 
+}; 
+const getFileData = e => { // 更新 Update Modal 內檔案
+  fileData.value = e.target.files;
+}; 
 const getTableData = async () => { // 顯示 Table 資料
   const res = await PluginList();
-  td_list.value = [];
-  for(let i of res.data) {     
-    td_list.value.push(i);
-  }
+  console.log(res)
+  td_list.value = res.data;
 };
 const create_validate = () => {  // Create Modal 驗證
   const textValidate = text_Validate([repeatName.value, fileName.value]);
@@ -228,13 +229,17 @@ const download_template_button = file => { // 點擊 Download Modal 按鈕
     configSuccess: t('downloaded '),
     configUnsuccess: t('download'),
   };
-  calldownload(file, alertData);
+  callDownload(file, alertData);
 };
 
 watch(fileName, () => { text_invalidated.value = false; });
 watch(fileData, () => { file_invalidated.value = false; });
 
 onBeforeMount(async () => {
+  if(locale.value == 'en') 
+    placeholder = `${ t('Please') }${ t('enter', ['a '])}${ t('Plugin') }${ t('Name') }`;
+  else 
+    placeholder = `${ t('Please') }${ t('enter') }${ t('Plugin') }${ t('Name') }`;
   try {
     await getTableData();
   }

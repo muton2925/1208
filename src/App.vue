@@ -17,7 +17,7 @@
 <script setup>
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
-import { useI18n } from 'vue-i18n';
+// import { useI18n } from 'vue-i18n';
 import Header from "./components/global/header.vue";
 import Sidebar from "./components/global/sidebar.vue";
 // import Cookies from 'js-cookie'
@@ -26,7 +26,7 @@ const store = useStore();
 const route = useRoute();
 const isRouterAlive = ref(true);
 const info = sessionStorage.getItem('token');
-const { locale } = useI18n()
+// const { locale } = useI18n()
 const loginStatus = computed(() => store.state.loginStatus);
 const reload = () => {
   isRouterAlive.value = false;

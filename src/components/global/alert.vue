@@ -34,7 +34,7 @@ const NSSIAlertContent = computed(() => {
     return `${ alertComponent.value } ${ alertAction.value }${ t('Success') } !`;
   else 
     return `${ alertComponent.value } ${ t('yet') }${ alertAction.value } !!`;
-})
+});
 const alertInfo = async (status, name, action, nssi = false) => {
   if(nssi)
     content.value = NSSIAlertContent;
@@ -47,6 +47,7 @@ const alertInfo = async (status, name, action, nssi = false) => {
   await delay(1500);
   alertShow.value = false;
 };
+
 defineExpose({
   alertInfo,
   nssiStatus,

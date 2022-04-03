@@ -52,7 +52,7 @@ const pageStatus = ref(false);
 onMounted(async () => {
   await delay(700);
   pageStatus.value = true;
-})
+});
 </script>
 <style scoped>
 .container-custom {

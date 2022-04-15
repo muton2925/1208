@@ -1,7 +1,9 @@
 <template>
   <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :status="status" :showBtn="false" @update="updateTableData">
     <template v-slot:header>
-      {{ t('NSSI_herder', 2) }}
+      <h3>
+        {{ t('NSSI_herder', 2) }}
+      </h3>
       <!-- Network Slice Subnet Instance -->
     </template>
     <template v-slot:table-name>

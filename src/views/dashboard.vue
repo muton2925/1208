@@ -1,67 +1,70 @@
 <template>
-  <div class="dashboard-container">
-    <audio controls loops ref="a">
-      <source src="../assets/Rubia.mp3">
-        Your browser does not support the
-        <code>audio</code> element.
-    </audio>
-    <button @click="logout">logout</button>
-    <div class="form-check form-switch">
-      <input  class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
-      <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
-    </div>
-  </div>
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :status="status" :showBtn="false" @update="updateTableData">
+    <template v-slot:header>
+     <button @click="a()"  class="btn btn-primary ms-3 text-white">
+          <i class="d-sm-none bi bi-folder-plus"></i>
+          <span class="d-none d-sm-inline">
+            {{ `NFV MANO ${ t('Plugin') }`}}
+          </span>
+        </button>
+    </template>
+    <template v-slot:table-name>
+      {{ `NFV MANO ${ t('Plugin') } ${ t('list') }`}}
+    </template>
+    <template v-slot:table-td>
+      <tr v-for="item in filterEntries" :key="item.name">
+        <td v-for="i in columnSort" :key="i">{{ item[i] }}</td>
+      </tr>
+    </template>
+  </Table>
+  
 </template>
-<script>
-import { useStore } from 'vuex';
-import { onBeforeRouteLeave, useRouter } from 'vue-router';
-import axios  from 'axios';
-export default {
-  setup(){
-    axios.post('http://10.20.1.40:80/basic/login/',{
-        name: "安s安",
-        password: "123523",
-        // email: '123456@gmail.com'
-    }).then(res=>{
-      console.log(res)
-    })
-    .catch(err=>{
-      console.log(err)
-    })
-
-
-    const router = useRouter();
-    const store = useStore();
-    onBeforeRouteLeave( (to) => {
-      console.log(to)
-      const info = sessionStorage.getItem('token');
-      if(info){
-        if(to.name == "login"){
-          router.push({
-            name: 'dashboard'
-          })
-        }
-      }
-    })
-    const logout = () => {
-      sessionStorage.removeItem('token')
-      store.commit("changeLoginStatus");
-      router.push({
-          path: '/'
-      })
-    }
-    return {
-      logout
-    }
-
+<script setup>
+import { useI18n } from 'vue-i18n';
+import { delay } from '@/assets/js/delay';
+import Table from '../components/global/table.vue';
+import { Share } from '@/assets/js/api';
+import { ref, onBeforeMount } from 'vue';
+const { PluginList } = Share();
+const { t } = useI18n();
+const th_list = ref([
+  { name: "userName", text: "userName" },
+  { name: "name", text: `${ t("Plugin") }${ t("Name") }` },
+  { name: "allocate_nssi", text: `${ t("Allocate") }NSSI${ t("File") }` },
+  { name: "deallocate_nssi", text: `${ t("Deallocate") }NSSI${ t("File") }` }
+]);
+const td_list = ref([]);
+const status = ref(false);
+const filterEntries = ref([]);
+const columnSort = ref(['user_name', 'name', 'allocate_nssi', 'deallocate_nssi']);
+const getTableData = async () => { // 顯示 Table 資料
+  const res = await PluginList();
+  console.log(res)
+  td_list.value = res.data;
+};
+const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
+  filterEntries.value = val;
+};
+const a = () => {
+  console.log(123)
+  th_list.value = [
+  { name: "userName", text: "userName" },
+  { name: "templateId", text: t("ID") },
+  { name: "name", text: `${ t("Template") }${ t("Name") }` },
+  { name: "description", text: t("Description") },
+  { name: "templateType", text: t('Type') },
+  { name: "nfvoType", text: t("NFVO") },
+  { name: "operationStatus", text: `NRM ${ t('Status') }` },]
+  columnSort.value = ['userName', 'templateId', 'name', 'description', 'templateType', 'nfvoType', 'operationStatus']
+}
+onBeforeMount(async () => {
+  try {
+    await getTableData();
   }
-}
+  catch(err) {
+    console.log(err);
+  }
+  await delay(700);
+  status.value = true;
+});
 </script>
-<style>
-.dashboard-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(100vh - 70px);
-}
-</style>

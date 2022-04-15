@@ -14,7 +14,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ t('Cancel') }}</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="delete_plugin">{{ t('Delete') }}</button>
+          <button type="button" class="btn btn-danger" @click="delete_plugin">{{ t('Delete') }}</button>
         </div>
       </div> 
     </div>
@@ -28,6 +28,7 @@ let modal;
 const { t } = useI18n();
 const modal_delete = ref(null);
 const delete_plugin = () => emit('delete');
+const closeModalEvent = () => modal.hide();
 const emit = defineEmits(['delete', 'remove']);
 
 onMounted(() => {
@@ -39,5 +40,6 @@ onMounted(() => {
 
 defineExpose({
   modal,
+  closeModalEvent,
 });
 </script>

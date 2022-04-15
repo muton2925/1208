@@ -2,9 +2,7 @@
   <div class="d-flex flex-column p-4 user-select-none">
     <template v-if="pageStatus">
       <div class="container-header d-flex justify-content-between align-items-center mb-4">
-        <h3>
-          <slot name="header"></slot>
-        </h3>
+        <slot name="header"></slot>
         <button v-if="showBtn" class="btn btn-primary ms-3 text-white" data-bs-toggle="modal" data-bs-target="#create_plugin_Modal">
           <i class="d-sm-none bi bi-folder-plus"></i>
           <span class="d-none d-sm-inline">
@@ -38,14 +36,12 @@
                   <th scope="col" class="table-light cursor-pointer col-1" :class="{ 'w-0' : !sortableColumn(item.name) }" v-for="item in columns" :key="item.name" @click="sortColumn(item.name)">
                     <template v-if="sortableColumn(item.name)">
                       <div class="d-flex justify-content-between">
-                        <!-- <span>{{ t(`__thList.${item.text}`) }}</span> -->
                         <span>{{ item.text }}</span>
                         <i :class="[[ item.name == this.sortDesc ? 'bi bi-sort-alpha-up' : 'bi bi-sort-alpha-down' ], { 'text-danger' : item.name == this.sortAsc || item.name == this.sortDesc }, 'ms-2']"></i>
                       </div>
                     </template>
                     <template v-else>
                       <div>{{ item.text }}</div>
-                      <!-- <div>{{ t(`__thList.${item.text}`) }}</div> -->
                     </template>
                   </th>
                 </tr>
@@ -102,7 +98,7 @@
     <template v-else>
       <div class="placeholder-glow d-flex justify-content-between mt-2 mb-4">
         <div class="placeholder placeholder-lg rounded-pill col-6 col-lg-3 col-xxl-2"></div>
-        <div class="placeholder placeholder-lg rounded-pill col-2 col-sm-3 col-lg-1"></div>
+        <div v-if="showBtn" class="placeholder placeholder-lg rounded-pill col-2 col-sm-3 col-lg-1"></div>
       </div>
       <div>
       <div class="card shadow-sm placeholder-glow">
@@ -183,8 +179,8 @@ const currentEntries = ref(10); // 當前每頁筆數
 const showEntries = [10, 50, 100]; // 每頁筆數列表  
 const loadingStatus = ref(false);  // 表格載入中的狀態
 const entries = ref(entrie.value); // 頁面 td 資料
-const columns = ref(column.value); // 頁面 tr 資料
-const columnNumber = column.value.length; // 頁面 tr 個數
+const columns = computed(() => column.value); // 頁面 tr 資料
+const columnNumber = computed(() => column.value.length); // 頁面 tr 個數
 const pageStatus = computed(() => { return status.value; }); // 頁面初始載入狀態
 const currentWindowWidth = computed(() => {  return store.state.windowWidth; }); // 當前視窗寬度
 const showPagination = computed(() => { return $array.pagination(allPages.value, currentPage.value, 2); }); // 右下角頁數資訊

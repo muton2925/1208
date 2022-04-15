@@ -1,7 +1,9 @@
 <template>
   <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :status="status" @update="updateTableData">
     <template v-slot:header>
-      {{ `NFV MANO ${ t('Plugin') }`}}
+      <h3>
+        {{ `NFV MANO ${ t('Plugin') }`}}
+      </h3>  
     </template>
     <template v-slot:button>
       {{ t('Create') }} {{ t('Plugin') }}
@@ -16,7 +18,7 @@
         <td class="tablecell-custom">{{ item.deallocate_nssi }}</td>
         <td class="w-0">
           <div class="d-flex justify-content-center form-check form-switch mb-0">
-            <input class="form-check-input cursor-pointer" type="checkbox" role="switch" checked>
+            <input class="form-check-input cursor-pointer" type="checkbox" role="switch" :checked="item.share" @click="sh(item.name, item.share)">
             <!-- (item.name, item.share) -->
           </div>
         </td>
@@ -38,17 +40,17 @@
       </tr>
     </template>
   </Table>
-  <Modalcreate ref="modalCreate" @remove="removeCreateData">
+  <Modalcreate ref="modalCreate" @remove="removeCreateData" @keypress.enter="create_plugin_modal">
     <template v-slot:header>
       {{ `${ t('Create') }${ t('new') } NFV MANO ${ t('Plugin') }` }}  
     </template>
     <template v-slot:body>
-      <form>
+      <div>
         <div class="mb-3">
           <label for="InputFile" class="form-label">
             {{ `${ t('Plugin') }${ t('Name') } :` }}
           </label>
-          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="placeholder" v-model.trim="fileName">
+          <input type="text" class="form-control" :class="{ 'is-invalid' : text_invalidated }" id="InputFile" :placeholder="placeholder" v-model.trim="fileName" autocomplete="off">
           <div class="invalid-feedback">
             <template v-if="repeatName">
               {{ `${ t('this') }${ t('Plugin') }${ t('Name') }${ t('already_exists') }` }}
@@ -59,21 +61,21 @@
           </div>
         </div>
         <div class="mb-2">
-          <label for="UploadFile" class="form-label">
+          <label for="UploadFileCreate" class="form-label">
             {{ `${ t('Plugin') }${ t('File') } :` }}
           </label>
-          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile" ref="uploadData_create" accept=".zip" @change="getFileData">
+          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFileCreate" ref="uploadData_create" accept=".zip" @change="getFileData">
           <div class="invalid-feedback">
             {{ `${ t('Plugin') }${ t('File') }${ t('not_be_empty') }` }}
           </div>
         </div>
-      </form>
+      </div>
     </template>
     <template v-slot:footer>
       <button type="button" class="btn btn-primary text-white" @click="create_plugin_modal">{{ t('Create') }}</button>
     </template>
   </Modalcreate>
-  <Modalupdate ref="modalUpdate" @remove="removeUpdateData">
+  <Modalupdate ref="modalUpdate" @remove="removeUpdateData" @keypress.enter="update_plugin_modal">
     <template v-slot:header>
       {{ `${ t('Update') }${ t('Service') }${ t('Mapping') }${ t('Plugin') }` }}  
     </template>
@@ -86,10 +88,10 @@
           <input type="text" class="form-control" id="InputFile" :placeholder="placeholder" v-model="fileName" readonly>
         </div>
         <div class="mb-2">
-          <label for="UploadFile2" class="form-label">
+          <label for="UploadFileUpdate" class="form-label">
             {{ `${ t('Plugin') }${ t('File') } :` }}
           </label>
-          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFile2" ref="uploadData_update" accept=".zip" @change="getFileData">
+          <input type="file" class="form-control" :class="{ 'is-invalid' : file_invalidated }" id="UploadFileUpdate" ref="uploadData_update" accept=".zip" @change="getFileData">
           <div class="invalid-feedback">
             {{ `${ t('File') }${ t('not_be_empty') }` }}
           </div>
@@ -100,7 +102,7 @@
       <button type="button" class="btn btn-warning text-white" @click="update_plugin_modal">{{ t('Update') }}</button>
     </template>
   </Modalupdate>
-  <Modaldelete @delete="delete_plugin_modal" @remove="removeDeleteData">
+  <Modaldelete ref="modalDelete" @remove="removeDeleteData" @keypress.enter="delete_plugin_modal" @delete="delete_plugin_modal">
     <template v-slot:header>
       {{ `${ t('Delete') }${ t('Service') }${ t('Mapping') }${ t('Plugin') }` }} 
     </template>
@@ -108,6 +110,7 @@
   <Alert ref="alertRef" v-show="alertExist"></Alert>
 </template>
 <script setup>
+import axios from 'axios';
 import { useI18n } from 'vue-i18n';
 import { delay } from '@/assets/js/delay';
 import { form } from '@/assets/js/newFormData';
@@ -126,6 +129,7 @@ const { PluginList } = Share();
 const { createPluginList, updatePlugin, deletePlugin } = nfv_mano_plugin();
 const modalCreate = ref(null);
 const modalUpdate = ref(null);
+const modalDelete = ref(null);
 const uploadData_create = ref(null);
 const uploadData_update = ref(null);
 const { t, locale } = useI18n();
@@ -149,16 +153,24 @@ const columnSort = ['name', 'allocate_nssi', 'dellocate_nssi'];
 const repeatName = computed(() => { 
   return td_list.value.map(e => { return e.name }).includes(fileName.value); 
 });
+if(locale.value == 'en') 
+  placeholder = `${ t('Please') }${ t('enter', ['a '])}${ t('Plugin') }${ t('Name') }`;
+else 
+  placeholder = `${ t('Please') }${ t('enter') }${ t('Plugin') }${ t('Name') }`;
 const get_plugin_name = name => { // Update Modal 內名稱
   fileName.value = name; 
 }; 
 const getFileData = e => { // 更新 Update Modal 內檔案
   fileData.value = e.target.files;
+  if(e.target.id == 'UploadFileCreate')
+    modalCreate.value.focusModalEvent();
+  else
+    modalUpdate.value.focusModalEvent();
 }; 
 const getTableData = async () => { // 顯示 Table 資料
   const res = await PluginList();
   console.log(res)
-  td_list.value = res.data;
+  td_list.value = res.data.filter(x => x.user_id == '7' );
 };
 const create_validate = () => {  // Create Modal 驗證
   const textValidate = text_Validate([repeatName.value, fileName.value]);
@@ -203,6 +215,7 @@ const delete_plugin_modal = () => { // 點擊 Delete Modal 內刪除按鈕
     configUnsuccess: t('delete'),
   };
   callDelete(fileName.value, [deletePlugin, getTableData], alertData);
+  closeModal(modalDelete.value);
 };
 const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
   filterEntries.value = val;
@@ -231,15 +244,27 @@ const download_template_button = file => { // 點擊 Download Modal 按鈕
   };
   callDownload(file, alertData);
 };
+const sh = (name, share) => {
+  console.log(share)
+  console.log(name)
+  const s = !share
+  console.log('s',s)
+  axios.post('http://10.20.1.40/basic/switch_share/',{
+    name:name,
+    share:s
+  }).then(res=>{
+    console.log(res)
+    getTableData()
+  }).catch((err)=>{
+    console.log(err)
+  })
 
+}
 watch(fileName, () => { text_invalidated.value = false; });
 watch(fileData, () => { file_invalidated.value = false; });
 
 onBeforeMount(async () => {
-  if(locale.value == 'en') 
-    placeholder = `${ t('Please') }${ t('enter', ['a '])}${ t('Plugin') }${ t('Name') }`;
-  else 
-    placeholder = `${ t('Please') }${ t('enter') }${ t('Plugin') }${ t('Name') }`;
+
   try {
     await getTableData();
   }

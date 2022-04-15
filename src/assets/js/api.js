@@ -1,9 +1,10 @@
 import axios from 'axios';
-const baseURL = 'http://10.20.1.143:8000/'
+const baseURL = 'http://10.20.1.40:80/'
+// const baseURL = 'http://10.20.1.143:8000/'
 // const baseURL = 'http://127.0.0.1:8000/';
 const instance  = axios.create({
   baseURL:baseURL,
-  timeout: 10000,
+  timeout: 3000,
 });
 const Share = () => {
   const PluginList = () => instance.get(`plugin/management/`);

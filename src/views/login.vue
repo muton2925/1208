@@ -14,8 +14,8 @@
         <h2 class="login_title">Free5g Mano， Lorem ipsum dolor sit consectetur.</h2>
       </div>
       <div class="form-custom bg-white shadow rounded text-center mt-4 mx-auto p-3">
-        <input class="form-control form-control-lg mb-3" type="email" placeholder="電子郵件地址">
-        <input class="form-control form-control-lg mb-3" type="password" placeholder="密碼">
+        <input v-model="name" class="form-control form-control-lg mb-3" type="email" placeholder="電子郵件地址">
+        <input v-model="pwd" class="form-control form-control-lg mb-3" type="password" placeholder="密碼">
         <button class="w-100 btn btn-primary btn-lg text-white mb-3" @click="a">登入</button>
         <router-link class="text-decoration-none" to="/">忘記密碼 ?</router-link>
         <div class="hr_custom"></div>
@@ -27,20 +27,42 @@
 </template>
 <script setup>
 import { useStore } from 'vuex';
-import { defineAsyncComponent } from 'vue';
+import { ref, defineAsyncComponent } from 'vue';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import {Login} from '../assets/server/apiConfig'
 const ModalRegister = defineAsyncComponent(() => import(/* webpackChunkName: "ModalRegister" */ '@/components/global/modal-register.vue'));
 const store = useStore();
+// import axios from 'axios';
 const router = useRouter();
+const name = ref('安安123123');
+const pwd = ref('123523')
 const a = () => { 
+
+  
+  
   store.commit("changeLoginStatus");
   const token = JSON.stringify({
     'token':123
   })
   sessionStorage.setItem("token", token);
-  router.push({
-    path: '/dashboard'
-  }); 
+  // axios.post('http://10.20.1.40/basic/login/',{
+  //   name:name.value,
+  //   password:pwd.value
+  // }).then(res=>{
+  //   console.log(res)
+  // })
+  Login(name.value, pwd.value).then(res=>{
+    //  router.push({
+    //   path: '/dashboard'
+    // });
+    router.push({
+      path: '/dashboard'
+    });
+ 
+    console.log(res)
+    console.log(document.cookie);
+  })
+    
 };
 
 onBeforeRouteLeave((to) => {

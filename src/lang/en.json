@@ -1,8 +1,58 @@
 {
+    "base":{
+        "showEntries": "show {0} to {1} of {2} entries",
+        "select": "Please select ...",
+        "userName": "userName"
+    },
+    "nfv":{
+        "plugin":"{0} Plugin {1}",
+        "create": "Create new plugin",
+        "update": "Update Service Mapping",
+        "delete": "Delete Service Mapping",
+        "name" : "Plugin name ",
+        "file": "Plugin file",
+        "thisName": "This plugin name",
+        "enter": "Please enter a plugin name",
+        "deallocate": "Deallocate NSSI File",
+        "allocate": "Allocate NSSI File"
+    },
+    "generic":{
+        "template": "{0} Template {1}",
+        "create": "Create new {0} Template",
+        "update": "Update {0} Template",
+        "delete": "Delete {0} Template",
+        "name": "Template name ",
+        "thisName": "This template name",
+        "NFVOName": "NFVO name",
+        "description": "{0} description",
+        "status": "{0} Status",
+        "templateNotFound": "Not upload {0} Template"
+    },
+    "nssi":{
+        "notVNFInformation": "No VNF Information !!",
+        "SureDeallocate": "Sure to deallocate NSSI ?",
+        "deallocate": "Deallocate NSSI",
+        "delete": "Delete NSSI"
+    },
+    "alertData":{
+        "successfully": "Operates Successfully",
+        "unSuccessfully": "Operates UnSuccessfully",
+        "contentSuccess": "{0} has been {1}",
+        "contentUnsuccess": "Fail to {0} the {1}"
+    },
+    "selectTemplate": "Please select one {0} {1}",
+    "plugin": "plugin",
+    "template": "template",
+    "notEmpty": "{0} must not be empty",
+    "exists": "{0} already exists",
+    "public" : "Public",
+    "delFile": "Sure to delete this file ?",
+    "matchingnotFound": "No matching data found",
     "show": "Show",
     "entries": "entries",
     "Loading": "Loading",
-    "matchingnotFound": "No matching data found",
+    
+
     "of": "of",
     "to": "to",
     "first":" First",

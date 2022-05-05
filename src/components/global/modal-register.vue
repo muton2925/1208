@@ -35,16 +35,16 @@
   </div>
 </template>
 <script setup>
-import axios from 'axios';
-const ax = () => {
-  axios.post('http://10.20.1.40:80/basic/register/',{
-    name: "aaa",
-    password: "123123",
-    email: "123@gmail.com"
-  }).then(res=>{
-    console.log(res)
-  })
-}
+// import axios from 'axios';
+// const ax = () => {
+//   axios.post('http://10.20.1.40:80/basic/register/',{
+//     name: "user2",
+//     password: "user2",
+//     email: "user2@gmail.com"
+//   }).then(res=>{
+//     console.log(res)
+//   })
+// }
 
 </script>
 <style scoped>

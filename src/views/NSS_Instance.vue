@@ -64,7 +64,7 @@
                   <!-- VNF Provider -->
                 </th>
                 <th scope="col" class="table-light cursor-pointer col-1">
-                  {{`VNF ${ t('State') }`}}
+                  {{t('generic.status', ['VNF'])}}
                   <!-- VNF State -->
                 </th>
                 <th scope="col" class="table-light cursor-pointer col-1">
@@ -85,7 +85,7 @@
               <template v-else>
                 <tr class="text-center">
                   <td :colspan="4">
-                    {{ t('no') }}VNF {{ t('Information') }} !!
+                    {{ t('nssi.notVNFInformation') }}
                     <!-- No VNF Information !! -->
                   </td>  
                 </tr>
@@ -96,10 +96,9 @@
       </form>
     </template>
   </Modalshow>
-  <Modaldelete @delete="delete_NSSI_modal" @remove="removeDeleteData">
+  <Modaldelete ref="modalDelete" @delete="delete_NSSI_modal" @remove="removeDeleteData">
     <template v-slot:header>
-      {{`${ t('Delete') }NSSI`}}
-      <!-- Delete NSSI -->
+      {{ t('nssi.delete') }}
     </template>
   </Modaldelete>
   <Alert ref="alertRef" v-show="alertExist"></Alert>
@@ -108,13 +107,13 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
-            {{`${ t('Deallocate') }NSSI`}}
+            {{ t('nssi.deallocate') }}
             <!-- Deallocate NSSI -->
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body mx-1">
-          {{`${ t('Sure to') }${ t('Deallocate') }NSSI ?`}}
+          {{ t('nssi.SureDeallocate') }}
           <!-- Sure to deallocate NSSI ? -->
         </div>
         <div class="modal-footer">
@@ -134,7 +133,8 @@
 import router from '@/router';
 import { useI18n } from 'vue-i18n';
 import { delay } from '@/assets/js/delay';
-import { NSS_Instance } from '@/assets/js/api';
+import { closeModal } from '@/assets/js/closeModel';
+import { api } from '../apis/api';
 import Table from '../components/global/table.vue';
 import { alertConfig, alertEvent } from '@/assets/js/alertData';
 import { ref, toRefs, reactive, onBeforeMount, defineAsyncComponent } from 'vue';
@@ -145,15 +145,16 @@ const Modaldelete = defineAsyncComponent(() => import(/* webpackChunkName: "Moda
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const status = ref(false);
 const th_list = [
-  { name: "nssiId", text: `${ t("NSSI") }(NSSI)` },
-  { name: "nsInstanceName", text: `${ t("Network") }${ t("Service") }(NS)` },
-  { name: "administrativeState", text: `${ t("Administrative") }${ t("State") }`},
-  { name: "operationalState", text: `${ t("Operational") }${ t("State") }` },
+  { name: "nssiId", text: `${ t('NSSI') }(NSSI)` },
+  { name: "nsInstanceName", text: `${ t('Network') }${ t('Service') }(NS)` },
+  { name: "administrativeState", text: t('generic.status', [t('Administrative')]) },
+  { name: "operationalState", text: t('generic.status', [t('Operational')]) },
   { name: "Graph", text: t("Graph") },
   { name: "Deallocate", text: t("Deallocate") },
-  { name: "Delete_NSSI", text: `${ t("Delete") }NSSI` },
+  { name: "Delete_NSSI", text: t('nssi.delete') },
 ];
 const td_list = ref([]);
+const modalDelete = ref(null);
 const nssiId = ref('');
 const vnfInstance = ref([]);
 const filterEntries = ref([]);
@@ -165,8 +166,7 @@ const deleteData = reactive({
 });
   
 const nss_instance_list = async () => {
-  const { nssInstanceIist } = NSS_Instance();
-  const res = await nssInstanceIist();
+  const res = await api.NSSInstance().nssInstanceIist();
   td_list.value = [];
   for(const i of res.data.attributeListOut) {
     const obj = {
@@ -244,17 +244,18 @@ const delete_NSSI_button = (id, status) => { // 點擊 Delete Modal 按鈕
   deleteData.status = status;
 }
 const delete_NSSI_modal = () => {
-  const { deleteNssi } = NSS_Instance();
   const alertData = {
     Template: `NSSI`,
     configSuccess: t('Delete'),
     configUnsuccess: t('deallocated'),
   };
   if(deleteData.status == 'deallocated') {
-    deleteNssi(deleteData.id).then(() => {
+    api.NSSInstance().deleteNssi(deleteData.id)
+    .then(() => {
       nss_instance_list();
       alertEvent(1, alertData.Template, alertData.configSuccess, true);
     });
+    closeModal(modalDelete.value)
   }
   else 
     alertEvent(0, alertData.Template, alertData.configUnsuccess, true);

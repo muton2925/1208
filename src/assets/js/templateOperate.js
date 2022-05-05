@@ -1,82 +1,105 @@
-
-import { alertEvent } from './alertData';
-
-/**
- * create
- * @param {*} form - formData
- * @param {Array} apiList - createAPI and getFunction
- * @param {object} alertData - Template and config
- * 
- */
-
- const callCreate = async (form, apiList, alertData) => {  
-    const [createData, getTableData] = apiList;
-    const { Template, configSuccess, configUnsuccess } = alertData;
-    try {
-      await createData(form);
-      await getTableData();
-      alertEvent(1, Template, configSuccess);
-    }
-    catch(error) {
-      console.log(error);
-      alertEvent(0, Template, configUnsuccess);
-    }
+import { alertEvent } from "./alertData";
+import { api } from "../../apis/api";
+export const NFVO_create = async (form, getdata, alertData) => {
+  const { Template, configSuccess, configUnsuccess } = alertData;
+  try {
+    await api.nfvManoPlugin().create(form);
+    await getdata();
+    alertEvent(1, Template, configSuccess);
+  } catch (error) {
+    console.log(error);
+    alertEvent(0, Template, configUnsuccess);
+  }
 };
 
-/**
- * updata
- * @param {*} updateData 
- * @param {*} element 
- * @param {*} apiList 
- */
-
-const callUpdate = async (updateData, apiList, alertData) => { // 點擊 Update Modal 內更新按鈕
+export const NFVO_update = async (updateData, getTableData, alertData) => {
+  // 點擊 Update Modal 內更新按鈕
   const [fileName, form] = updateData;
-  const [updatePlugin, getTableData] = apiList;
   const { Template, configSuccess, configUnsuccess } = alertData;
   try {
-    await updatePlugin(fileName, form);
+    await api.nfvManoPlugin().update(fileName, form);
     await getTableData();
     alertEvent(1, Template, configSuccess);
-  }
-  catch(error) {
-    console.log(error);
-    alertEvent(0, Template, configUnsuccess);
-  }
-}
-
-/**
- * Delete
- * @param {*} fileName 
- * @param {*} apiList 
- */
-
-const callDelete = async (fileName, apiList, alertData) => { // 點擊 Delete Modal 內刪除按鈕
-  const [deletePlugin, getTableData] = apiList;
-  const { Template, configSuccess, configUnsuccess } = alertData;
-  try {
-    await deletePlugin(fileName)
-    await getTableData();
-    alertEvent(1, Template, configSuccess);
-  }
-  catch(error) {
+  } catch (error) {
     console.log(error);
     alertEvent(0, Template, configUnsuccess);
   }
 };
 
-/**
- * 
- * @param {*} file 
- */
-
-const callDownload = (file, alertData) => { // 點擊 Download Modal 按鈕
+export const NFVO_delete = async (fileName, getTableData, alertData) => {
   const { Template, configSuccess, configUnsuccess } = alertData;
-  if(file == null)
-    alertEvent(0, Template, configUnsuccess);
-  else
+  try {
+    await api.nfvManoPlugin().delete(fileName);
+    await getTableData();
     alertEvent(1, Template, configSuccess);
+  } catch (error) {
+    console.log(error);
+    alertEvent(0, Template, configUnsuccess);
+  }
+};
+export const generic_create = async (form, getdata, alertData) => {
+  const { Template, configSuccess, configUnsuccess } = alertData;
+  try {
+    await api.genericTemplate().create(form);
+    await getdata();
+    alertEvent(1, Template, configSuccess);
+  } catch (error) {
+    console.log(error);
+    alertEvent(0, Template, configUnsuccess);
+  }
 };
 
-export { callCreate, callUpdate, callDownload, callDelete }
+export const generic_update = async (updateData, getTableData, alertData) => {
+  const [fileName, form] = updateData;
+  const { Template, configSuccess, configUnsuccess } = alertData;
+  try {
+    await api.genericTemplate().update(fileName, form);
+    await getTableData();
+    alertEvent(1, Template, configSuccess);
+  } catch (error) {
+    console.log(error);
+    alertEvent(0, Template, configUnsuccess);
+  }
+};
+
+export const generic_delete = async (fileName, getTableData, alertData) => {
+  const { Template, configSuccess, configUnsuccess } = alertData;
+  try {
+    await api.genericTemplate().delete(fileName);
+    await getTableData();
+    alertEvent(1, Template, configSuccess);
+  } catch (error) {
+    console.log(error);
+    alertEvent(0, Template, configUnsuccess);
+  }
+};
+export const NSST_create = async (form, getdata, alertData) => {
+  const { Template, configSuccess, configUnsuccess } = alertData;
+  try {
+    await api.nssTemplate().create(form);
+    await getdata();
+    alertEvent(1, Template, configSuccess);
+  } catch (error) {
+    console.log(error);
+    alertEvent(0, Template, configUnsuccess);
+  }
+};
+export const NSST_delete = async (fileName, getTableData, alertData) => {
+  const { Template, configSuccess, configUnsuccess } = alertData;
+  try {
+    await api.nssTemplate().delete(fileName);
+    await getTableData();
+    alertEvent(1, Template, configSuccess);
+  } catch (error) {
+    console.log(error);
+    alertEvent(0, Template, configUnsuccess);
+  }
+};
+
+ export const callDownload = (file, alertData) => {
+  const { Template, configSuccess, configUnsuccess } = alertData;
+  if (file == null) alertEvent(0, Template, configUnsuccess);
+  else alertEvent(1, Template, configSuccess);
+};
+
 

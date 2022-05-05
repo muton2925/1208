@@ -1,8 +1,4 @@
 <template>
-  <template v-if="loginStatus">
-    <router-view></router-view>
-  </template>
-  <template v-else>
     <main>
       <div class="grid-custom">
         <div class="grid-main-custom" style="overflow: hidden;">
@@ -12,44 +8,35 @@
     </main>
     <Header></Header>
     <Sidebar></Sidebar>
-  </template>
 </template>
 <script setup>
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
 // import { useI18n } from 'vue-i18n';
+import { useCookies } from "vue3-cookies";
 import Header from "./components/global/header.vue";
 import Sidebar from "./components/global/sidebar.vue";
 // import Cookies from 'js-cookie'
-import { ref, watch, computed, provide, nextTick, onMounted } from 'vue';
+import { ref, watch, provide, nextTick, onMounted } from 'vue';
+console.log(process.env)
+console.log(document.cookie);
+const { cookies } = useCookies();
+// var user = { id:1, name:'Journal',session:'25j_7Sl6xDq2Kc3ym0fmrSSk2xV2XkUkX' };
+// cookies.set('user',user);
+const a = cookies.isKey('user') 
+const b = cookies.keys()  
+console.log(a)
+console.log(b)
 const store = useStore();
 const route = useRoute();
 const isRouterAlive = ref(true);
-const info = sessionStorage.getItem('token');
 // const { locale } = useI18n()
-const loginStatus = computed(() => store.state.loginStatus);
 const reload = () => {
   isRouterAlive.value = false;
   nextTick(() => {
     isRouterAlive.value = true;
   });
 };
-provide('reload', reload);
-// let lang = navigator.language;//常規瀏覽器語言
-// lang = lang.slice(0, 2);//擷取lang前2位字元
-// if(lang == 'zh'){
-//   store.commit("changeLocaleLang", 'tw');
-//   locale.value = store.state.localeLang;
-// }else{
-//   store.commit("changeLocaleLang", 'en');
-//   locale.value = store.state.localeLang;
-// }
-if (info) {
-  const token = JSON.parse(info).token;
-  // 如果token不為空，且確實有這個欄位則讓路由變更
-  if (token.length > 0 || token !== undefined)
-    store.commit("changeLoginStatus");
-}
 provide('reload', reload);
 watch(route, () => {
   if(route.path == '/')

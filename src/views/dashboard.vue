@@ -1,15 +1,14 @@
 <template>
-  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :status="status" :showBtn="false" @update="updateTableData">
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :status="status" :showBtn="showBtn" @update="updateTableData">
     <template v-slot:header>
-     <button @click="a()"  class="btn btn-primary ms-3 text-white">
-          <i class="d-sm-none bi bi-folder-plus"></i>
+        <button class="btn btn-primary ms-3 text-white">
           <span class="d-none d-sm-inline">
-            {{ `NFV MANO ${ t('Plugin') }`}}
+            {{t('nfv.plugin', ['NFV MANO'])}}
           </span>
         </button>
     </template>
     <template v-slot:table-name>
-      {{ `NFV MANO ${ t('Plugin') } ${ t('list') }`}}
+      {{t('nfv.plugin', ['NFV MANO', t('list')])}}
     </template>
     <template v-slot:table-td>
       <tr v-for="item in filterEntries" :key="item.name">
@@ -17,7 +16,6 @@
       </tr>
     </template>
   </Table>
-  
 </template>
 <script setup>
 import { useI18n } from 'vue-i18n';
@@ -27,11 +25,12 @@ import { Share } from '@/assets/js/api';
 import { ref, onBeforeMount } from 'vue';
 const { PluginList } = Share();
 const { t } = useI18n();
+const showBtn = ref(false)
 const th_list = ref([
-  { name: "userName", text: "userName" },
-  { name: "name", text: `${ t("Plugin") }${ t("Name") }` },
-  { name: "allocate_nssi", text: `${ t("Allocate") }NSSI${ t("File") }` },
-  { name: "deallocate_nssi", text: `${ t("Deallocate") }NSSI${ t("File") }` }
+  { name: "userName", text: t('base.userName') },
+  { name: "name", text: t('nfv.name') },
+  { name: "allocate_nssi", text: t('nfv.allocate') },
+  { name: "deallocate_nssi", text: t('nfv.deallocate') }
 ]);
 const td_list = ref([]);
 const status = ref(false);
@@ -45,18 +44,12 @@ const getTableData = async () => { // 顯示 Table 資料
 const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
   filterEntries.value = val;
 };
-const a = () => {
-  console.log(123)
-  th_list.value = [
-  { name: "userName", text: "userName" },
-  { name: "templateId", text: t("ID") },
-  { name: "name", text: `${ t("Template") }${ t("Name") }` },
-  { name: "description", text: t("Description") },
-  { name: "templateType", text: t('Type') },
-  { name: "nfvoType", text: t("NFVO") },
-  { name: "operationStatus", text: `NRM ${ t('Status') }` },]
-  columnSort.value = ['userName', 'templateId', 'name', 'description', 'templateType', 'nfvoType', 'operationStatus']
-}
+// const a =async () => {
+//   console.log(123)
+//   status.value = false;
+//  await delay(700)
+//   status.value = true;
+// }
 onBeforeMount(async () => {
   try {
     await getTableData();

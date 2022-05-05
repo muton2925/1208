@@ -1,9 +1,9 @@
 import { createStore } from 'vuex'
-
+// import { api } from '../apis/api'
 export default createStore({
   state: {
     windowWidth: window.innerWidth,
-    loginStatus: true,
+    loginStatus: false,
     currentRoute: '',
     menuData: [
       {

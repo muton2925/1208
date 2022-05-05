@@ -73,7 +73,9 @@
             </table>
           </div>
           <div class="d-flex flex-wrap justify-content-center justify-content-lg-between align-items-center">
-            <div class="col-12 text-center col-lg-auto mb-2 mb-lg-0">{{ t('show') }} {{ showInfo.start }} {{ t('to') }} {{ showInfo.end }} {{ t('of') }} {{ showInfo.length }} {{ t('entries') }}</div>
+            <div class="col-12 text-center col-lg-auto mb-2 mb-lg-0">
+              {{t('base.showEntries', [showInfo.start, showInfo.end, showInfo.length])}}
+            </div>
             <ul class="pagination justify-content-center flex-wrap col-lg-auto" :class="{ 'pagination-sm' : currentWindowWidth < 576 }">
               <li class="page-item" :class="{ disabled : currentPage == 1 }">
                 <a class="page-link" href="#" @click.prevent="paginateEvent(1)">{{ t('first') }}</a>
@@ -167,7 +169,7 @@ const props = defineProps({
     default: false
   },
 });
-const { column, entrie, columnSort, status } = toRefs(props);
+const { showBtn, column, entrie, columnSort, status } = toRefs(props);
 const { t } = useI18n();
 let Search = t('Search');
 const store = useStore();  

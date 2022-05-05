@@ -2,16 +2,16 @@
   <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :status="status" @update="updateTableData">
     <template v-slot:header>
       <h3>
-        {{`${ t('NSSI_Template') } ${ t('Template') }`}}
+        {{ t('generic.template', [t('NSSI_Template')]) }}
       </h3>
       <!-- Network Slice Subnet Template -->
     </template>
     <template v-slot:button>
-      {{`${ t('Create') } NSS ${ t('Template') }`}}
+      {{ t('generic.template', [`${ t('Create') }NSS`]) }}
       <!-- Create NSS Template -->
     </template>
     <template v-slot:table-name>
-      {{`NSS ${ t('Template') } ${ t('list') }`}}
+      {{ t('generic.template', ['NSS', t('list')]) }}
       <!-- NSS Template List -->
     </template>
     <template v-slot:table-td>
@@ -39,14 +39,14 @@
   </Table>
   <Modalshow ref="modalShow" @remove="removeShowData">
     <template v-slot:header>
-      {{ t('Generic') }}{{ t('Template') }}{{ t('list') }}
+      {{ t('generic.template', [t('Generic'), t('list')]) }}
       <!-- Generic Template List -->
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
           <label for="InputFile" class="form-label">
-            NSS{{ t('Template') }}{{ t('ID') }} :
+            {{`${ t('generic.template', ['NSS', t('ID')]) } :`}}
             <!-- NSS Template ID : -->
           </label>
           <input type="text" class="form-control" id="InputFile" placeholder="請輸入 Plugin 名稱" v-model="templateId" readonly>
@@ -67,24 +67,24 @@
   </Modalshow>
   <Modalcreate ref="modalCreate" @remove="removeCreateData" @keypress.enter="create_template_modal">
     <template v-slot:header>
-      {{`${ t('Create') }${ t('new') }NSS ${ t('Template') }`}}
+      {{ t('generic.create', ['NSS']) }}
+
       <!-- Create new NSS Template -->
     </template>
     <template v-slot:body>
       <form>
         <div class="mb-3">
           <label for="select1" class="form-label">
-            VNF {{ t('Template') }} :
-            <!-- VNF Template : -->
+            {{`${t('generic.template', ['VNF'])} :`}}
           </label>
           <select @change="selectChangeEvent('VNF')" v-model="currentVNF" class="form-select form-select" :class="{ 'is-invalid' : select_vnf_invalidated }" id="select1" aria-label=".form-select">
-            <option selected disabled :value="`${ t('Please') }${ t('select') } ...`">
-              {{`${ t('Please') }${ t('select') } ...`}}
+            <option selected disabled :value="t('base.select')">
+              {{t('base.select')}}
               <!-- 請選擇 ... -->
             </option>
             <option v-for="item in templateVNFList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
-          <div class="mt-2" v-if="currentVNF != `${ t('Please') }${ t('select') } ...`">
+          <div class="mt-2" v-if="currentVNF != t('base.select')">
             <div>
               VNF {{ t('ID') }} : {{ currentVNF }}
               <!-- VNF ID : {{ currentVNF }} -->
@@ -95,23 +95,23 @@
             </div>
           </div>
           <div class="invalid-feedback">
-            {{`${ t('Please') }${ t('select') }${ t('one') } VNF ${ t('Template') }`}}
+            {{ t('selectTemplate', ['VNF', t('template')]) }}
             <!-- 請選擇一個 VNF Template -->
           </div>
         </div>
         <div class="mb-3">
           <label for="select2" class="form-label">
-            NSD {{ t('Template') }} :
+            {{`${t('generic.template', ['NSD'])} :`}}
             <!-- NSD Template : -->
           </label>
           <select @change="selectChangeEvent('NSD')" v-model="currentNSD" class="form-select form-select" :class="{ 'is-invalid' : select_nsd_invalidated }" id="select2" aria-label=".form-select">
-            <option selected disabled :value="`${ t('Please') }${ t('select') } ...`">
-              {{`${ t('Please') }${ t('select') } ...`}}
+            <option selected disabled :value="t('base.select')">
+              {{t('base.select')}}
               <!-- 請選擇 ... -->
             </option>
             <option v-for="item in templateNSDList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
-          <div class="mt-2" v-if="currentNSD != `${ t('Please') }${ t('select') } ...`">
+          <div class="mt-2" v-if="currentNSD != t('base.select')">
             <div>
               NSD {{ t('ID') }} : {{ currentNSD }}
               <!-- NSD ID : {{ currentNSD }} -->
@@ -122,23 +122,23 @@
             </div>
           </div>
           <div class="invalid-feedback">
-            {{`${ t('Please') }${ t('select') }${ t('one') } NSD ${ t('Template') }`}}
+            {{ t('selectTemplate', ['NSD', t('template')]) }}
             <!-- 請選擇一個 NSD Template -->
           </div>
         </div>
         <div class="mb-3">
           <label for="select3" class="form-label">
-            NRM {{ t('Template') }} :
+            {{`${t('generic.template', ['NRM'])} :`}}
             <!-- NRM Template : -->
           </label>
           <select @change="selectChangeEvent('NRM')" v-model="currentNRM" class="form-select form-select" :class="{ 'is-invalid' : select_nrm_invalidated }" id="select3" aria-label=".form-select">
-            <option selected disabled :value="`${ t('Please') }${ t('select') } ...`">
-              {{`${ t('Please') }${ t('select') } ...`}}
+            <option selected disabled :value="t('base.select')">
+              {{t('base.select')}}
               <!-- 請選擇 ... -->
             </option>
             <option v-for="item in templateNRMList" :key="item.templateId" :value="item.templateId">{{ item.name }}</option>
           </select>
-          <div class="mt-2" v-if="currentNRM != `${ t('Please') }${ t('select') } ...`">
+          <div class="mt-2" v-if="currentNRM != t('base.select')">
             <div>
               NRM {{ t('ID') }} : {{ currentNRM }}
               <!-- NRM ID : {{ currentNRM }} -->
@@ -149,31 +149,31 @@
             </div>
           </div>
           <div class="invalid-feedback">
-            {{`${ t('Please') }${ t('select') }${ t('one') } NRM ${ t('Template') }`}}
+            {{ t('selectTemplate', ['NRM', t('template')]) }}
             <!-- 請選擇一個 NRM Template -->
           </div>
         </div>
         <div class="mb-3">
           <label for="InputFile" class="form-label">
-            {{`NSS${ t('Description') } :`}}
+            {{`NSS ${ t('Description') } :`}}
             <!-- NSS Description : -->
           </label>
-          <input type="text" class="form-control" id="InputFile" :placeholder="description" v-model.trim="templateDescription">
+          <input type="text" class="form-control" id="InputFile" :placeholder="t('Description')" v-model.trim="templateDescription">
         </div>
         <div class="mb-2">
           <label for="select4" class="form-label">
-            {{`NFVO${ t('Name') } :`}}
+            {{`NFVO ${ t('Name') } :`}}
             <!-- NFVO Name : -->
           </label>
           <select v-model="currentNFVMANO" class="form-select form-select" :class="{ 'is-invalid' : select_nfvmano_invalidated }" id="select4" aria-label=".form-select" @change="selectNFVMANO">
-            <option selected disabled :value="`${ t('Please') }${ t('select') } ...`">
-              {{`${ t('Please') }${ t('select') } ...`}}
+            <option selected disabled :value="t('base.select')">
+              {{t('base.select')}}
               <!-- 請選擇 ... -->
             </option>
             <option v-for="item in nfv_mano_list" :key="item.name" :value="item.name">{{ item.name }}</option>
           </select>
           <div class="invalid-feedback">
-            {{`${ t('Please') }${ t('select') }${ t('one') } NFVO`}}
+            {{ t('selectTemplate', ['NFVO', t('plugin')]) }}
             <!-- 請選擇一個 NFVO -->
           </div>
         </div>
@@ -188,7 +188,7 @@
   </Modalcreate>
   <Modaldelete ref="modalDelete" @remove="removeDeleteData" @keypress.enter="delete_template_modal" @delete="delete_template_modal">
     <template v-slot:header>
-      {{`${ t('Delete') }NSS${ t('Template') }`}}
+      {{ t('generic.delete', ['NSS']) }}
       <!-- Delete NSS Template -->
     </template>
   </Modaldelete>
@@ -199,20 +199,17 @@
 import router from '@/router';
 import { $array } from 'alga-js';
 import { useI18n } from 'vue-i18n';
-import { Share } from '@/assets/js/api';
+import { api } from '../apis/api';
 import { delay } from '@/assets/js/delay';
 import { form } from '@/assets/js/newFormData';
-import { nss_template } from '@/assets/js/api';
 import Table from '../components/global/table.vue';
 import { closeModal } from '@/assets/js/closeModel';
 import { alertConfig } from '@/assets/js/alertData';
-import { callCreate, callDelete } from '@/assets/js/templateOperate';
+import { NSST_create, NSST_delete } from '@/assets/js/templateOperate';
 import { ref, toRefs, watch, onBeforeMount, defineAsyncComponent } from 'vue';
 import { set_selects_invalidated, selects_Validate, selects_invalidated } from '@/assets/js/validate';
 const { t } = useI18n();
-const { PluginList, TemplateList } = Share();
 const { alertRef, alertExist } = toRefs(alertConfig);
-const { nssTemplateList, createNssTemplate, deleteNssTemplate }  = nss_template();
 const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
 const Modalshow = defineAsyncComponent(() => import(/* webpackChunkName: "Modalshow" */ '../components/global/modal-show.vue'));
 const Modalcreate = defineAsyncComponent(() => import(/* webpackChunkName: "Modalcreate" */ '../components/global/modal-create.vue'));
@@ -240,28 +237,27 @@ const templateVNFList = ref([]);
 const templateNSDList = ref([]);
 const templateNRMList = ref([]);
 const templateDescription = ref('');
-const description = t('Description');
 const selected_vnf_description = ref('');
 const selected_nsd_description = ref('');
 const selected_nrm_description = ref('');
-const currentVNF = ref(`${ t('Please') }${ t('select') } ...`);
-const currentNSD = ref(`${ t('Please') }${ t('select') } ...`);
-const currentNRM = ref(`${ t('Please') }${ t('select') } ...`);
-const currentNFVMANO = ref(`${ t('Please') }${ t('select') } ...`);
+const currentVNF = ref(t('base.select'));
+const currentNSD = ref(t('base.select'));
+const currentNRM = ref(t('base.select'));
+const currentNFVMANO = ref(t('base.select'));
 set_selects_invalidated(['select_vnf_invalidated', 'select_nsd_invalidated', 'select_nrm_invalidated', 'select_nfvmano_invalidated']);
 const { select_vnf_invalidated, select_nsd_invalidated, select_nrm_invalidated, select_nfvmano_invalidated } = toRefs(selects_invalidated);
 const getTableData = async () => {  // 獲取 VNF NSD NRM 資料
-  const res = await TemplateList();
+  const res = await api.tableList().templateList();
   templateVNFList.value = res.data.filter(i => i.operationStatus == 'UPLOAD' && i.templateType == 'VNF');
   templateNSDList.value = res.data.filter(i => i.operationStatus == 'UPLOAD' && i.templateType == 'NSD');
   templateNRMList.value = res.data.filter(i => i.operationStatus == 'UPLOAD' && i.templateType == 'NRM');
 };
 const getNfvManoData = async () => { // 獲取 NFVMANO 資料
-  const res = await PluginList();
+  const res = await api.tableList().pluginList();
   nfv_mano_list.value = res.data;
 };
 const getNssData = async () => { // 獲取 NSS Template 資料
-  const res = await nssTemplateList();
+  const res = await api.nssTemplate().nssTemplateList();
   console.log(res)
   td_list.value = [];
   for(let i of res.data) {
@@ -282,7 +278,7 @@ const selectNFVMANO = () => {
   modalCreate.value.focusModalEvent();
 };
 const selectChangeEvent = type => { // 切換 Create Modal Select
-  const set = `${ t('Please') }${ t('select') } ...`;
+  const set = t('base.select');
   if(type == 'VNF' && currentVNF.value != set) {
     const index = templateVNFList.value.findIndex(x => x.templateId == currentVNF.value);
     selected_vnf_description.value = templateVNFList.value[index].description;
@@ -298,7 +294,7 @@ const selectChangeEvent = type => { // 切換 Create Modal Select
   modalCreate.value.focusModalEvent();
 };
 const create_validate = () => { // 驗證 Create Modal
-  const set = `${ t('Please') }${ t('select') } ...`;
+  const set = t('base.select');
   let options = new Map();
   options.set('select_vnf_invalidated', currentVNF.value);
   options.set('select_nsd_invalidated', currentNSD.value);
@@ -311,14 +307,14 @@ const create_template_modal = async () => { // 點擊 Create Modal 內創建按�
  const createValidate = create_validate();
   if(createValidate) {
     const alertData = {
-      Template: `${ t('NSSI_Template') } ${ t('Template') }`,
+      Template: t('generic.template', [t('NSSI_Template')]),
       configSuccess: t('created'),
       configUnsuccess: t('create'),
     };
     const formName = ['nfvoType', 'genericTemplates', 'genericTemplates', 'genericTemplates', 'description'];
     const formValue = [currentNFVMANO.value, currentVNF.value, currentNSD.value, currentNRM.value, templateDescription.value];
     const formData = form(formName, formValue);
-    callCreate(formData, [createNssTemplate, getNssData], alertData);
+    NSST_create(formData,  getNssData, alertData);
     closeModal(modalCreate.value);
   }
 };
@@ -342,19 +338,19 @@ const allocate_template_button = item => { // 點擊 Allocate Modal 按鈕
 };
 const delete_template_modal = () => { // 點擊 Delete Modal 內刪除按鈕
   const alertData = {
-    Template: `${ t('NSSI_Template') } ${ t('Template') }`,
+    Template: t('generic.template', [t('NSSI_Template')]),
     configSuccess: t('deleted'),
     configUnsuccess: t('delete'),
   };
-  callDelete(templateId.value, [deleteNssTemplate, getNssData], alertData);
+  NSST_delete(templateId.value, getNssData, alertData);
   closeModal(modalDelete.value);
 };
 const removeCreateData = () => { // 關閉 Create Modal
   templateDescription.value = '';
-  currentVNF.value = `${ t('Please') }${ t('select') } ...`;
-  currentNSD.value = `${ t('Please') }${ t('select') } ...`;
-  currentNRM.value = `${ t('Please') }${ t('select') } ...`;
-  currentNFVMANO.value = `${ t('Please') }${ t('select') } ...`;
+  currentVNF.value = t('base.select');
+  currentNSD.value = t('base.select');
+  currentNRM.value = t('base.select');
+  currentNFVMANO.value = t('base.select');
   select_vnf_invalidated.value = false;
   select_nsd_invalidated.value = false;
   select_nrm_invalidated.value = false;

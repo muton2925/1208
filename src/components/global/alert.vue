@@ -10,7 +10,7 @@
 import { useI18n } from 'vue-i18n';
 import { delay } from '@/assets/js/delay';
 import { ref, computed, defineExpose } from 'vue';  
-const { t } = useI18n;
+const { t } = useI18n();
 const alertShow = ref(false);
 const alertStatus = ref(null);
 const alertAction = ref(null);
@@ -19,15 +19,15 @@ const nssiStatus = ref(false);
 const content = ref('');
 const alertTitle = computed(() => {
   if(alertStatus.value) 
-    return `Operates Successfully`;
+    return t('alertData.successfully');
   else 
-    return `Operates UnSuccessfully`;
+    return t('alertData.unSuccessfully');
 });
 const alertContent = computed(() => {
   if(alertStatus.value)
-    return `${ alertComponent.value } has been ${ alertAction.value } !`;
+    return `${t('alertData.contentSuccess', [alertComponent.value, alertAction.value])} !`;
   else 
-    return `Fail to ${ alertAction.value } the ${ alertComponent.value } !`;
+    return `${t('alertData.contentUnsuccess', [alertAction.value, alertComponent.value])} !`;
 });
 const NSSIAlertContent = computed(() => {
   if(alertStatus.value)

@@ -1,73 +1,63 @@
 <template>
-  <div class="dashboard-container">
-    <audio controls loops ref="a">
-      <source src="../assets/Rubia.mp3">
-        Your browser does not support the
-        <code>audio</code> element.
-    </audio>
-    <button @click="as(123)">123</button>
-    <button @click="sa(456)">456</button> 
-    <div class="form-check form-switch">
-      <input @change="sa(e)" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
-      <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
-    </div>
-    <div class="form-check form-switch">
-      <input @change="sa('id')" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
-      <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
-    </div>
-  </div>
-  <Alert ref="alertRef" v-show="alertExist"></Alert>
+  <Table :column="th_list" :entrie="td_list" :columnSort="columnSort" :status="status" :showBtn="showBtn" @update="updateTableData">
+    <template v-slot:header>
+        <button class="btn btn-primary ms-3 text-white">
+          <span class="d-none d-sm-inline">
+            {{t('nfv.plugin', ['NFV MANO'])}}
+          </span>
+        </button>
+    </template>
+    <template v-slot:table-name>
+      {{t('nfv.plugin', ['NFV MANO', t('list')])}}
+    </template>
+    <template v-slot:table-td>
+      <tr v-for="item in filterEntries" :key="item.name">
+        <td v-for="i in columnSort" :key="i">{{ item[i] }}</td>
+      </tr>
+    </template>
+  </Table>
 </template>
-<script>
-import { toRefs, reactive } from '@vue/reactivity';
-import {computed, defineAsyncComponent,ref} from 'vue'
-import { useStore } from 'vuex';
-const Alert = defineAsyncComponent(() => import(/* webpackChunkName: "Alert" */ '../components/global/alert.vue'));
-import { alertConfig, alertEvent } from '@/assets/js/alertData';
-import { useRouter } from 'vue-router';
-export default {
-  components:{
-    Alert
-  },
-  setup(){
-    let a = ref(undefined)
-    const b = computed(()=>{
-      console.log(a.value)
-      if(a.value !='選擇檔案類型'){
-        return false
-      }else{
-        return true
-      }
-    })
-    const router = useRouter();
-    const store = useStore();
-    const { alertRef, alertExist } = toRefs(alertConfig);
-    const ss = reactive({});
-    const as = (a) =>{
-      ss['a'] = a;
-      alertEvent(1, 'NSS Template', 'deleted');
-      console.log(ss)
-      sessionStorage.removeItem("token");
-      store.commit("changeLoginStatus");
-      router.push({
-        path: '/'
-      }); 
-    }
-
-    const sa = (id) =>{
-      console.log(id)
-    }
-    return {
-      alertRef, alertExist,as,ss,a,b,sa
-    }
+<script setup>
+import { useI18n } from 'vue-i18n';
+import { delay } from '@/assets/js/delay';
+import Table from '../components/global/table.vue';
+import { Share } from '@/assets/js/api';
+import { ref, onBeforeMount } from 'vue';
+const { PluginList } = Share();
+const { t } = useI18n();
+const showBtn = ref(false)
+const th_list = ref([
+  { name: "userName", text: t('base.userName') },
+  { name: "name", text: t('nfv.name') },
+  { name: "allocate_nssi", text: t('nfv.allocate') },
+  { name: "deallocate_nssi", text: t('nfv.deallocate') }
+]);
+const td_list = ref([]);
+const status = ref(false);
+const filterEntries = ref([]);
+const columnSort = ref(['user_name', 'name', 'allocate_nssi', 'deallocate_nssi']);
+const getTableData = async () => { // 顯示 Table 資料
+  const res = await PluginList();
+  console.log(res)
+  td_list.value = res.data;
+};
+const updateTableData = val => {  // 每次執行 Table 操作，更新資料 
+  filterEntries.value = val;
+};
+// const a =async () => {
+//   console.log(123)
+//   status.value = false;
+//  await delay(700)
+//   status.value = true;
+// }
+onBeforeMount(async () => {
+  try {
+    await getTableData();
   }
-}
+  catch(err) {
+    console.log(err);
+  }
+  await delay(700);
+  status.value = true;
+});
 </script>
-<style>
-.dashboard-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(100vh - 70px);
-}
-</style>

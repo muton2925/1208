@@ -7,7 +7,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form class="row">
+          <div class="row">
             <div class="col-12 mb-3">
               <label for="account" class="form-label">帳號 :</label>
               <input type="text" class="form-control input-custom" id="account" placeholder="帳號">
@@ -26,15 +26,26 @@
             </div>
 
             <div class="text-center my-2">
-              <button class="btn btn-success px-5" data-bs-toggle="modal" data-bs-target="#register_Modal">註 冊</button>
+              <button @click="ax" class="btn btn-success px-5" data-bs-toggle="modal" data-bs-target="#register_Modal">註 冊</button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-<script>
+<script setup>
+// import axios from 'axios';
+// const ax = () => {
+//   axios.post('http://10.20.1.40:80/basic/register/',{
+//     name: "user2",
+//     password: "user2",
+//     email: "user2@gmail.com"
+//   }).then(res=>{
+//     console.log(res)
+//   })
+// }
+
 </script>
 <style scoped>
 .btn-success {

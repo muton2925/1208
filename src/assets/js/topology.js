@@ -1,11 +1,10 @@
 import router from '@/router';
 import * as echarts from 'echarts';
 import { ref } from 'vue';
-import { nssi_topology } from './api';
+import { api } from '../../apis/api'
 var label;
 var datas, nssi_num; 
 let NSViewChartContent = ref();
-const { showNssi, nssiSwitched, showNssiTopology, allocateNssi,  deleteVnf } = nssi_topology();
 function show_nssi(dom, unmount) {
     var myChart;
     function myChartResize (){
@@ -28,7 +27,8 @@ function nssiContent(myChart, id){
   }else{
     nssiId = '/'
   }
-  showNssi(nssiId).then(response => {
+  api.nssiTopology().showNssi(nssiId)
+  .then(response => {
       if (response.data.length) {
         for (var i = 1; i < response.data.length; i++) {
           var node_tal = response.data[0].nodes;
@@ -121,7 +121,8 @@ function nssiContent(myChart, id){
 }
 
 function deallocate_nssi_topology(myChart, nssiID) {
-  showNssiTopology(nssiID).then(response => {
+  api.nssiTopology().showNssiTopology(nssiID)
+  .then(response => {
     if (response.data.length) {
       for (var i = 1; i < response.data.length; i++) {
       var node_tal = response.data[0].nodes;
@@ -214,7 +215,7 @@ function deallocate_nssi_topology(myChart, nssiID) {
 function allocate_nssi( myChart, nsstID) {
 	myChart.showLoading();
 	const json = JSON.stringify({attributeListIn:{nsstid:nsstID,using_existed:""}});
-    allocateNssi(json)
+  api.nssiTopology().allocateNssi(json)
     .then((response) => {
         var nssiID = response.data.nSSIId;
         show_allocate_nssi_topology(myChart,nssiID);
@@ -225,7 +226,7 @@ function allocate_nssi( myChart, nsstID) {
 }
 
 function show_allocate_nssi_topology(myChart,nssiID) {
-    showNssiTopology(nssiID)
+  api.nssiTopology().showNssiTopology(nssiID)
     .then(response => {
         
         myChart.hideLoading();
@@ -319,7 +320,8 @@ function show_allocate_nssi_topology(myChart,nssiID) {
 }
 
 function delete_vnf(myChart, nodes, nssiID) {
-  deleteVnf(nssiID).then(() => {
+  api.nssiTopology().delete(nssiID)
+  .then(() => {
     for (let i = nodes.length - 1; i >= 1; i--) {
       setTimeout(function (){
         nodes.pop();
@@ -366,7 +368,8 @@ function myChartClick(myChart){
         nssi_switched = !nssi_switched;
         label = !label;
         if (nssi_switched) {
-          nssiSwitched(params.data.id).then(response => {
+          api.nssiTopology().nssiSwitched(params.data.id)
+          .then(response => {
             var datas = response.data;
             // var categories = [];
             datas.nodes.forEach(function(node) {

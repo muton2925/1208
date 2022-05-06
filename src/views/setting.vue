@@ -43,6 +43,7 @@
         <a href="#" tabindex="-1" class="btn btn-danger disabled placeholder col-2"></a>
       </div>
     </template>
+
   </div>
 </template>
 <script setup>

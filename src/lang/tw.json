@@ -1,8 +1,11 @@
 {
+    "base":{
+        "matchingnotFound": "沒有找到匹配的數據"
+    },
     "show": "顯示",
     "entries": "個條目",
     "Loading": "載入中",
-    "matchingnotFound": "沒有找到匹配的數據",
+    
     "of": "個條目，總共",
     "to": "到",
     "first": "第一頁",
